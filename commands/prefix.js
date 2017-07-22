@@ -4,6 +4,7 @@ commands.prefix = {
   name: 'prefix',
   optArgs: ['show|set|reset', 'prefix'],
   desc: 'manages the bot\'s command prefix on this server',
+  admin: true,
   fn: async (message, params, main) => {
     const prefix = await main.prefixHelper.getServerPrefixFromDB(message.guild.id);
 
