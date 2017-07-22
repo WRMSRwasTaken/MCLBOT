@@ -33,7 +33,7 @@ commands.prefix = {
       return `The bot's custom prefix has been set to \`${params[1]}\` for this server`;
     }
 
-    return main.utils.argumentsError('prefix', 0, 'Unknown command argument.');
+    return main.utils.argumentsError('prefix', 0, 'Unknown command argument');
   },
 };
 
