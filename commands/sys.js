@@ -60,7 +60,7 @@ commands.exec = {
     return new Bluebird((resolve, reject) => {
       childProcess.exec(param, (err, stdout, stderr) => {
         if (err) {
-          resolve(`There was an error while executing your command:\`\`\`\n${err.message}\n\`\`\``);
+          return resolve(`There was an error while executing your command:\`\`\`\n${err.message}\n\`\`\``);
         }
 
         const time = Date.now() - start;
@@ -113,7 +113,7 @@ commands.status = {
     embed.addField(':floppy_disk: Memory usage', prettyBytes(process.memoryUsage().heapTotal));
     embed.addField(':gear: Cog stats', `${main.commandFilesCount} active modules containing ${main.loadedCommands} subcommands`);
 
-    message.channel.send({
+    message.channel.send('', {
       embed,
     });
   },

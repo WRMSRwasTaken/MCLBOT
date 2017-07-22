@@ -91,6 +91,7 @@ main.Discord = Discord;
 main.startTime = Date.now();
 
 if (!nconf.get('bot:owner')) {
+  main.owner = [];
   winston.warn('No bot owner(s) has/have been specified! Admin commands will be unavailable!');
 } else {
   main.owner = nconf.get('bot:owner').split(',');
