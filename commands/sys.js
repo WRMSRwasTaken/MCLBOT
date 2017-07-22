@@ -2,6 +2,7 @@ const childProcess = require('child_process');
 const prettyMs = require('pretty-ms');
 const prettyBytes = require('pretty-bytes');
 const winston = require('winston');
+const Bluebird = require('bluebird');
 
 const commands = {};
 
@@ -56,14 +57,16 @@ commands.exec = {
   fn: async (message, param) => {
     const start = Date.now();
 
-    childProcess.exec(param, (err, stdout, stderr) => {
-      if (err) {
-        return `\`\`\`\n${err.message}\n\`\`\``;
-      }
+    return new Bluebird((resolve, reject) => {
+      childProcess.exec(param, (err, stdout, stderr) => {
+        if (err) {
+          resolve(`There was an error while executing your command:\`\`\`\n${err.message}\n\`\`\``);
+        }
 
-      const time = Date.now() - start;
+        const time = Date.now() - start;
 
-      return `STDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: Took ${time}ms`;
+        resolve(`STDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: Execution took ${time}ms`);
+      });
     });
   },
 };

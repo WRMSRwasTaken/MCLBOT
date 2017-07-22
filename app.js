@@ -142,7 +142,7 @@ const CommandHandler = require('./lib/commandHandler.js');
 main.commandHandler = new CommandHandler(main);
 
 function readyEvent(event) {
-  main.mentionRegex = new RegExp(`^<@!?${main.bot.user.id}> `);
+  main.mentionRegex = new RegExp(`^<@!?${main.bot.user.id}>`);
 
   winston.info(`Connected to Discord API: ${(bot.shard) ? `Shard ID: ${bot.shard.id} of total: ${bot.shard.count} now` : 'Now'} live in ${bot.channels.size} channels on ${bot.guilds.size} servers for a total of ${bot.users.size} users. My ID is: ${bot.user.id} - ready for commands!`);
 }
