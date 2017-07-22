@@ -4,9 +4,12 @@ commands.prefix = {
   name: 'prefix',
   optArgs: ['show|set|reset', 'prefix'],
   desc: 'manages the bot\'s command prefix on this server',
-  admin: true,
   fn: async (message, params, main) => {
     const prefix = await main.prefixHelper.getServerPrefixFromDB(message.guild.id);
+
+    if ((params[0] === 'reset' || params[0] === 'set') && message.member.hasPermission('MANAGE_GUILD')) {
+      return message.send('Sorry, but only server administrators are allowed to change the bot\'s server prefix');
+    }
 
     if (!params[0] || params[0] === 'show') {
       if (prefix) {
@@ -29,6 +32,8 @@ commands.prefix = {
       await main.prefixHelper.setServerPrefix(message.guild.id, params[1]);
       return `The bot's custom prefix has been set to \`${params[1]}\` for this server`;
     }
+
+    return main.utils.argumentsError('prefix', 0, 'Unknown command argument.');
   },
 };
 
