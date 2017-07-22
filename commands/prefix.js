@@ -7,7 +7,7 @@ commands.prefix = {
   fn: async (message, params, main) => {
     const prefix = await main.prefixHelper.getServerPrefixFromDB(message.guild.id);
 
-    if ((params[0] === 'reset' || params[0] === 'set') && message.member.hasPermission('MANAGE_GUILD')) {
+    if ((params[0] === 'reset' || params[0] === 'set') && !message.member.hasPermission('MANAGE_GUILD')) {
       return message.send('Sorry, but only server administrators are allowed to change the bot\'s server prefix');
     }
 
