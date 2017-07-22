@@ -7,7 +7,7 @@ const commands = {};
 
 commands.eval = {
   name: 'eval',
-  desc: 'Runs the text via JavaScript\'s eval() (bot owner only)',
+  desc: 'Runs the text via JavaScript\'s eval()',
   hide: true,
   owner: true,
   args: ['code'],
@@ -20,28 +20,28 @@ commands.eval = {
     try {
       evalOutput = eval(param);
     } catch (err) {
-      return `\`\`\`\n${err}\n\`\`\``;
+      return `There was an error while eval()-ing your input:\n\`\`\`\n${err}\n\`\`\``;
     }
 
     const time = Date.now() - start;
 
     if (evalOutput === undefined) {
-      retMsg = '```JSON\nundefined\n```';
+      retMsg = 'eval() output:\n```JSON\nundefined\n```';
     } else if (evalOutput === null) {
-      retMsg = '```JSON\nnull\n```';
+      retMsg = 'eval() output:\n```JSON\nnull\n```';
     } else if (typeof evalOutput === 'object') {
       try {
         evalOutput = JSON.stringify(evalOutput, null, 2);
 
-        retMsg = `\`\`\`JSON\n${evalOutput}\n\`\`\``;
+        retMsg = `eval() output:\n\`\`\`JSON\n${evalOutput}\n\`\`\``;
       } catch (err) {
-        retMsg = `\`\`\`\n${err.message}\n\`\`\``;
+        retMsg = `There was an error while eval()-ing your input:\n\`\`\`\n${err.message}\n\`\`\``;
       }
     } else {
-      retMsg = `\`\`\`\n${evalOutput.toString()}\n\`\`\``;
+      retMsg = `eval() output:\n\`\`\`\n${evalOutput.toString()}\n\`\`\``;
     }
 
-    retMsg = `${retMsg} \n :stopwatch: Took ${time}ms`;
+    retMsg = `${retMsg} \n :stopwatch: eval() took ${time}ms`;
 
     return retMsg;
   },
@@ -53,18 +53,17 @@ commands.exec = {
   hide: true,
   owner: true,
   args: ['command'],
-  fn: (message, param) => {
+  fn: async (message, param) => {
     const start = Date.now();
 
     childProcess.exec(param, (err, stdout, stderr) => {
       if (err) {
-        message.replyFunction(`\`\`\`\n${err.message}\n\`\`\``);
-        return;
+        return `\`\`\`\n${err.message}\n\`\`\``;
       }
 
       const time = Date.now() - start;
 
-      message.replyFunction(`STDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: Took ${time}ms`);
+      return `STDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: Took ${time}ms`;
     });
   },
 };
@@ -75,20 +74,22 @@ commands.sql = {
   hide: true,
   owner: true,
   args: ['command'],
-  fn: (message, param, main) => {
+  fn: async (message, param, main) => {
     const start = Date.now();
 
-    main.db.sequelize.query(param)
-      .then((output) => {
-        const time = Date.now() - start;
+    let sqlOutput;
 
-        output = JSON.stringify(output[0], null, 2);
+    try {
+      sqlOutput = await main.db.sequelize.query(param);
+    } catch (err) {
+      return `There was an error while executing your SQL query:\n\`\`\`\n${err.message}\n\`\`\``;
+    }
 
-        message.replyFunction(`\`\`\`JSON\n${output}\n\`\`\` \n :stopwatch: Took ${time}ms`);
-      })
-      .catch((err) => {
-        message.replyFunction(`\`\`\`\n${err.message}\n\`\`\``);
-      });
+    const time = Date.now() - start;
+
+    sqlOutput = JSON.stringify(sqlOutput[0], null, 2);
+
+    return `SQL query returned:\n\`\`\`JSON\n${sqlOutput}\n\`\`\` \n :stopwatch: Query took ${time}ms`;
   },
 };
 
@@ -105,7 +106,7 @@ commands.status = {
 
     embed.addField(':alarm_clock: Uptime', prettyMs(Date.now() - main.startTime));
     embed.addField(':stopwatch: Ping', `${Math.round(main.bot.ping)}ms`);
-    embed.addField(':electric_plug: Connected to', `${Math.round(main.bot.ping)}ms`);
+    // embed.addField(':electric_plug: Connected to', `${Math.round(main.bot.ping)}ms`);
     embed.addField(':floppy_disk: Memory usage', prettyBytes(process.memoryUsage().heapTotal));
     embed.addField(':gear: Cog stats', `${main.commandFilesCount} active modules containing ${main.loadedCommands} subcommands`);
 

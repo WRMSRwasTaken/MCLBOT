@@ -72,7 +72,7 @@ nconf.defaults({
     database: 'mclbot',
     host: '127.0.0.1',
     port: 3306,
-    dialect: 'mariadb',
+    dialect: 'mysql',
   },
   redis: {
     // password: null,
@@ -97,7 +97,7 @@ if (!nconf.get('bot:owner')) {
 }
 
 winston.debug('Initializing database ORM...');
-main.db = require('./models');
+main.db = require('./models/index.js');
 
 winston.debug('Connecting to Redis...');
 
@@ -122,68 +122,27 @@ main.redis.on('close', (event) => {
   winston.warn('Connection to Redis backend lost! Reconnecting in 5 seconds...');
 });
 
-main.isMyMessage = message => message.author.id === main.bot.user.id;
+const Utils = require('./lib/utils.js');
 
-main.isPM = message => message.channel.type === 'dm';
+main.utils = new Utils(main);
 
-main.startsWithPrefix = message => (message.content.startsWith(nconf.get('bot:prefix')));
+const PrefixHelper = require('./lib/prefixHelper.js');
 
-main.hasAttachments = message => !!message.attachments.first();
+main.prefixHelper = new PrefixHelper(main);
 
-main.isMention = (message) => {
-  if (message.content.substr(0, main.aidLen) === main.askId) {
-    return true;
-  }
+const ResourceLoader = require('./lib/resourceLoader.js');
 
-  if (message.content.substr(0, main.aidLen2) === main.askId2) {
-    return true;
-  }
+main.resourceLoader = new ResourceLoader(main);
 
-  return false;
-};
+main.resourceLoader.loadCommandFiles();
+main.resourceLoader.loadEventFiles();
 
-main.shouldAnswer = (message) => {
-  if (main.isMyMessage(message)) {
-    return false;
-  }
+const CommandHandler = require('./lib/commandHandler.js');
 
-  if (message.pinned) {
-    return false;
-  }
-
-  if (!main.isPM(message) && !main.isMention(message) && !main.startsWithPrefix(message)) {
-    return false;
-  }
-
-  return true;
-};
-
-main.utils = require('./lib/utils.js')(main);
-
-const commandLoader = require('./lib/loadCommands.js')(main);
-
-commandLoader.loadCommandFiles();
-
-const eventLoader = require('./lib/loadEvents.js')(main);
-
-eventLoader.loadEventFiles();
-
-const handler = require('./lib/messageCommandHandler.js')(main);
-
-main.handleMessage = handler.handleMessage;
+main.commandHandler = new CommandHandler(main);
 
 function readyEvent(event) {
-  main.id = main.bot.user.id;
-  main.askId = `<@${main.bot.user.id}>`;
-  main.askIdC = `<@${main.bot.user.id}> `;
-  main.askId2 = `<@!${main.bot.user.id}>`;
-  main.askIdC2 = `<@!${main.bot.user.id}> `;
-
-  main.idLen = main.id.length;
-  main.aidLen = main.askId.length;
-  main.aidcLen = main.askIdC.length;
-  main.aidLen2 = main.askId2.length;
-  main.aidcLen2 = main.askIdC2.length;
+  main.mentionRegex = new RegExp(`^<@!?${main.bot.user.id}> `);
 
   winston.info(`Connected to Discord API: ${(bot.shard) ? `Shard ID: ${bot.shard.id} of total: ${bot.shard.count} now` : 'Now'} live in ${bot.channels.size} channels on ${bot.guilds.size} servers for a total of ${bot.users.size} users. My ID is: ${bot.user.id} - ready for commands!`);
 }

@@ -1,49 +1,53 @@
 const winston = require('winston');
 
-module.exports = ((main) => {
-  const events = {};
+module.exports = {
 
-  events.message = {
+  message: {
     on: 'message',
-    fn: (message) => {
-      winston.debug('New message event fired. ID: %s - isMyMessage? %s - shouldAnswer? %s -- %s', message.id, main.isMyMessage(message), main.shouldAnswer(message), message.content);
+    fn: async (main, message) => {
+      const shouldHandle = await main.utils.shouldHandle(message);
 
-      if (main.shouldAnswer(message)) {
-        winston.debug('Responding to message...');
-        main.handleMessage(message);
+      winston.debug('New message event fired. ID: %s - shouldHandle? %s -- %s', message.id, shouldHandle, message.content);
+
+      if (shouldHandle) {
+        main.commandHandler.handleMessage(message);
       }
     },
-  };
+  },
 
-  events.messageUpdate = {
+  messageUpdate: {
     on: 'messageUpdate',
-    fn: (oldMessage, newMessage) => {
-      winston.debug('Message edit event fired. ID: %s - hasReplies? %s - isMyMessage? %s - shouldAnswer? %s -- %s <-> %s', newMessage.id, !!oldMessage.replies, main.isMyMessage(newMessage), main.shouldAnswer(newMessage), oldMessage.content, newMessage.content);
+    fn: async (main, oldMessage, newMessage) => {
+      const shouldHandle = await main.utils.shouldHandle(newMessage);
+
+      winston.debug('Message edit event fired. ID: %s - hasReplies? %s - shouldHandle (new message)? %s -- %s <-> %s', newMessage.id, !!oldMessage.replies, shouldHandle, oldMessage.content, newMessage.content);
 
       if (!oldMessage.content || !newMessage.content || oldMessage.content === newMessage.content) {
-        winston.debug('Message content did not change...');
+        winston.debug('Message content did not change... returning');
         return;
       }
 
       if (oldMessage.responded) {
-        if (main.shouldAnswer(newMessage)) {
+        if (shouldHandle) {
           if (oldMessage.replies.length === 1) {
             winston.debug('Editing old response...');
-            main.handleMessage(newMessage, oldMessage.replies[0]);
+            main.commandHandler.handleMessage(newMessage, oldMessage.replies[0]);
             return;
-          }
+          } else if (oldMessage.replies.length > 1) {
+            winston.debug('Deleting old responses and sending new messages...');
 
-          winston.debug('Deleting old responses and sending new messages...');
-
-          for (const msg of oldMessage.replies) {
-            if (msg.deletable) {
-              msg.delete(0);
+            for (const msg of oldMessage.replies) {
+              if (msg.deletable) {
+                msg.delete(0);
+              }
             }
+
+            newMessage.replies = [];
+          } else {
+            winston.debug('Message has no responses so far...');
           }
 
-          newMessage.replies = [];
-
-          main.handleMessage(newMessage);
+          main.commandHandler.handleMessage(newMessage);
           return;
         }
 
@@ -61,16 +65,15 @@ module.exports = ((main) => {
         return;
       }
 
-      if (main.shouldAnswer(newMessage)) {
-        winston.debug('Responding to it...');
-        main.handleMessage(newMessage);
+      if (shouldHandle) {
+        main.commandHandler.handleMessage(newMessage);
       }
     },
-  };
+  },
 
-  events.messageDelete = {
+  messageDelete: {
     on: 'messageDelete',
-    fn: (message) => {
+    fn: async (main, message) => {
       winston.debug('Message delete event fired. was answered by me?', message.responded);
       if (!message.responded) {
         return;
@@ -91,7 +94,5 @@ module.exports = ((main) => {
 
       message.replies = [];
     },
-  };
-
-  return events;
-});
+  },
+};

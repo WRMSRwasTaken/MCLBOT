@@ -11,11 +11,11 @@ commands.discrim = {
 
     for (const guild of main.bot.guilds.values()) {
       for (const member of guild.members.values()) {
-        if (member.user.discriminator == discrim && !names.includes(member.user.tag)) names.push(member.user.tag);
+        if (member.user.discriminator === discrim && !names.includes(member.user.tag)) names.push(member.user.tag);
       }
     }
 
-    return `Users matching #${discrim}:\n\`\`\`js\n${JSON.stringify(names, null, 4)}\`\`\``;
+    return `Users matching discriminator \`#${discrim}\`:\n\`\`\`js\n${JSON.stringify(names, null, 4)}\`\`\``;
   },
 };
 
