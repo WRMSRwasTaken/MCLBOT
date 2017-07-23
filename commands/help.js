@@ -12,7 +12,7 @@ commands.help = {
     if (!params) {
       const output = main.utils.displayHelpPage();
 
-      if (!main.utils.isDM(message)) {
+      if (!main.commandHandler.isDM(message)) {
         message.author.send(output);
         return `<@${message.author.id}> I've sent you a PM`;
       }
@@ -21,7 +21,7 @@ commands.help = {
     } else if (!isNaN(tryParsedNumber)) {
       const output = main.utils.displayHelpPage(tryParsedNumber);
 
-      if (!main.utils.isDM(message)) {
+      if (!main.commandHandler.isDM(message)) {
         message.author.send(output);
         return `<@${message.author.id}> I've sent you a PM`;
       }

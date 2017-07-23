@@ -22,20 +22,22 @@ winston.add(winston.transports.Console, {
   timestamp: true,
 });
 
+const main = {};
+
 const Discord = require('discord.js');
 
-const api = new Discord.Client({
+main.api = new Discord.Client({
   messageCacheLifetime: 15 * 60,
   messageSweepInterval: 5 * 60,
   fetchAllMembers: true,
-  disableEveryone: true,
+  disableEveryone: false,
 });
 
-if (api.shard && api.shard.count === 0) {
-  api.shard = undefined; // PM2 fork mode gets recognized as shard id 0 with total shard count of 0
+if (main.api.shard && main.api.shard.count === 0) {
+  main.api.shard = undefined; // PM2 fork mode gets recognized as shard id 0 with total shard count of 0
 }
 
-if (!api.shard) {
+if (!main.api.shard) {
   winston.info(' __  __  _____ _      ____   ____ _______');
   winston.info('|  \\/  |/ ____| |    |  _ \\ / __ \\__   __|');
   winston.info('| \\  / | |    | |    | |_) | |  | | | |');
@@ -57,7 +59,7 @@ if (!nconf.get('bot:token')) {
   process.exit(1);
 }
 
-winston.info(`${(api.shard) ? `Shard ID: ${api.shard.id} of total: ${api.shard.count} starting` : 'Starting'} up - env: ${global.env}, loglevel: ${nconf.get('loglevel')}`);
+winston.info(`${(main.api.shard) ? `Shard ID: ${main.api.shard.id} of total: ${main.api.shard.count} starting` : 'Starting'} up - env: ${global.env}, loglevel: ${nconf.get('loglevel')}`);
 
 process.title = 'MCLBOT';
 
@@ -82,9 +84,6 @@ nconf.defaults({
   },
 });
 
-const main = {};
-
-main.api = api;
 main.Discord = Discord;
 
 main.startTime = Date.now();
@@ -144,7 +143,7 @@ main.commandHandler = new CommandHandler(main);
 function readyEvent(event) {
   main.mentionRegex = new RegExp(`^<@!?${main.api.user.id}>`);
 
-  winston.info(`Connected to Discord API: ${(api.shard) ? `Shard ID: ${api.shard.id} of total: ${api.shard.count} now` : 'Now'} live in ${api.channels.size} channels on ${api.guilds.size} servers for a total of ${api.users.size} users. My ID is: ${api.user.id} - ready for commands!`);
+  winston.info(`Connected to Discord API: ${(main.api.shard) ? `Shard ID: ${main.api.shard.id} of total: ${main.api.shard.count} now` : 'Now'} live in ${main.api.channels.size} channels on ${main.api.guilds.size} servers for a total of ${main.api.users.size} users. My ID is: ${main.api.user.id} - ready for commands!`);
 }
 
 function disconnectEvent(event) {
@@ -158,7 +157,7 @@ function disconnectEvent(event) {
     winston.info('Reconnecting manually in 5 seconds...');
 
     setTimeout(() => {
-      api.login(nconf.get('bot:token'))
+      main.api.login(nconf.get('bot:token'))
         .then(() => winston.info('Reconnected manually to Discord API.'))
         .catch((err) => {
           winston.error('Unable to connect to Discord API!', err);
@@ -168,13 +167,13 @@ function disconnectEvent(event) {
   }
 }
 
-api.on('ready', readyEvent);
-api.on('disconnect', disconnectEvent);
+main.api.on('ready', readyEvent);
+main.api.on('disconnect', disconnectEvent);
 
-api.on('error', e => winston.error(e));
-api.on('warn', e => winston.warn(e));
+main.api.on('error', e => winston.error(e));
+main.api.on('warn', e => winston.warn(e));
 
-api.login(nconf.get('bot:token'))
+main.api.login(nconf.get('bot:token'))
   .catch((err) => {
     winston.error('Unable to connect to Discord API!', err);
     process.exit(1);
@@ -182,9 +181,9 @@ api.login(nconf.get('bot:token'))
 
 process.on('uncaughtException', (err) => {
   const errorMsg = err.stack.replace(new RegExp(`${__dirname}\/`, 'g'), './');
-  winston.error('Uncaught Exception', api.user, errorMsg);
+  winston.error('Uncaught Exception', main.api.user, errorMsg);
 });
 
 process.on('unhandledRejection', (err) => {
-  winston.error('Uncaught Promise Error', api.user, err);
+  winston.error('Uncaught Promise Error', main.api.user, err);
 });
