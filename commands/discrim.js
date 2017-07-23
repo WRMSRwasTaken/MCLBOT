@@ -7,13 +7,7 @@ commands.discrim = {
   fn: (message, params, main) => {
     const discrim = params || message.author.discriminator;
 
-    const names = [];
-
-    for (const guild of main.bot.guilds.values()) {
-      for (const member of guild.members.values()) {
-        if (member.user.discriminator === discrim && !names.includes(member.user.tag)) names.push(member.user.tag);
-      }
-    }
+    const names = main.api.users.filter(u => u.discriminator === discrim).map(u => u.tag);
 
     return `Users matching discriminator \`#${discrim}\`:\n\`\`\`js\n${JSON.stringify(names, null, 4)}\`\`\``;
   },

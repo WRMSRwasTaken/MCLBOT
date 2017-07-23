@@ -104,12 +104,11 @@ commands.status = {
 
     embed.author = {
       name: 'MCLBOT\'s statistical data',
-      icon_url: main.bot.user.avatarURL,
+      icon_url: main.api.user.avatarURL,
     };
 
     embed.addField(':alarm_clock: Uptime', prettyMs(Date.now() - main.startTime));
-    embed.addField(':stopwatch: Ping', `${Math.round(main.bot.ping)}ms`);
-    // embed.addField(':electric_plug: Connected to', `${Math.round(main.bot.ping)}ms`);
+    embed.addField(':stopwatch: Ping', `${Math.round(main.api.ping)}ms`);
     embed.addField(':floppy_disk: Memory usage', prettyBytes(process.memoryUsage().heapTotal));
     embed.addField(':gear: Cog stats', `${main.commandFilesCount} active modules containing ${main.loadedCommands} subcommands`);
 

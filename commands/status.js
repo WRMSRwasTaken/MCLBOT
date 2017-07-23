@@ -6,7 +6,7 @@ commands.say = {
   args: ['text'],
   owner: true,
   fn: (message, param, main) => {
-    main.bot.user.setGame(param);
+    main.api.user.setGame(param);
     message.send(`Status set to \`${param}\``);
   },
 };
