@@ -97,7 +97,7 @@ commands.sql = {
 };
 
 commands.status = {
-  name: 'status',
+  name: 'stats',
   desc: 'Prints the bot\'s current system status',
   fn: (message, param, main) => {
     const embed = new main.Discord.RichEmbed();
@@ -113,7 +113,7 @@ commands.status = {
     embed.addField(':floppy_disk: Memory usage', prettyBytes(process.memoryUsage().heapTotal));
     embed.addField(':gear: Cog stats', `${main.commandFilesCount} active modules containing ${main.loadedCommands} subcommands`);
 
-    message.channel.send('', {
+    message.send({
       embed,
     });
   },
