@@ -129,6 +129,10 @@ const PrefixHelper = require('./lib/prefixHelper.js');
 
 main.prefixHelper = new PrefixHelper(main);
 
+const BlacklistHelper = require('./lib/blacklistHelper.js');
+
+main.blacklistHelper = new BlacklistHelper(main);
+
 const ResourceLoader = require('./lib/resourceLoader.js');
 
 main.resourceLoader = new ResourceLoader(main);

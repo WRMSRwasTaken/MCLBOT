@@ -35,7 +35,7 @@ main.registerCommand({
     //   return;
     // }
     //
-    // console.log(message.channel.guild.members);
+    // console.log(message.guild.members);
 
 
     // if (message.mentions.everyone) {

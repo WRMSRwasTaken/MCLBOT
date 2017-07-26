@@ -1,27 +1,27 @@
 
 module.exports = {
   up(queryInterface, Sequelize) {
-    return queryInterface.createTable('ServerPrefixes', {
-      id: {
+    return queryInterface.createTable('server_prefix', {
+      server_id: {
         allowNull: false,
-        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
       prefix: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      createdAt: {
+      created_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
     });
   },
   down(queryInterface, Sequelize) {
-    return queryInterface.dropTable('ServerPrefixes');
+    return queryInterface.dropTable('server_prefix');
   },
 };
