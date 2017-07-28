@@ -7,7 +7,7 @@ module.exports = {
 
   messageUpdate: {
     on: 'messageUpdate',
-    fn: (main, oldMessage, newMessage) => main.commandHandler.handleMessageUpdateEvent(oldMessage, newMessage),
+    fn: (main, oldMessage, newMessage) => main.commandHandler.handleMessageEvent(oldMessage, newMessage),
   },
 
   messageDelete: {
