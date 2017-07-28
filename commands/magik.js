@@ -1,10 +1,8 @@
 const path = require('path');
-const shared = require(path.resolve(__dirname, '../lib/shared.js'));
-const main = shared.main;
 
 const child = require('child_process');
 const fs = require('fs');
-const request = require('superagent');
+const axios = require('axios');
 
 const opts = {
   stdio: ['pipe', 'pipe', 'pipe'],
@@ -25,28 +23,36 @@ function random2(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-main.registerCommand({
+const commands = {};
+
+commands.magik = {
   name: 'magik',
-  desc: 'Do some ImageMagick',
-  fn: (message, text, params) => {
-    message.channel.send('ok, processing')
+  hide: true,
+  args: ['imagemagick'],
+  desc: 'applies some magik to an image',
+  fn: (message, params, main) => {
+    message.send('ok, processing')
       .then((msg) => {
+        const comb1 = random(combinations);
+        const comb2 = random(combinations);
 
-        let comb1 = random(combinations);
-        let comb2 = random(combinations);
-
-        let selectedDimensions = comb1[0] + '%x' + comb2[0] + '%';
-        let selectedDimensions2 = comb1[1] + '%x' + comb2[1] + '%';
+        const selectedDimensions = `${comb1[0]}%x${comb2[0]}%`;
+        const selectedDimensions2 = `${comb1[1]}%x${comb2[1]}%`;
 
         const magik = child.spawn('convert', ['(', '(', 'fd:0', '-resize', '2000x2000>', ')', '-liquid-rescale', selectedDimensions, ')', '-resize', selectedDimensions2, 'fd:1'], opts);
 
-        //const magik = child.spawn('convert', ['fd:0', '-resize', '64x64', 'fd:1'], opts);
+        // const magik = child.spawn('convert', ['fd:0', '-resize', '64x64', 'fd:1'], opts);
 
-        request
-          .get(params)
-          .pipe(magik.stdio[0]);
+        axios({
+          method:'get',
+          url:params,
+          responseType:'stream'
+        })
+          .then(function(response) {
+            response.data.pipe(magik.stdio[0])
+          });
 
-        //const buf = require('fs').readFileSync('./imgtmp/lel.jpg');
+        // const buf = require('fs').readFileSync('./imgtmp/lel.jpg');
 
         const childStream = [];
 
@@ -66,9 +72,16 @@ main.registerCommand({
 
           // fs.createWriteStream('tmp.png').write(buf);
 
-          message.channel.sendFile(buf, 'lel.jpg')
+          message.send({
+            files: [{
+              attachment: buf,
+              name: 'magik.png',
+            }],
+          })
             .then(() => msg.delete());
         });
       });
   },
-});
+};
+
+module.exports = commands;
