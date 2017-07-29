@@ -4,6 +4,7 @@ const child = require('child_process');
 const fs = require('fs');
 const axios = require('axios');
 const gm = require('gm').subClass({ imageMagick: true });
+const Bluebird = require('bluebird');
 
 const opts = {
   stdio: [0, 1, 2, 'pipe', 'pipe'],
@@ -28,8 +29,8 @@ const commands = {};
 
 commands.magik = {
   name: 'magik',
-  hide: true,
-  args: ['imagemagick'],
+  args: ['image'],
+  alias: ['imagemagic', 'imagemagick', 'magic', 'magick', 'cas', 'liquid'],
   desc: 'applies some magik to an image',
   fn: async (message, params, main) => {
     const waitmsg = await message.send('ok, processing');
@@ -47,19 +48,60 @@ commands.magik = {
 
     // const magik = child.spawn('convert', ['fd:0', '-resize', '64x64', 'fd:1'], opts);
 
-    const httpResponse = await axios({
-      method: 'get',
-      url: params,
-      responseType: 'stream',
-    });
+    let httpResponse;
+
+    try {
+      httpResponse = await axios({
+        method: 'get',
+        url: params,
+        responseType: 'arraybuffer',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.78 Safari/537.36',
+        },
+      });
+    } catch (err) {
+      waitmsg.delete();
+      delete message.replies[0];
+      message.send('Downloading the image file failed!');
+      return;
+    }
 
     // const inputStream = new net.Socket({ fd: 3, readable: true, writable: true });
 
     // httpResponse.data.pipe(magik.stdio[3]);
 
-    gm(httpResponse.data)
+    console.log(httpResponse.data.length);
+
+    const gmImage = gm(httpResponse.data);
+
+    let imageDimentsions;
+
+    try {
+      imageDimentsions = await new Bluebird((resolve, reject) => {
+        gmImage.size((err, value) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(value);
+        });
+      });
+    } catch (err) {
+      waitmsg.delete();
+      delete message.replies[0];
+      message.send('Could not identify image!');
+      return;
+    }
+
+    if (imageDimentsions.width > 3000 || imageDimentsions.height > 3000) {
+      waitmsg.delete();
+      delete message.replies[0];
+      message.send('Supplied image exceeds maximum resolution >= (3000, 3000)!');
+      return;
+    }
+
+    gmImage
       .resize(2000, 2000, '>')
-      .in(`-liquid-rescale`, selectedDimensions)
+      .out('-liquid-rescale', selectedDimensions)
       .resize(comb1[1], comb2[1], '%')
       .toBuffer(async (err, buffer) => {
         if (err) return console.log('Error in magick;', err);
