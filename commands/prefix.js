@@ -19,7 +19,7 @@ commands.prefix = {
       newPrefix = params[1].toLowerCase();
     }
 
-    if ((mode === 'reset' || mode === 'set') && !main.utils.isGuildAdmin(message)) {
+    if (['reset', 'set'].includes(mode) && !main.utils.isGuildAdmin(message)) {
       return message.send('Sorry, but only server administrators are allowed to change the bot\'s server prefix');
     }
 

@@ -27,8 +27,11 @@ commands.help = {
       }
 
       return output;
-    } else if (main.commands[params]) {
-      return `Help for command ${params}: ${main.utils.displayCommandHelp(params)}`;
+    } else if (main.commands[params] || main.aliases[params]) {
+      if (!main.commands[params]) {
+        return `Help for command \`${main.aliases[params]}\`: ${main.utils.displayCommandHelp(main.aliases[params])}`;
+      }
+      return `Help for command \`${params}\`: ${main.utils.displayCommandHelp(params)}`;
     }
     return 'Help for unknown command requested.';
   },

@@ -99,22 +99,38 @@ commands.magik = {
       return;
     }
 
-    gmImage
-      .resize(2000, 2000, '>')
-      .out('-liquid-rescale', selectedDimensions)
-      .resize(comb1[1], comb2[1], '%')
-      .toBuffer(async (err, buffer) => {
-        if (err) return console.log('Error in magick;', err);
-        await message.send({
-          files: [{
-            attachment: buffer,
-            name: 'magik.png',
-          }],
-        });
+    let magikd;
 
-        waitmsg.delete();
-        delete message.replies[0];
+    try {
+      magikd = await new Bluebird((resolve, reject) => {
+        gmImage
+          .resize(800, 800, '<')
+          // .out('-liquid-rescale', selectedDimensions)
+          // .resize(comb1[1], comb2[1], '%')
+          .out('-liquid-rescale', '50%,', '-liquid-rescale', '150%')
+          .toBuffer(async (err, buffer) => {
+            if (err) {
+              reject(err);
+            }
+            resolve(buffer);
+          });
       });
+    } catch (err) {
+      waitmsg.delete();
+      delete message.replies[0];
+      message.send('Error while applying magik to image!');
+      return;
+    }
+
+    await message.send({
+      files: [{
+        attachment: magikd,
+        name: 'magik.png',
+      }],
+    });
+
+    waitmsg.delete();
+    delete message.replies[0];
 
     // const buf = require('fs').readFileSync('./imgtmp/lel.jpg');
 
