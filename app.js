@@ -65,7 +65,7 @@ process.title = 'MCLBOT';
 
 nconf.defaults({
   bot: {
-    prefix: '!',
+    prefix: 'm!',
   },
   database: {
     username: 'mclbot',
