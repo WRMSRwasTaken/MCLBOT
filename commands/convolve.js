@@ -9,10 +9,10 @@ const Bluebird = require('bluebird');
 const commands = {};
 
 commands.magik = {
-  name: 'magik',
+  name: 'convolve',
   args: ['image'],
-  alias: ['imagemagic', 'imagemagick', 'magic', 'magick', 'cas', 'liquid'],
-  desc: 'applies some magik to an image',
+  // alias: ['imagemagic', 'imagemagick', 'magic', 'magick', 'cas', 'liquid'],
+  desc: 'applies some convolution to an image',
   fn: async (message, params, main) => {
     const waitmsg = await message.send('ok, processing');
 
@@ -67,25 +67,46 @@ commands.magik = {
       magikd = await new Bluebird((resolve, reject) => {
         gmImage
           .resize(800, 800, '<')
-          .out('-liquid-rescale', '50%', '-liquid-rescale', '150%')
+          .define('convolve:scale=\'50%!\'')
+          .define('morphology:compose=Lighten')
+          .out('-morphology', 'convolve', 'sobel:>')
           .toBuffer(async (err, buffer) => {
             if (err) {
               reject(err);
             }
             resolve(buffer);
           });
+        // gmImage
+        //   // .resize(800, 800, '<')
+        //   .out('-colorspace', 'Gray', '-channel', 'G')
+        //   .out('-define', 'convolve:scale=\'50%!\'', '-bias', '50%')
+        //   .out('(', '-clone', '0', '-morphology', 'Convolve', 'Sobel:0', ')')
+        //   .out('(', '-clone', '0', '-morphology', 'Convolve', 'Sobel:90', ')')
+        //   .out('-delete', '0', '-background', 'Black')
+        //   .out('(', '-clone', '0,1', '-fx', '\'0.5', '+', 'atan2(v-0.5,0.5-u)/pi/2\'', ')')
+        //   .out('(', '-clone', '0', '-fill', 'white', '-colorize', '100%', ')')
+        //   .out('(', '-clone', '0,1', '-fx', '\'hypot(u-0.5,v-0.5)*2\'', ')')
+        //   .out('-delete', '0,1', '-separate', '+channel')
+        //   .out('-set', 'colorspace', 'HSB', '-combine', '-colorspace', 'RGB')
+        //   .toBuffer(async (err, buffer) => {
+        //     if (err) {
+        //       reject(err);
+        //     }
+        //     resolve(buffer);
+        //   });
       });
     } catch (err) {
       waitmsg.delete();
       delete message.replies[0];
-      message.send('Error while applying magik to image!');
+      message.send('Error while applying convolution to image!');
+      console.log(err);
       return;
     }
 
     await message.send({
       files: [{
         attachment: magikd,
-        name: 'magik.png',
+        name: 'convolve.png',
       }],
     });
 

@@ -2,7 +2,7 @@ const commands = {};
 
 commands.alias = {
   name: 'alias',
-  hide: true,
+  // hide: true,
   args: ['command'],
   desc: 'lists a command\'s aliases',
   fn: (message, params, main) => {

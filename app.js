@@ -67,6 +67,9 @@ nconf.defaults({
   bot: {
     prefix: 'm!',
   },
+  prometheus: {
+    port: '9400',
+  },
   database: {
     username: 'mclbot',
     // password: null,
@@ -114,12 +117,20 @@ main.redis = new Redis({
 });
 
 main.redis.on('ready', (event) => {
-  winston.info('Connected to Redis backend.');
+  winston.info(`${(main.api.shard) ? `Shard ID: ${main.api.shard.id} connected` : 'Connected'} to Redis backend.`);
 });
 
 main.redis.on('close', (event) => {
-  winston.warn('Connection to Redis backend lost! Reconnecting in 5 seconds...');
+  winston.warn(`${(main.api.shard) ? `Shard ID: ${main.api.shard.id} lost ` : 'Lost'} connection to Redis backend! Reconnecting in 5 seconds...`);
 });
+
+winston.debug('Initializing modules...');
+
+const PrometheusExporter = require('./lib/prometheusExporter.js');
+
+main.prometheusExporter = new PrometheusExporter(main);
+
+main.prometheusExporter.init();
 
 const Utils = require('./lib/utils.js');
 
@@ -133,16 +144,26 @@ const BlacklistHelper = require('./lib/blacklistHelper.js');
 
 main.blacklistHelper = new BlacklistHelper(main);
 
-const ResourceLoader = require('./lib/resourceLoader.js');
+const ImageHelper = require('./lib/imageHelper.js');
 
-main.resourceLoader = new ResourceLoader(main);
+main.imageHelper = new ImageHelper(main);
 
-main.resourceLoader.loadCommandFiles();
-main.resourceLoader.loadEventFiles();
+const PaginationHelper = require('./lib/paginationHelper.js');
+
+main.paginationHelper = new PaginationHelper(main);
 
 const CommandHandler = require('./lib/commandHandler.js');
 
 main.commandHandler = new CommandHandler(main);
+
+const ResourceLoader = require('./lib/resourceLoader.js');
+
+main.resourceLoader = new ResourceLoader(main);
+
+winston.debug('Loading bot resources...');
+main.resourceLoader.loadCommandFiles();
+main.resourceLoader.loadEventFiles();
+main.resourceLoader.loadTaskFiles();
 
 function readyEvent(event) {
   main.mentionRegex = new RegExp(`^<@!?${main.api.user.id}>`);
@@ -173,10 +194,15 @@ function disconnectEvent(event) {
 
 main.api.on('ready', readyEvent);
 main.api.on('disconnect', disconnectEvent);
+main.api.on('reconnecting', () => {
+  winston.info('Reconnecting to Discord API...');
+});
 
 main.api.on('error', e => winston.error(e));
 main.api.on('warn', e => winston.warn(e));
+main.api.on('debug', e => winston.debug(e));
 
+winston.info('Connecting to the Discord API...');
 main.api.login(nconf.get('bot:token'))
   .catch((err) => {
     winston.error('Unable to connect to Discord API!', err);

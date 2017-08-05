@@ -12,7 +12,7 @@ commands.say = {
 commands.csay = {
   name: 'csay',
   desc: 'says something in the specified channel',
-  hide: true,
+  // hide: true,
   owner: true,
   args: ['channel id', 'text'],
   fn: async (message, params, main) => {

@@ -9,10 +9,10 @@ const Bluebird = require('bluebird');
 const commands = {};
 
 commands.magik = {
-  name: 'magik',
+  name: 'fourier',
   args: ['image'],
-  alias: ['imagemagic', 'imagemagick', 'magic', 'magick', 'cas', 'liquid'],
-  desc: 'applies some magik to an image',
+  // alias: ['imagemagic', 'imagemagick', 'magic', 'magick', 'cas', 'liquid'],
+  desc: 'edge tracing for image',
   fn: async (message, params, main) => {
     const waitmsg = await message.send('ok, processing');
 
@@ -37,6 +37,7 @@ commands.magik = {
     const gmImage = gm(httpResponse.data);
 
     let imageDimentsions;
+    let format;
 
     try {
       imageDimentsions = await new Bluebird((resolve, reject) => {
@@ -54,6 +55,29 @@ commands.magik = {
       return;
     }
 
+    try {
+      format = await new Bluebird((resolve, reject) => {
+        gmImage.format((err, value) => {
+          if (err) {
+            reject(err);
+          }
+          resolve(value);
+        });
+      });
+    } catch (err) {
+      waitmsg.delete();
+      delete message.replies[0];
+      message.send('Could not identify image!');
+      return;
+    }
+
+    if (format === 'GIF') {
+      waitmsg.delete();
+      delete message.replies[0];
+      message.send('This command is for images, not gifs!');
+      return;
+    }
+
     if (imageDimentsions.width > 3000 || imageDimentsions.height > 3000) {
       waitmsg.delete();
       delete message.replies[0];
@@ -66,26 +90,48 @@ commands.magik = {
     try {
       magikd = await new Bluebird((resolve, reject) => {
         gmImage
-          .resize(800, 800, '<')
-          .out('-liquid-rescale', '50%', '-liquid-rescale', '150%')
+          // .resize(800, 800, '<')
+          .out('-fft')
+          .out('-evaluate', 'pow', '0.9', '-ift')
+          // .out('(', '-clone', '0', '-evaluate', 'pow', '0.9', ')')
+          // .out('-delete', '0', '+swap', '-ift')
           .toBuffer(async (err, buffer) => {
             if (err) {
               reject(err);
             }
             resolve(buffer);
           });
+        // gmImage
+        //   // .resize(800, 800, '<')
+        //   .out('-colorspace', 'Gray', '-channel', 'G')
+        //   .out('-define', 'convolve:scale=\'50%!\'', '-bias', '50%')
+        //   .out('(', '-clone', '0', '-morphology', 'Convolve', 'Sobel:0', ')')
+        //   .out('(', '-clone', '0', '-morphology', 'Convolve', 'Sobel:90', ')')
+        //   .out('-delete', '0', '-background', 'Black')
+        //   .out('(', '-clone', '0,1', '-fx', '\'0.5', '+', 'atan2(v-0.5,0.5-u)/pi/2\'', ')')
+        //   .out('(', '-clone', '0', '-fill', 'white', '-colorize', '100%', ')')
+        //   .out('(', '-clone', '0,1', '-fx', '\'hypot(u-0.5,v-0.5)*2\'', ')')
+        //   .out('-delete', '0,1', '-separate', '+channel')
+        //   .out('-set', 'colorspace', 'HSB', '-combine', '-colorspace', 'RGB')
+        //   .toBuffer(async (err, buffer) => {
+        //     if (err) {
+        //       reject(err);
+        //     }
+        //     resolve(buffer);
+        //   });
       });
     } catch (err) {
       waitmsg.delete();
       delete message.replies[0];
-      message.send('Error while applying magik to image!');
+      message.send('Error while applying convolution to image!');
+      console.log(err);
       return;
     }
 
     await message.send({
       files: [{
         attachment: magikd,
-        name: 'magik.png',
+        name: 'convolve.png',
       }],
     });
 
