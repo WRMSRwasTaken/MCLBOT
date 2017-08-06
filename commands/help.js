@@ -24,18 +24,18 @@ commands.help = {
     //   message.send(`<@${message.author.id}> I've sent you a PM`);
     // }
 
-    const helpOutput = (!isNaN(tryParsedNumber)) ? main.utils.displayHelpPage(tryParsedNumber) : main.utils.displayHelpPage();
+    let currentPage = (!isNaN(tryParsedNumber)) ? tryParsedNumber : 1;
 
-    const helpMsg = await message.send(helpOutput);
+    const helpMsg = await message.send(main.utils.displayHelpPage(currentPage));
 
-    const paginationHelper = await main.paginationHelper.initPagination(helpMsg, message.author);
+    const paginationHelper = await main.paginationHelper.initPagination(helpMsg, message.author, main.helpPages.length);
 
     if (!paginationHelper) {
       return false;
     }
 
-    paginationHelper.on('test', () => {
-      console.log('pagination event fired via event emitter!');
+    paginationHelper.on('paginate', (pageNumber) => {
+      helpMsg.edit(main.utils.displayHelpPage(pageNumber));
     });
   },
 };

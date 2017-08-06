@@ -114,6 +114,7 @@ main.redis = new Redis({
   retryStrategy(times) {
     return 5000;
   },
+  stringNumbers: false,
 });
 
 main.redis.on('ready', (event) => {
