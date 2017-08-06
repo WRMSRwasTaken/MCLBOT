@@ -123,18 +123,21 @@ module.exports = {
     on: 'message',
     fn: (main) => {
       main.prometheusMetrics.websocketEventCountGauge.inc();
+      main.prometheusMetrics.messageCountGauge.inc();
     },
   },
   messageDelete: {
     on: 'messageDelete',
     fn: (main) => {
       main.prometheusMetrics.websocketEventCountGauge.inc();
+      main.prometheusMetrics.messageDeleteCountGauge.inc();
     },
   },
   messageDeleteBulk: {
     on: 'messageDeleteBulk',
-    fn: (main) => {
+    fn: (main, messages) => {
       main.prometheusMetrics.websocketEventCountGauge.inc();
+      main.prometheusMetrics.messageDeleteCountGauge.inc(messages.size);
     },
   },
   messageReactionAdd: {
@@ -159,6 +162,7 @@ module.exports = {
     on: 'messageUpdate',
     fn: (main) => {
       main.prometheusMetrics.websocketEventCountGauge.inc();
+      main.prometheusMetrics.messageUpdateCountGauge.inc();
     },
   },
   presenceUpdate: {

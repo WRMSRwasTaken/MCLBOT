@@ -6,6 +6,8 @@ tasks.updateMetrics = {
   fn: (main) => {
     main.prometheusMetrics.serverCountGauge.set(main.api.guilds.size);
     main.prometheusMetrics.userCacheCountGauge.set(main.api.users.size);
+    main.prometheusMetrics.uptime.set(Date.now() - main.startTime);
+    main.prometheusMetrics.latency.set(main.api.ping);
   },
 };
 
