@@ -87,6 +87,8 @@ nconf.defaults({
   },
 });
 
+main.initialized = false;
+
 main.Discord = Discord;
 
 main.startTime = Date.now();
@@ -168,6 +170,7 @@ main.resourceLoader.loadTaskFiles();
 
 function readyEvent(event) {
   main.mentionRegex = new RegExp(`^<@!?${main.api.user.id}>`);
+  main.initialized = true;
 
   winston.info(`Connected to Discord API: ${(main.api.shard) ? `Shard ID: ${main.api.shard.id} of total: ${main.api.shard.count} now` : 'Now'} live in ${main.api.channels.size} channels on ${main.api.guilds.size} servers for a total of ${main.api.users.size} users. My ID is: ${main.api.user.id} - ready for commands!`);
 }
