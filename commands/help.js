@@ -24,11 +24,17 @@ commands.help = {
     //   message.send(`<@${message.author.id}> I've sent you a PM`);
     // }
 
-    let currentPage = (!isNaN(tryParsedNumber)) ? tryParsedNumber : 1;
+    const currentPage = (!isNaN(tryParsedNumber)) ? tryParsedNumber : 1;
 
     const helpMsg = await message.send(main.utils.displayHelpPage(currentPage));
 
     const paginationHelper = await main.paginationHelper.initPagination(helpMsg, message.author, main.helpPages.length);
+
+    if (!helpMsg.pagination) {
+      console.log('NO handler added!!!');
+    } else {
+      console.log('handler added');
+    }
 
     if (!paginationHelper) {
       return false;
