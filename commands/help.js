@@ -30,12 +30,6 @@ commands.help = {
 
     const paginationHelper = await main.paginationHelper.initPagination(helpMsg, message.author, main.helpPages.length);
 
-    if (!helpMsg.pagination) {
-      console.log('NO handler added!!!');
-    } else {
-      console.log('handler added');
-    }
-
     if (!paginationHelper) {
       return false;
     }
