@@ -106,8 +106,6 @@ commands.server = {
 
     embed.addField('Channels', `Text: ${textChannels}, Voice: ${voiceChannels} (${textChannels + voiceChannels} total)`);
 
-    embed.addField('Verfication level', verificationLevels[message.guild.verificationLevel]);
-
     embed.addField('Default channel', `<#${defaultChannel.id}>`);
 
     embed.addField('Roles', message.guild.roles.size);
