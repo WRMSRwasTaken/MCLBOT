@@ -112,7 +112,25 @@ commands.server = {
 
     embed.addField('Roles', message.guild.roles.size);
 
-    if (message.guild.emojis.size) embed.addField(`Emojis (${message.guild.emojis.size})`, message.guild.emojis.map(emoji => `<:${emoji.name}:${emoji.id}>`).join(''));
+    let emojiString = '';
+    let countEmojis = 0;
+    let moreEmojis = false;
+
+    if (message.guild.emojis.size) {
+      message.guild.emojis.forEach((emoji) => {
+        const newEmoji = `<:${emoji.name}:${emoji.id}>`;
+        if (emojiString.length + newEmoji.length <= 1024) {
+          emojiString += newEmoji;
+          countEmojis += 1;
+        } else {
+          moreEmojis = true;
+        }
+      });
+
+      // message.guild.emojis.map(emoji => `<:${emoji.name}:${emoji.id}>`).join('');
+
+      embed.addField(`Emojis (${message.guild.emojis.size})${(moreEmojis) ? `(only the first ${countEmojis} are shown)` : ''}`, emojiString);
+    }
 
     message.send({
       embed,
