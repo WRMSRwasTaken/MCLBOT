@@ -1,7 +1,5 @@
-const winston = require('winston');
 const prettyMs = require('pretty-ms');
 const moment = require('moment');
-const _ = require('lodash');
 
 const commands = {};
 
@@ -27,7 +25,7 @@ commands.user = {
       if (!param) {
         user = message.author;
       } else {
-        user = await main.userHelper.getUser(param);
+        user = await main.userHelper.fetchUserFromAPI(param);
       }
     }
 
@@ -125,12 +123,21 @@ commands.server = {
         }
       });
 
-      embed.addField(`Emojis (${message.guild.emojis.size})${(moreEmojis) ? `(only the first ${countEmojis} are shown)` : ''}`, emojiString);
+      embed.addField(`Emojis (${message.guild.emojis.size})${(moreEmojis) ? ` (only the first ${countEmojis} are shown)` : ''}`, emojiString);
     }
 
     message.send({
       embed,
     });
+  },
+};
+
+commands.avatar = {
+  name: 'avatar',
+  desc: 'get an user\'s avatar',
+  fn: async (message, param, main) => {
+    const user = await main.userHelper.getUser(message, param);
+    return (user) ? `\`${user.tag}\`'s avatar is: ${main.imageHelper.getUserAvatar(user)}` : 'No user found.';
   },
 };
 
