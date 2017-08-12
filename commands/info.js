@@ -96,13 +96,13 @@ commands.server = {
 
     let textChannels = 0;
     let voiceChannels = 0;
-    let defaultChannel;
 
-    message.guild.channels.forEach((channel) => {
-      if (!defaultChannel && channel.permissionsFor(message.guild.me).has('READ_MESSAGES')) defaultChannel = channel;
+    const defaultChannel = message.guild.channels.filter((channel) => {
       if (channel.type === 'text') textChannels += 1;
       else voiceChannels += 1;
-    });
+
+      return (channel.permissionsFor(message.guild.me).has('READ_MESSAGES'));
+    }).sort((c1, c2) => c1.position - c2.position).first();
 
     embed.addField('Channels', `Text: ${textChannels}, Voice: ${voiceChannels} (${textChannels + voiceChannels} total)`);
 
@@ -126,8 +126,6 @@ commands.server = {
           moreEmojis = true;
         }
       });
-
-      // message.guild.emojis.map(emoji => `<:${emoji.name}:${emoji.id}>`).join('');
 
       embed.addField(`Emojis (${message.guild.emojis.size})${(moreEmojis) ? `(only the first ${countEmojis} are shown)` : ''}`, emojiString);
     }
