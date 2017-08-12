@@ -60,3 +60,4 @@ typings/
 # Directory-based project format
 .idea/
 .vscode/
+.vs/

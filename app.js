@@ -132,12 +132,19 @@ winston.debug('Initializing modules...');
 const PrometheusExporter = require('./lib/prometheusExporter.js');
 
 main.prometheusExporter = new PrometheusExporter(main);
-
 main.prometheusExporter.init();
+
+const Watchdog = require('./lib/watchdog.js');
+
+main.watchdog = new Watchdog(main);
 
 const Utils = require('./lib/utils.js');
 
 main.utils = new Utils(main);
+
+const UserHelper = require('./lib/userHelper.js');
+
+main.userHelper = new UserHelper(main);
 
 const PrefixHelper = require('./lib/prefixHelper.js');
 
@@ -171,6 +178,8 @@ main.resourceLoader.loadTaskFiles();
 function readyEvent(event) {
   main.mentionRegex = new RegExp(`^<@!?${main.api.user.id}>`);
   main.initialized = true;
+
+  main.watchdog.start();
 
   winston.info(`Connected to Discord API: ${(main.api.shard) ? `Shard ID: ${main.api.shard.id} of total: ${main.api.shard.count} now` : 'Now'} live in ${main.api.channels.size} channels on ${main.api.guilds.size} servers for a total of ${main.api.users.size} users. My ID is: ${main.api.user.id} - ready for commands!`);
 }
