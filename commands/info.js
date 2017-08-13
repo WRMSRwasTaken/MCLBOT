@@ -37,10 +37,10 @@ commands.user = {
 
     embed.author = {
       name: user.tag,
-      icon_url: user.avatarURL,
+      icon_url: user.displayAvatarURL,
     };
 
-    embed.setThumbnail(user.avatarURL);
+    embed.setThumbnail(user.displayAvatarURL);
 
     embed.addField('ID', user.id);
     embed.addField('Tag', user.tag);
@@ -137,7 +137,7 @@ commands.avatar = {
   desc: 'get an user\'s avatar',
   fn: async (message, param, main) => {
     const user = await main.userHelper.getUser(message, param);
-    return (user) ? `\`${user.tag}\`'s avatar is: ${main.imageHelper.getUserAvatar(user)}` : 'No user found.';
+    return (user) ? `\`${user.tag}\`'s avatar is: ${user.displayAvatarURL}` : 'No user found.';
   },
 };
 
