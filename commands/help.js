@@ -1,11 +1,7 @@
-const commands = {};
-
-commands.help = {
-  name: 'help',
-  // hide: true,
+module.exports = {
   alias: ['h', 'commands'],
   optArgs: ['command or help page'],
-  desc: 'displays help',
+  desc: 'Displays the bot\'s help pages',
   fn: async (message, params, main) => {
     const tryParsedNumber = parseInt(params, 10);
 
@@ -15,9 +11,9 @@ commands.help = {
 
     if (main.commands[params] || main.aliases[params]) {
       if (!main.commands[params]) {
-        return `Help for command \`${main.aliases[params]}\`: ${main.utils.displayCommandHelp(main.aliases[params])}`;
+        return `Help for command \`${main.aliases[params]}\`: ${main.stringUtils.displayCommandHelp(main.aliases[params])}`;
       }
-      return `Help for command \`${params}\`: ${main.utils.displayCommandHelp(params)}`;
+      return `Help for command \`${params}\`: ${main.stringUtils.displayCommandHelp(params)}`;
     }
 
     // if (!main.commandHandler.isDM(message)) {
@@ -26,7 +22,7 @@ commands.help = {
 
     const currentPage = (!isNaN(tryParsedNumber)) ? tryParsedNumber : 1;
 
-    const helpMsg = await message.send(main.utils.displayHelpPage(currentPage));
+    const helpMsg = await message.send(main.stringUtils.displayHelpPage(currentPage));
 
     const paginationHelper = await main.paginationHelper.initPagination(helpMsg, message.author, main.helpPages.length);
 
@@ -35,9 +31,7 @@ commands.help = {
     }
 
     paginationHelper.on('paginate', (pageNumber) => {
-      helpMsg.edit(main.utils.displayHelpPage(pageNumber));
+      helpMsg.edit(main.stringUtils.displayHelpPage(pageNumber));
     });
   },
 };
-
-module.exports = commands;

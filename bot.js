@@ -9,9 +9,22 @@ nconf.argv().env('.');
 global.env = process.env.NODE_ENV || 'production';
 
 const winston = require('winston');
+const winstonCommon = require('winston/lib/winston/common');
 const pkg = require('./package.json');
 
 nconf.set('loglevel', nconf.get('loglevel') || (global.env === 'production' ? 'info' : 'debug'));
+
+// winston.transports.Console.prototype.log = function (level, message, meta, callback) {
+//   const output = winstonCommon.log(Object.assign({}, this, {
+//     level,
+//     message,
+//     meta,
+//   }));
+//
+//   console[level in console ? level : 'log'](output);
+//
+//   setImmediate(callback, null, true);
+// };
 
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
@@ -25,7 +38,7 @@ winston.add(winston.transports.Console, {
 nconf.defaults({
   bot: {
     prefix: 'm!',
-    shard: 'auto',
+    shard: 'no',
   },
   prometheus: {
     port: '9400',
@@ -60,7 +73,7 @@ main.Discord = Discord;
 main.api = new Discord.Client({
   messageCacheLifetime: 15 * 60,
   messageSweepInterval: 5 * 60,
-  fetchAllMembers: true,
+  fetchAllMembers: false,
   disableEveryone: false,
 });
 
@@ -75,7 +88,7 @@ if (!main.api.shard) {
   winston.info('| |\\/| | |    | |    |  _ <| |  | | | |');
   winston.info('| |  | | |____| |____| |_) | |__| | | |');
   winston.info('|_|  |_|\\_____|______|____/ \\____/  |_|');
-  winston.info(`            --- v${pkg.version} ---`);
+  winston.info(`    --- main v${pkg.version} - api v${main.Discord.version} ---`);
   winston.info('');
   winston.info(`env: ${global.env}, loglevel: ${nconf.get('loglevel')}`);
 }
@@ -141,16 +154,12 @@ if (main.shardMaster) {
 
   process.title = 'MCLBOT - shard master';
 
-  let shardCount = 0;
-
-  const shardManager = new Discord.ShardingManager('app.js', {
+  const shardManager = new Discord.ShardingManager('bot.js', {
     token: nconf.get('bot:token'),
   });
 
   shardManager.on('launch', (shard) => {
     winston.debug('Launching shard:', shard.id);
-    shardCount += 1;
-    process.title = `MCLBOT - shard master (total: ${shardCount})`;
   });
 
   shardManager.spawn();
@@ -198,9 +207,9 @@ if (main.shardMaster) {
 
   main.watchdog = new Watchdog(main);
 
-  const Utils = require('./lib/utils.js');
+  const StringUtils = require('./lib/stringUtils.js');
 
-  main.utils = new Utils(main);
+  main.stringUtils = new StringUtils(main);
 
   const UserHelper = require('./lib/userHelper.js');
 
@@ -218,6 +227,10 @@ if (main.shardMaster) {
 
   main.imageHelper = new ImageHelper(main);
 
+  const AudioHelper = require('./lib/audioHelper.js');
+
+  main.audioHelper = new AudioHelper(main);
+
   const PaginationHelper = require('./lib/paginationHelper.js');
 
   main.paginationHelper = new PaginationHelper(main);
@@ -233,7 +246,8 @@ if (main.shardMaster) {
   winston.debug('Loading bot resources...');
   main.resourceLoader.loadCommandFiles();
   main.resourceLoader.loadEventFiles();
-  main.resourceLoader.loadTaskFiles();
+  // main.resourceLoader.loadTaskFiles();
+  main.resourceLoader.generateHelpPages();
 
   main.api.on('ready', readyEvent);
   main.api.on('disconnect', disconnectEvent);
@@ -243,9 +257,9 @@ if (main.shardMaster) {
 
   main.api.on('error', e => winston.error(e));
   main.api.on('warn', e => winston.warn(e));
-  main.api.on('debug', e => winston.debug(e));
+  // main.api.on('debug', e => winston.debug(e));
 
-  winston.debug('Connecting to the Discord API...');
+  winston.info(`${(main.api.shard) ? `Shard ${main.api.shard.id} startup` : 'Startup'} completed. Connecting to Discord API...`);
   main.api.login(nconf.get('bot:token'))
     .catch((err) => {
       winston.error('Unable to connect to Discord API!', err);

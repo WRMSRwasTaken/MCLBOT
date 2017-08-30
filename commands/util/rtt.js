@@ -1,26 +1,7 @@
-const moment = require('moment');
-const prettyMs = require('pretty-ms');
 const winston = require('winston');
 
-const commands = {};
-
-commands.ping = {
-  name: 'ping',
-  alias: ['pong'],
-  desc: 'replies with the bot\'s ping time',
-  fn: async (message) => {
-    const start = Date.now();
-
-    const pingMsg = await message.send(':stopwatch: Pinging...');
-
-    const time = Math.round((Date.now() - start) / 2);
-    pingMsg.edit(`:ping_pong: Pong! \`${time}ms\``);
-  },
-};
-
-commands.rtt = {
-  name: 'rtt',
-  desc: 'measures the latency of sending a message and recieving it',
+module.exports = {
+  desc: 'Measures the latency of sending a text message and recieving it',
   fn: async (message, param, main) => {
     if (!main.pings) {
       main.pings = {};
@@ -78,27 +59,3 @@ commands.rtt = {
     }
   },
 };
-
-commands.hb = {
-  name: 'hb',
-  desc: 'displays statistics about the bot\'s websocket heartbeats to the discord api',
-  fn: (message, param, main) => {
-    const pings = main.api.pings;
-    let min = 0;
-    let max = 0;
-    let avg = 0;
-
-    for (const ping of pings) {
-      if (min === 0) min = ping;
-      if (ping < min) min = ping;
-      if (ping > max) max = ping;
-      avg += ping;
-    }
-
-    avg /= pings.length;
-
-    message.send(`\`\`\`Last heartbeat: ${moment(main.api.ws.connection.lastPingTimestamp).format()} (${prettyMs(Date.now() - main.api.ws.connection.lastPingTimestamp)} ago)\n   Min latency: ${min}ms\n   Max latency: ${max}ms\n   Avg latency: ${prettyMs(avg)}\`\`\``);
-  },
-};
-
-module.exports = commands;

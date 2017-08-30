@@ -1,18 +1,18 @@
 
 module.exports = {
   up(queryInterface, Sequelize) {
-    queryInterface.createTable('blacklist', {
+    return queryInterface.createTable('member_message', {
       server_id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      channel_id: {
+      user_id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
-      user_id: {
+      message_id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT,
@@ -28,6 +28,6 @@ module.exports = {
     });
   },
   down(queryInterface, Sequelize) {
-    return queryInterface.dropTable('blacklist');
+    return queryInterface.dropTable('member_message');
   },
 };

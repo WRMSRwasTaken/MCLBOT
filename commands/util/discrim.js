@@ -1,7 +1,4 @@
-const commands = {};
-
-commands.discrim = {
-  name: 'discrim',
+module.exports = {
   desc: 'Lists all known users with this discriminator',
   optArgs: ['discriminator'],
   fn: (message, params, main) => {
@@ -22,5 +19,3 @@ commands.discrim = {
     return `Users matching discriminator \`#${discrim}\`:\n\`\`\`${names.join('\n')}\`\`\``;
   },
 };
-
-module.exports = commands;

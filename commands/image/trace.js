@@ -1,15 +1,7 @@
-const path = require('path');
-
-const child = require('child_process');
-const fs = require('fs');
-const axios = require('axios');
 const gm = require('gm').subClass({ imageMagick: true });
 const Bluebird = require('bluebird');
 
-const commands = {};
-
-commands.magik = {
-  name: 'trace',
+module.exports = {
   args: ['image'],
   // alias: ['imagemagic', 'imagemagick', 'magic', 'magick', 'cas', 'liquid'],
   desc: 'edge tracing for image',
@@ -146,5 +138,3 @@ commands.magik = {
     delete message.replies[0];
   },
 };
-
-module.exports = commands;

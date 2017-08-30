@@ -1,12 +1,7 @@
 
 module.exports = function (sequelize, DataTypes) {
-  const blacklist = sequelize.define('blacklist', {
+  const member_last_message = sequelize.define('member_last_message', {
     server_id: {
-      allowNull: false,
-      primaryKey: true,
-      type: DataTypes.BIGINT,
-    },
-    channel_id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.BIGINT,
@@ -18,12 +13,12 @@ module.exports = function (sequelize, DataTypes) {
     },
   }, {
     underscored: true,
-    tableName: 'blacklist',
+    tableName: 'member_last_message',
     classMethods: {
       associate(models) {
         // associations can be defined here
       },
     },
   });
-  return blacklist;
+  return member_last_message;
 };

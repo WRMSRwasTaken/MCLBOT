@@ -1,0 +1,53 @@
+Command / cubcommand parameters:
+----------------------------------------------------------------------------------------
+
+name			the subcommand name (automatically set for commands by filename)
+aliases			the (sub-/)command aliases
+guarded			whether the (sub-/)command should be protected from disabling or not (if the command is protected, this applies to all subcommands aswell if not set there)
+arguments 		the command arguments as array
+guildOnly		disable this (sub-/)command in DM channels (if this is set for the commands, this applies to all subcommands aswell if not set there)
+cooldown 		the (sub-/)command cooldown (if this is set for the commands, this applies to all subcommands aswell if not set there)
+fn				the command function (if command has subcommands, this will be executed if no subcommand is set - if not set with subcommands set this will error)
+subommands		subcommands object (only on command) (if command's fn and subcommands is set, the subcommand will become optional)
+
+Command argument parameters:
+----------------------------------------------------------------------------------------
+
+name				internal name
+label				argument label
+type				argument type to validate against
+max					max number for int / float, max string length for strings
+min					min number for int / float, min string length for strings
+default				default value for argument (making it optional) (if just true see argument types for their dependent default values)
+infinite			if the parameter takes infinite values (only for strings, arguments specified afterwards won't be set then)
+skip				if argument does not validate against specified type, try the next arg type instead of erroring and set this arg to it's default value (works only if the command is optional / a default value is set)
+
+
+Command argument types:
+----------------------------------------------------------------------------------------
+
+string
+integer
+float
+boolean             can be 'yes', 'on', 'true', 'y' or 'enable' for true, 'no', 'off', 'false', 'n' and 'disable' for false
+user				user id, mention, partial or full tag (if default is true, it's set to the current user invoking the command)
+member				user id, mention, partial or full tag (user must be in guild) (if default is true, it's set to the current guild member invoking the command)
+role				role id, mention, name (if default is true, it's set to the highest role of the user invoking the command)
+channel				channel id, mention, name (if default is true, it's set to the channel the command has been invoked in)
+image               (special argument:) url or user (will get user's avatar url then) (if default is true, it'll get the last image posted in this channel)
+color               (special argument:) hex rgb string, member or role (if member, it's using the displayHexColor attribute, if role it's using the hexColor attribute)
+
+Context variables / methods:
+----------------------------------------------------------------------------------------
+
+main 				the main object
+message				the message object
+guild				the guild this message was sent in (none if dm)
+channel				the guild's message channel this message was sent in (none if dm)
+command 			the command object
+subcommand 			the subcommand name invoked (if any)
+reply()				respond to the command
+parent				the parent command (if it's a subcommand)
+resetCooldown()		reset the command cooldown
+prefix				the bot's prefix (custom guild prefix, if any set)
+args				all arguments passed
