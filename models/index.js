@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
+
 const basename = path.basename(module.filename);
 const db = {};
 
@@ -11,8 +12,11 @@ const config = {
   host: nconf.get('database:host'),
   port: nconf.get('database:port'),
   dialect: nconf.get('database:dialect'),
-  // logging: (nconf.get('loglevel') === 'debug') ? winston.debug : null,
-  // logging: false,
+  logging: (msg) => {
+    if (nconf.get('loglevel') === 'debug') {
+      winston.debug(msg);
+    }
+  },
 };
 
 const sequelize = new Sequelize(nconf.get('database:database'), nconf.get('database:username'), nconf.get('database:password'), config);

@@ -10,7 +10,7 @@ module.exports = {
 
       main.prometheusMetrics.sqlWrites.inc();
 
-      main.db.member_message.create({
+      main.db.member_message.upsert({
         server_id: message.guild.id,
         user_id: message.author.id,
         message_id: message.id,
