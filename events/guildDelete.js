@@ -10,7 +10,7 @@ module.exports = {
 
     main.prometheusMetrics.sqlWrites.inc();
 
-    main.db.member_last_message.destroy({
+    main.db.member_message.destroy({
       where: {
         server_id: guild.id,
       },
