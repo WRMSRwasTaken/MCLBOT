@@ -11,10 +11,35 @@ module.exports = function (sequelize, DataTypes) {
       primaryKey: true,
       type: DataTypes.BIGINT,
     },
+    channel_id: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.BIGINT,
+    },
     message_id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.BIGINT,
+    },
+    char_count: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
+    word_count: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
+    user_mention_count: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
+    },
+    attachment_count: {
+      allowNull: false,
+      primaryKey: true,
+      type: DataTypes.INTEGER,
     },
   }, {
     underscored: true,

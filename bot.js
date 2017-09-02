@@ -43,6 +43,10 @@ nconf.defaults({
   prometheus: {
     port: '9400',
   },
+  webserver: {
+    listen: 8080,
+    listenUmask: '666a',
+  },
   database: {
     username: 'mclbot',
     // password: null,
@@ -139,7 +143,7 @@ function disconnectEvent(event) {
   //       .then(() => winston.info('Reconnected manually to Discord API.'))
   //       .catch((err) => {
   //         winston.error('Unable to connect to Discord API!', err);
-  //         process.exit(1);
+  //         main.exit(1);
   //       });
   //   }, 5000);
   // }
@@ -203,6 +207,11 @@ if (main.shardMaster) {
   main.prometheusExporter = new PrometheusExporter(main);
   main.prometheusExporter.init();
 
+  const Webserver = require('./lib/webserver.js');
+
+  main.webserver = new Webserver(main);
+  main.webserver.init();
+
   const Watchdog = require('./lib/watchdog.js');
 
   main.watchdog = new Watchdog(main);
@@ -254,6 +263,9 @@ if (main.shardMaster) {
   main.api.on('reconnecting', () => {
     winston.warn(`${(main.api.shard) ? `Shard ${main.api.shard.id} lost` : 'Lost'} connection to Discord API! Reconnecting...`);
   });
+  main.api.on('resume', (replayed) => {
+    winston.info(`${(main.api.shard) ? `Shard ${main.api.shard.id} resumed` : 'Resumed'} connection to Discord API. Replayed ${replayed} events.`);
+  });
 
   main.api.on('error', e => winston.error(e));
   main.api.on('warn', e => winston.warn(e));
@@ -263,7 +275,7 @@ if (main.shardMaster) {
   main.api.login(nconf.get('bot:token'))
     .catch((err) => {
       winston.error('Unable to connect to Discord API!', err);
-      process.exit(1);
+      main.shutdown(1);
     });
 }
 
@@ -275,3 +287,14 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
   winston.error(`${(main.api.shard) ? `Shard ${main.api.shard.id} uncaught` : 'Uncaught'} promise Error`, err);
 });
+
+main.shutdown = function (code) {
+  winston.info('Application shutdown requested.');
+  main.webserver.exit();
+
+  winston.info('Shutdown complete. Exiting.');
+  process.exit(code || 0);
+};
+
+process.on('SIGTERM', main.shutdown);
+process.on('SIGINT', main.shutdown);

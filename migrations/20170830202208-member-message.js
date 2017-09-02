@@ -12,17 +12,44 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
+      channel_id: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.BIGINT,
+      },
       message_id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT,
       },
+      char_count: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      word_count: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      user_mention_count: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
+      attachment_count: {
+        allowNull: false,
+        primaryKey: true,
+        type: Sequelize.INTEGER,
+      },
       created_at: {
         allowNull: false,
+        primaryKey: true,
         type: Sequelize.DATE,
       },
       updated_at: {
         allowNull: false,
+        primaryKey: true,
         type: Sequelize.DATE,
       },
     });
