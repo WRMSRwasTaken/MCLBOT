@@ -10,7 +10,7 @@
     "discord.js": "git+https://github.com/hydrabolt/discord.js.git",
     "dotenv": "^4.0.0",
     "express": "^4.15.4",
-    "ffmpeg-binaries": "^3.2.2-3",
+    "ffmpeg-binaries": "^3.2.2",
     "fs-extra": "^4.0.1",
     "gm": "^1.23.0",
     "has": "^1.0.1",
@@ -19,7 +19,7 @@
     "ip": "^1.1.5",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "mysql2": "^1.4.1",
+    "mysql2": "^1.4.2",
     "nconf": "^0.8.4",
     "node-opus": "^0.2.6",
     "node-xwhois": "^1.0.7",
@@ -27,7 +27,7 @@
     "pretty-ms": "^3.0.0",
     "prom-client": "^10.0.4",
     "prometheus-gc-stats": "^0.5.0",
-    "sequelize": "^4.7.5",
+    "sequelize": "^4.8.0",
     "sequelize-cli": "^2.8.0",
     "string": "^3.3.3",
     "validator": "^8.1.0",
@@ -37,8 +37,8 @@
   "author": "MCL",
   "license": "GPL",
   "devDependencies": {
-    "eslint": "^4.5.0",
-    "eslint-config-airbnb-base": "^11.3.2",
+    "eslint": "^4.6.0",
+    "eslint-config-airbnb-base": "^12.0.0",
     "eslint-plugin-import": "^2.7.0"
   }
 }

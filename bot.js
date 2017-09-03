@@ -211,6 +211,8 @@ if (main.shardMaster) {
 
   const Influx = require('influx');
 
+  main.Influx = Influx;
+
   main.influx = new Influx.InfluxDB({
     host: nconf.get('influx:host'),
     port: nconf.get('influx:port'),
