@@ -2,7 +2,7 @@ module.exports = {
   desc: 'Runs the text via JavaScript\'s eval()',
   hide: true,
   owner: true,
-  args: '<string:code...>',
+  args: ['code'],
   fn: (ctx, code) => {
     let evalOutput;
     let retMsg;
@@ -10,7 +10,7 @@ module.exports = {
     const start = Date.now();
 
     try {
-      evalOutput = eval(param);
+      evalOutput = eval(code);
     } catch (err) {
       return `There was an error while eval()-ing your input:\n\`\`\`\n${err}\n\`\`\``;
     }
