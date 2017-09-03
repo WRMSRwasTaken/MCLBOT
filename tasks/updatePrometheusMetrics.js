@@ -1,7 +1,4 @@
-const tasks = {};
-
-tasks.updateMetrics = {
-  name: 'updateMetrics',
+module.exports = {
   interval: 60,
   fn: (main) => {
     if (!main.initialized) {
@@ -14,5 +11,3 @@ tasks.updateMetrics = {
     main.prometheusMetrics.latency.set(main.api.ping || 0);
   },
 };
-
-module.exports = tasks;

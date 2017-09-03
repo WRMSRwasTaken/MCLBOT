@@ -1,9 +1,6 @@
-const tasks = {};
-
 let foo = false;
 
-tasks.playingStatus = {
-  name: 'playingStatus',
+module.exports = {
   interval: 60,
   fn: (main) => {
     if (!main.initialized) {
@@ -19,5 +16,3 @@ tasks.playingStatus = {
     foo = !foo;
   },
 };
-
-module.exports = tasks;

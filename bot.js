@@ -1,3 +1,6 @@
+const main = {};
+main.startTime = Date.now();
+
 const nconf = require('nconf');
 const dotenv = require('dotenv');
 
@@ -9,22 +12,9 @@ nconf.argv().env('.');
 global.env = process.env.NODE_ENV || 'production';
 
 const winston = require('winston');
-const winstonCommon = require('winston/lib/winston/common');
 const pkg = require('./package.json');
 
 nconf.set('loglevel', nconf.get('loglevel') || (global.env === 'production' ? 'info' : 'debug'));
-
-// winston.transports.Console.prototype.log = function (level, message, meta, callback) {
-//   const output = winstonCommon.log(Object.assign({}, this, {
-//     level,
-//     message,
-//     meta,
-//   }));
-//
-//   console[level in console ? level : 'log'](output);
-//
-//   setImmediate(callback, null, true);
-// };
 
 winston.remove(winston.transports.Console);
 winston.add(winston.transports.Console, {
@@ -45,7 +35,7 @@ nconf.defaults({
   },
   webserver: {
     listen: 8080,
-    listenUmask: '666a',
+    listenUmask: 666,
   },
   database: {
     username: 'mclbot',
@@ -62,11 +52,14 @@ nconf.defaults({
     port: 6379,
     prefix: 'mclbot:',
   },
+  influx: {
+    username: 'root',
+    password: 'root',
+    database: 'mclbot',
+    host: '127.0.0.1',
+    port: 8086,
+  },
 });
-
-const main = {};
-
-main.startTime = Date.now();
 
 main.initialized = false;
 
@@ -128,30 +121,44 @@ function readyEvent(event) {
   winston.info(`${(main.api.shard) ? `Shard ${main.api.shard.id} now` : 'Now'} live in ${main.api.channels.size} channels on ${main.api.guilds.size} servers for a total of ${main.api.users.size} users.`);
 }
 
-function disconnectEvent(event) {
-  winston.warn(`${(main.api.shard) ? `Shard ${main.api.shard.id} disconnected` : 'Disconnected'} from Discord API! Code:`, event.code);
-
-  // if (event.code === 1000) { // CLOSE_NORMAL
-  //   // In this case, Discord.js doesn't do auto reconnect so we need to reconnect for ourselves
-  //   // That happens when the bot was online for too long
-  //   // and nginx keepalive_requests were exhausted on discord's / cloudflare's side
-  //
-  //   winston.info('Reconnecting manually in 5 seconds...');
-  //
-  //   setTimeout(() => {
-  //     main.api.login(nconf.get('bot:token'))
-  //       .then(() => winston.info('Reconnected manually to Discord API.'))
-  //       .catch((err) => {
-  //         winston.error('Unable to connect to Discord API!', err);
-  //         main.exit(1);
-  //       });
-  //   }, 5000);
-  // }
-}
-
 if (!main.api.shard && !main.shardMaster) {
   winston.info('Bot is starting in standalone mode.');
 }
+
+main.shutdown = async (code) => {
+  winston.info('Application shutdown requested.');
+
+  try {
+    winston.debug('Disconnecting from Discord API...');
+    await main.api.destroy();
+
+    main.webserver.exit();
+
+    winston.debug('Disconnecting from Redis backend...');
+    await main.redis.disconnect();
+
+    winston.debug('Closing database ORM...');
+    await main.db.sequelize.close();
+  } catch (ex) {
+    winston.warn('Unclean shutdown detected!', ex.message);
+    process.exit(code || 1);
+    return;
+  }
+
+  winston.info('Shutdown complete. Exiting.');
+  process.exit(code || 0);
+};
+
+process.on('SIGTERM', main.shutdown);
+process.on('SIGINT', main.shutdown);
+process.on('uncaughtException', (err) => {
+  const errorMsg = err.stack.replace(new RegExp(`${__dirname}\/`, 'g'), './');
+  winston.error(`${(main.api.shard) ? `Shard ${main.api.shard.id} uncaught` : 'Uncaught'} exception`, errorMsg);
+});
+
+process.on('unhandledRejection', (err) => {
+  winston.error(`${(main.api.shard) ? `Shard ${main.api.shard.id} uncaught` : 'Uncaught'} promise Error`, err);
+});
 
 if (main.shardMaster) {
   winston.info('Bot is starting in shard mode.');
@@ -174,10 +181,11 @@ if (main.shardMaster) {
 
   process.title = `MCLBOT${(main.api.shard) ? ` - shard ${main.api.shard.id}` : ''}`;
 
-  winston.debug('Initializing database ORM...');
+  winston.debug('Initializing SQL ORM...');
   main.db = require('./models/index.js');
+  main.db.sequelize.authenticate();
 
-  winston.debug('Connecting to Redis...');
+  winston.debug('Initializing Redis...');
 
   const Redis = require('ioredis');
 
@@ -187,17 +195,55 @@ if (main.shardMaster) {
     password: nconf.get('redis:password'),
     db: nconf.get('redis:database'),
     keyPrefix: nconf.get('redis:prefix'),
-    retryStrategy(times) {
+    retryStrategy() {
       return 5000;
     },
   });
 
-  main.redis.on('ready', (event) => {
+  main.redis.on('ready', () => {
     winston.debug(`${(main.api.shard) ? `Shard ${main.api.shard.id} connected` : 'Connected'} to Redis backend.`);
   });
-
-  main.redis.on('close', (event) => {
+  main.redis.on('close', () => {
     winston.warn(`${(main.api.shard) ? `Shard ${main.api.shard.id} lost` : 'Lost'} connection to Redis backend! Reconnecting in 5 seconds...`);
+  });
+
+  winston.debug('Initializing InfluxDB...');
+
+  const Influx = require('influx');
+
+  main.influx = new Influx.InfluxDB({
+    host: nconf.get('influx:host'),
+    port: nconf.get('influx:port'),
+    username: nconf.get('influx:username'),
+    password: nconf.get('influx:password'),
+    database: nconf.get('influx:database'),
+    schema: [
+      {
+        measurement: 'member_message',
+        fields: {
+          // server_id: Influx.FieldType.INTEGER,
+          // user_id: Influx.FieldType.INTEGER,
+          // channel_id: Influx.FieldType.INTEGER,
+          message_id: Influx.FieldType.INTEGER,
+          char_count: Influx.FieldType.INTEGER,
+          word_count: Influx.FieldType.INTEGER,
+          user_mention_count: Influx.FieldType.INTEGER,
+          attachment_count: Influx.FieldType.INTEGER,
+        },
+        tags: ['server_id', 'user_id', 'channel_id'],
+      },
+      {
+        measurement: 'member_status',
+        fields: {
+          online: Influx.FieldType.INTEGER,
+          idle: Influx.FieldType.INTEGER,
+          dnd: Influx.FieldType.INTEGER,
+          offline: Influx.FieldType.INTEGER,
+          total: Influx.FieldType.INTEGER,
+        },
+        tags: ['server_id'],
+      },
+    ],
   });
 
   winston.debug('Initializing modules...');
@@ -255,11 +301,13 @@ if (main.shardMaster) {
   winston.debug('Loading bot resources...');
   main.resourceLoader.loadCommandFiles();
   main.resourceLoader.loadEventFiles();
-  // main.resourceLoader.loadTaskFiles();
+  main.resourceLoader.loadTaskFiles();
   main.resourceLoader.generateHelpPages();
 
   main.api.on('ready', readyEvent);
-  main.api.on('disconnect', disconnectEvent);
+  main.api.on('disconnect', (event) => {
+    winston.warn(`${(main.api.shard) ? `Shard ${main.api.shard.id} disconnected` : 'Disconnected'} from Discord API! Code:`, event.code);
+  });
   main.api.on('reconnecting', () => {
     winston.warn(`${(main.api.shard) ? `Shard ${main.api.shard.id} lost` : 'Lost'} connection to Discord API! Reconnecting...`);
   });
@@ -278,23 +326,3 @@ if (main.shardMaster) {
       main.shutdown(1);
     });
 }
-
-process.on('uncaughtException', (err) => {
-  const errorMsg = err.stack.replace(new RegExp(`${__dirname}\/`, 'g'), './');
-  winston.error(`${(main.api.shard) ? `Shard ${main.api.shard.id} uncaught` : 'Uncaught'} exception`, errorMsg);
-});
-
-process.on('unhandledRejection', (err) => {
-  winston.error(`${(main.api.shard) ? `Shard ${main.api.shard.id} uncaught` : 'Uncaught'} promise Error`, err);
-});
-
-main.shutdown = function (code) {
-  winston.info('Application shutdown requested.');
-  main.webserver.exit();
-
-  winston.info('Shutdown complete. Exiting.');
-  process.exit(code || 0);
-};
-
-process.on('SIGTERM', main.shutdown);
-process.on('SIGINT', main.shutdown);
