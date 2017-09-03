@@ -10,7 +10,7 @@ module.exports = {
     const start = Date.now();
 
     try {
-      evalOutput = eval(code);
+      evalOutput = eval(code[0]);
     } catch (err) {
       return `There was an error while eval()-ing your input:\n\`\`\`\n${err}\n\`\`\``;
     }
