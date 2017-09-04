@@ -12,7 +12,7 @@ module.exports = {
     const start = Date.now();
 
     try {
-      evalOutput = eval(code[0]);
+      evalOutput = eval(code.join(' '));
     } catch (err) {
       return `There was an error while eval()-ing your input:\n\`\`\`\n${err}\n\`\`\``;
     }
