@@ -8,15 +8,10 @@ module.exports = {
 
     main.prefixHelper.deleteServerPrefix(guild.id);
 
-    main.influx.dropSeries({
-      where: e => e.tag('server_id').equals.value(guild.id),
-      database: 'member_message',
-    });
-
-    main.influx.dropSeries({
-      where: e => e.tag('server_id').equals.value(guild.id),
-      database: 'member_status',
-    });
+    main.influx.query(`delete from member_message where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
+    main.influx.query(`delete from member_status where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
+    main.influx.query(`delete from member_join where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
+    main.influx.query(`delete from member_leave where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
 
     main.prometheusMetrics.sqlWrites.inc();
 

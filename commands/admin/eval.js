@@ -1,9 +1,11 @@
+const util = require('util');
+
 module.exports = {
   desc: 'Runs the text via JavaScript\'s eval()',
   hide: true,
   owner: true,
   args: ['code'],
-  fn: (ctx, code) => {
+  fn: (context, code) => {
     let evalOutput;
     let retMsg;
 
@@ -23,9 +25,10 @@ module.exports = {
       retMsg = 'eval() output:\n```JSON\nnull\n```';
     } else if (typeof evalOutput === 'object') {
       try {
-        evalOutput = JSON.stringify(evalOutput, null, 2);
+        // evalOutput = JSON.stringify(evalOutput, null, 2);
+        evalOutput = util.inspect(evalOutput);
 
-        retMsg = `eval() output:\n\`\`\`JSON\n${evalOutput}\n\`\`\``;
+        retMsg = `eval() output:\n\`\`\`js\n${evalOutput}\n\`\`\``;
       } catch (err) {
         retMsg = `There was an error while eval()-ing your input:\n\`\`\`\n${err.message}\n\`\`\``;
       }

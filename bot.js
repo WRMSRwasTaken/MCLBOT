@@ -223,9 +223,6 @@ if (main.shardMaster) {
       {
         measurement: 'member_message',
         fields: {
-          // server_id: Influx.FieldType.INTEGER,
-          // user_id: Influx.FieldType.INTEGER,
-          // channel_id: Influx.FieldType.INTEGER,
           message_id: Influx.FieldType.INTEGER,
           char_count: Influx.FieldType.INTEGER,
           word_count: Influx.FieldType.INTEGER,
@@ -242,6 +239,20 @@ if (main.shardMaster) {
           dnd: Influx.FieldType.INTEGER,
           offline: Influx.FieldType.INTEGER,
           total: Influx.FieldType.INTEGER,
+        },
+        tags: ['server_id'],
+      },
+      {
+        measurement: 'member_join',
+        fields: {
+          user_id: Influx.FieldType.INTEGER,
+        },
+        tags: ['server_id'],
+      },
+      {
+        measurement: 'member_leave',
+        fields: {
+          user_id: Influx.FieldType.INTEGER,
         },
         tags: ['server_id'],
       },

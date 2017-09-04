@@ -7,7 +7,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "bluebird": "^3.5.0",
-    "discord.js": "git+https://github.com/hydrabolt/discord.js.git",
+    "discord.js": "git://github.com/hydrabolt/discord.js.git#765b652",
     "dotenv": "^4.0.0",
     "express": "^4.15.4",
     "ffmpeg-binaries": "^3.2.2",
