@@ -5,11 +5,11 @@ module.exports = {
   desc: 'Runs a system command',
   owner: true,
   args: ['command'],
-  fn: async (message, param) => {
+  fn: async (context, command) => {
     const start = Date.now();
 
     return new Bluebird((resolve, reject) => {
-      childProcess.exec(param, (err, stdout, stderr) => {
+      childProcess.exec(command[0], (err, stdout, stderr) => {
         if (err) {
           return resolve(`There was an error while executing your command:\`\`\`\n${err.message}\n\`\`\``);
         }

@@ -16,7 +16,7 @@ module.exports = {
 
     const time = Date.now() - start;
 
-    influxOutput = JSON.stringify(influxOutput[0], null, 2);
+    influxOutput = JSON.stringify(influxOutput, null, 2);
 
     return `InfluxDB query returned:\n\`\`\`JSON\n${influxOutput}\n\`\`\` \n :stopwatch: Query took ${time}ms`;
   },

@@ -1,7 +1,6 @@
 module.exports = {
   fn: (main, message) => {
     if (message.channel.type !== 'dm' && !message.author.bot) {
-
       main.influx.writePoints([
         {
           measurement: 'member_message',
@@ -19,10 +18,10 @@ module.exports = {
           },
         },
       ]);
-
-      main.commandHandler.handleMessageEvent(message);
-
-      // REPL CODE HERE
     }
+
+    main.commandHandler.handleMessageEvent(message);
+
+    // REPL CODE HERE
   },
 };
