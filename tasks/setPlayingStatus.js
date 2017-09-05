@@ -1,7 +1,7 @@
 let foo = false;
 
 module.exports = {
-  interval: 10,
+  interval: 60,
   fn: (main) => {
     if (!main.initialized) {
       return;
