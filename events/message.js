@@ -1,6 +1,8 @@
 module.exports = {
   fn: (main, message) => {
     if (message.channel.type !== 'dm' && !message.author.bot) {
+      main.prometheusMetrics.influxWrites.inc();
+
       main.influx.writePoints([
         {
           measurement: 'member_message',

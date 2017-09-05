@@ -4,6 +4,7 @@ module.exports = {
       return;
     }
 
+    main.prometheusMetrics.influxWrites.inc();
     main.influx.writePoints([
       {
         measurement: 'member_leave',
