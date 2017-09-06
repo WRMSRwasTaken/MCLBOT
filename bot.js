@@ -1,6 +1,7 @@
 const main = {};
 main.startTime = Date.now();
 
+const childProcess = require('child_process');
 const nconf = require('nconf');
 const dotenv = require('dotenv');
 
@@ -78,14 +79,22 @@ if (main.api.shard && main.api.shard.count === 0) {
   main.api.shard = undefined; // PM2 fork mode gets recognized as shard id 0 with total shard count of 0
 }
 
+try {
+  main.version = childProcess.execSync('git rev-parse --short HEAD').toString().trim();
+} catch (ex) {
+  winston.warn('Could not get version information!');
+  main.version = 'N/A';
+}
+
 if (!main.api.shard) {
-  winston.info(' __  __  _____ _      ____   ____ _______');
-  winston.info('|  \\/  |/ ____| |    |  _ \\ / __ \\__   __|');
-  winston.info('| \\  / | |    | |    | |_) | |  | | | |');
-  winston.info('| |\\/| | |    | |    |  _ <| |  | | | |');
-  winston.info('| |  | | |____| |____| |_) | |__| | | |');
-  winston.info('|_|  |_|\\_____|______|____/ \\____/  |_|');
-  winston.info(`    --- main v${pkg.version} - api v${main.Discord.version} ---`);
+  winston.info('         ____     __       ____     _____   ______');
+  winston.info(' /\'\\_/`\\/\\  _`\\  /\\ \\     /\\  _`\\  /\\  __`\\/\\__  _\\');
+  winston.info('/\\      \\ \\ \\/\\_\\\\ \\ \\    \\ \\ \\ \\ \\\\ \\ \\/\\ \\/_/\\ \\/');
+  winston.info('\\ \\ \\__\\ \\ \\ \\/_/_\\ \\ \\  __\\ \\  _ <\'\\ \\ \\ \\ \\ \\ \\ \\');
+  winston.info(' \\ \\ \\_/\\ \\ \\ \\ \\ \\\\ \\ \\ \\ \\\\ \\ \\ \\ \\\\ \\ \\_\\ \\ \\ \\ \\');
+  winston.info('  \\ \\_\\\\ \\_\\ \\____/ \\ \\____/ \\ \\____/ \\ \\_____\\ \\ \\_\\');
+  winston.info('   \\/_/ \\/_/\\/___/   \\/___/   \\/___/   \\/_____/  \\/_/');
+  winston.info(`         --- core: ${main.version} - api: ${main.Discord.version} ---`);
   winston.info('');
   winston.info(`env: ${global.env}, loglevel: ${nconf.get('loglevel')}`);
 }

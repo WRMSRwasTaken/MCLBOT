@@ -36,7 +36,7 @@ user				user id, mention, partial or full tag (if default is true, it's set to t
 member				user id, mention, partial or full tag (user must be in guild) (if default is true, it's set to the current guild member invoking the command)
 role				role id, mention, name (if default is true, it's set to the highest role of the user invoking the command)
 channel				channel id, mention, name (if default is true, it's set to the channel the command has been invoked in)
-image               (special argument:) url or user (will get user's avatar url then) (if default is true, it'll get the last image posted in this channel)
+image               (special argument:) url or user (will get user's avatar url then) or emoji (if default is true, it'll get the last image posted in this channel)
 color               (special argument:) hex rgb string, member or role (if member, it's using the displayHexColor attribute, if role it's using the hexColor attribute)
 
 Context variables / methods:

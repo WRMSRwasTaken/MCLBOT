@@ -9,7 +9,7 @@ module.exports = {
     const start = Date.now();
 
     return new Bluebird((resolve, reject) => {
-      childProcess.exec(command[0], (err, stdout, stderr) => {
+      childProcess.exec(command.join(' '), (err, stdout, stderr) => {
         if (err) {
           return resolve(`There was an error while executing your command:\`\`\`\n${err.message}\n\`\`\``);
         }

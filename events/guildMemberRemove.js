@@ -12,7 +12,7 @@ module.exports = {
           server_id: member.guild.id,
         },
         fields: {
-          user_id: member.user.id,
+          user_id: member.id,
         },
       },
     ]);
