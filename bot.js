@@ -232,7 +232,7 @@ if (main.shardMaster) {
       {
         measurement: 'member_message',
         fields: {
-          message_id: Influx.FieldType.INTEGER,
+          message_id: Influx.FieldType.STRING,
           char_count: Influx.FieldType.INTEGER,
           word_count: Influx.FieldType.INTEGER,
           user_mention_count: Influx.FieldType.INTEGER,
@@ -254,14 +254,14 @@ if (main.shardMaster) {
       {
         measurement: 'member_join',
         fields: {
-          user_id: Influx.FieldType.INTEGER,
+          user_id: Influx.FieldType.STRING,
         },
         tags: ['server_id'],
       },
       {
         measurement: 'member_leave',
         fields: {
-          user_id: Influx.FieldType.INTEGER,
+          user_id: Influx.FieldType.STRING,
         },
         tags: ['server_id'],
       },
