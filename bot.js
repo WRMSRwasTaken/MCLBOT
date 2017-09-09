@@ -43,8 +43,8 @@ nconf.defaults({
     // password: null,
     database: 'mclbot',
     host: '127.0.0.1',
-    port: 3306,
-    dialect: 'mysql',
+    port: 5432,
+    dialect: 'postgresql',
   },
   redis: {
     // password: null,
@@ -333,7 +333,7 @@ if (main.shardMaster) {
   main.api.on('reconnecting', () => {
     winston.warn(`${(main.api.shard) ? `Shard ${main.api.shard.id} lost` : 'Lost'} connection to Discord API! Reconnecting...`);
   });
-  main.api.on('resume', (replayed) => {
+  main.api.on('resumed', (replayed) => {
     winston.info(`${(main.api.shard) ? `Shard ${main.api.shard.id} resumed` : 'Resumed'} connection to Discord API. Replayed ${replayed} events.`);
   });
 
