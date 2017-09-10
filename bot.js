@@ -34,6 +34,9 @@ nconf.defaults({
   prometheus: {
     port: '9400',
   },
+  rpc: {
+    port: '1337',
+  },
   webserver: {
     listen: 8080,
     listenUmask: 666,
@@ -168,6 +171,28 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (err) => {
   winston.error(`${(main.api.shard) ? `Shard ${main.api.shard.id} uncaught` : 'Uncaught'} promise Error`, err);
 });
+
+
+const net = require('net');
+
+net.createServer((socket) => {
+  winston.debug('RPC socket connection from:', socket.remoteAddress);
+
+  socket.on('data', async (data) => {
+    try {
+      const answer = await eval(data.toString());
+      socket.write(JSON.stringify(answer));
+    } catch (ex) {
+      winston.error('RPC socket error:', ex.msg);
+    }
+  });
+
+  socket.on('end', () => {
+    winston.debug('RPC socket disconnect from:', socket.remoteAddress);
+  });
+}).listen(nconf.get('rpc:port'));
+winston.info('RPC socket listening on port:', nconf.get('rpc:port'));
+
 
 if (main.shardMaster) {
   winston.info('Bot is starting in shard mode.');
