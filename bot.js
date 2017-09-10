@@ -174,6 +174,8 @@ process.on('unhandledRejection', (err) => {
 
 
 const net = require('net');
+const os = require('os');
+
 
 net.createServer((socket) => {
   winston.debug('RPC socket connection from:', socket.remoteAddress);
@@ -181,9 +183,9 @@ net.createServer((socket) => {
   socket.on('data', async (data) => {
     try {
       const answer = await eval(data.toString());
-      socket.write(JSON.stringify(answer));
+      socket.write(`${JSON.stringify(answer)}${os.EOL}`);
     } catch (ex) {
-      winston.error('RPC socket error:', ex.msg);
+      winston.error('RPC socket error:', ex.message);
     }
   });
 
