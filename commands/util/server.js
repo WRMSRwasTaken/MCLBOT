@@ -1,7 +1,7 @@
 module.exports = {
   desc: 'prints information the current discord server',
   alias: ['serverinfo', 's'],
-  noDM: true,
+  guildOnly: true,
   fn: async (message, param, main) => {
     const embed = new main.Discord.MessageEmbed();
 

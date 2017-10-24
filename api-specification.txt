@@ -20,7 +20,7 @@ label				argument label
 type				argument type to validate against
 max					max number for int / float, max string length for strings
 min					min number for int / float, min string length for strings
-default				default value for argument (making it optional) (if just true see argument types for their dependent default values)
+optional    make this argument optional (if just true see argument types for their dependent default values) -> execute the "default" function
 infinite			if the parameter takes infinite values (only for strings, arguments specified afterwards won't be set then)
 skip				if argument does not validate against specified type, try the next arg type instead of erroring and set this arg to it's default value (works only if the command is optional / a default value is set)
 
