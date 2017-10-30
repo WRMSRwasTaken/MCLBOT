@@ -30,4 +30,6 @@ module.exports = {
 
     throw new Error('Multiple channels have been found Please be more specific.');
   },
+
+  default: context => context.channel,
 };

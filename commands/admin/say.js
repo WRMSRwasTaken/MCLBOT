@@ -1,8 +1,12 @@
 module.exports = {
   desc: 'says something in the current channel',
   owner: true,
-  args: ['text'],
-  fn: (message, param) => {
-    message.send(param);
-  },
+  arguments: [
+    {
+      label: 'message',
+      type: 'string',
+      infinite: true,
+    },
+  ],
+  fn: (context, message) => context.reply(message),
 };
