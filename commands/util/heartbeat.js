@@ -4,8 +4,8 @@ module.exports = {
   name: 'heartbeat',
   desc: 'Displays statistics about the bot\'s websocket heartbeats to the discord api',
   alias: ['hb'],
-  fn: (message, param, main) => {
-    const pings = main.api.pings;
+  fn: (ctx) => {
+    const pings = ctx.main.api.pings;
     let min = 0;
     let max = 0;
     let avg = 0;
@@ -19,6 +19,6 @@ module.exports = {
 
     avg /= pings.length;
 
-    message.send(`\`\`\`Last heartbeat: ${main.stringUtils.formatUnixTimestamp(main.api.ws.connection.lastPingTimestamp)}\n   Min latency: ${min}ms\n   Max latency: ${max}ms\n   Avg latency: ${prettyMs(avg)}\`\`\``);
+    ctx.reply(`:cloud: Websocket latency statistics:\`\`\`Last heartbeat: ${ctx.main.stringUtils.formatUnixTimestamp(ctx.main.api.ws.connection.lastPingTimestamp)}\n   Min latency: ${min}ms\n   Max latency: ${max}ms\n   Avg latency: ${prettyMs(avg)}\`\`\``);
   }
 };
