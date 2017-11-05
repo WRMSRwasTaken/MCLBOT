@@ -1,10 +1,6 @@
 module.exports = {
   interval: 60 * 5,
   fn: (main) => {
-    if (!main.initialized) {
-      return;
-    }
-
     main.api.guilds.forEach(async (guild) => {
       let online = 0;
       let idle = 0;

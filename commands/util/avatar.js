@@ -2,15 +2,10 @@ module.exports = {
   desc: 'get an user\'s avatar',
   arguments: [
     {
-      label: 'user id | mention | user name/tag',
-      type: 'member',
-      optional: false,
-    },
-    {
-      label: 'leltest',
-      type: 'member',
-      optional: false,
+      label: 'user',
+      type: 'user',
+      optional: true,
     },
   ],
-  fn: async (ctx, user) => `\`${user.user.tag}\`'s avatar is: ${user.user.displayAvatarURL({ format: 'png', size: 2048 })}`,
+  fn: async (ctx, user) => `\`${user.tag}\`'s avatar is: ${user.displayAvatarURL({ format: 'png', size: 2048 })}`,
 };

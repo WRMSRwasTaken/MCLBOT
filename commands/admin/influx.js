@@ -18,6 +18,6 @@ module.exports = {
 
     influxOutput = JSON.stringify(influxOutput, null, 2);
 
-    return `InfluxDB query returned:\n\`\`\`JSON\n${influxOutput}\n\`\`\` \n :stopwatch: Query took ${time}ms`;
+    return `InfluxDB query returned:\n\`\`\`JSON\n${influxOutput}\n\`\`\` \n:stopwatch: took ${time}ms`;
   },
 };

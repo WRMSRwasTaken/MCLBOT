@@ -18,6 +18,6 @@ module.exports = {
 
     sqlOutput = JSON.stringify(sqlOutput[0], null, 2);
 
-    return `SQL query returned:\n\`\`\`JSON\n${sqlOutput}\n\`\`\` \n :stopwatch: Query took ${time}ms`;
+    return `SQL query returned:\n\`\`\`JSON\n${sqlOutput}\n\`\`\` \n:stopwatch: took ${time}ms`;
   },
 };

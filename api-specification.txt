@@ -1,7 +1,7 @@
 Command / cubcommand parameters:
 ----------------------------------------------------------------------------------------
 
--name			the subcommand name (automatically set for commands by filename)
+-name			the subcommand name (automatically set for commands by filename, automatically set for subcommands by the object key name)
 -aliases			the command aliases
 -owner       bot admin only
 -permission    guild permission needed to execute the (sub-)command
@@ -10,7 +10,7 @@ arguments 		the (sub-)command arguments as array
 -guildOnly		disable this (sub-/)command in DM channels (if this is set for the commands, this applies to all subcommands aswell if not set there)
 -cooldown 		the (sub-/)command cooldown (if this is set for the commands, this applies to all subcommands aswell if not set there)
 fn				the command function (if command has subcommands, this will be executed if no subcommand is set - if not set with subcommands set this will error)
-subcommands		subcommands object (only on command) (if command's fn and subcommands is set, the subcommand will become optional)
+subcommands		subcommands object (only on command) with the subcommand's name as the object key (if command's fn and subcommands is set, the subcommand will become optional)
 
 Command argument parameters:
 ----------------------------------------------------------------------------------------
@@ -23,6 +23,7 @@ min					min number for int / float, min string length for strings
 optional    make this argument optional (if just true see argument types for their dependent default values) -> execute the "default" function
 infinite			if the parameter takes infinite values (only for strings, arguments specified afterwards won't be set then)
 skip				if argument does not validate against specified type, try the next arg type instead of erroring and set this arg to it's default value (works only if the command is optional / a default value is set)
+default     override for the "default" function for the current argument type
 
 
 Command argument types:

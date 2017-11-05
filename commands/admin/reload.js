@@ -1,42 +1,75 @@
+async function reloadCommand(ctx, command) {
+  const reloadMsg = await ctx.reply(`Reloading command \`${command}\`...`);
+
+  const start = Date.now();
+
+  try {
+    ctx.main.resourceLoader.loadCommand(command, null, true);
+  } catch (ex) {
+    return reloadMsg.edit(`Error reloading command \`${command}\`:\n\n${ex.message}`);
+  }
+
+  return reloadMsg.edit(`Command \`${command}\` reloaded in ${(Date.now() - start)}ms`);
+}
+
 module.exports = {
-  desc: 'reload a bot command or category',
   owner: true,
-  args: ['all | command | category'],
-  optArgs: ['command / category name'],
-  fn: async (message, params, main) => {
-    let mode;
-    let commandOrCategoryName;
+  desc: 'reload a single bot command',
+  arguments: [
+    {
+      label: 'command',
+      type: 'string',
+    },
+  ],
+  fn: async (ctx, command) => reloadCommand(ctx, command),
+  subcommands: {
+    command: {
+      desc: 'reload a single bot command',
+      arguments: [
+        {
+          label: 'command',
+          type: 'string',
+        },
+      ],
+      fn: async (ctx, command) => reloadCommand(ctx, command),
+    },
+    category: {
+      desc: 'reload all bot commands in the given category',
+      arguments: [
+        {
+          label: 'category',
+          type: 'string',
+        },
+      ],
+      fn: async (ctx, category) => {
+        const reloadMsg = await ctx.reply(`Reloading all commands in the category \`${category}\`...`);
 
-    console.log(params)
+        const start = Date.now();
 
-    if (params[0]) {
-      mode = params[0].toLowerCase();
-    }
-
-    if (params[1]) {
-      commandOrCategoryName = params[1].toLowerCase();
-    }
-
-    if (['command', 'category'].includes(mode) && !commandOrCategoryName) {
-      return main.stringUtils.argumentsError('reload', 1, 'Missing command argument.');
-    }
-
-    switch (mode.toLowerCase()) {
-      case 'all':
-        main.resourceLoader.loadCommandFiles(null, true);
-        break;
-      case 'category':
-        main.resourceLoader.loadCommandFiles(params[1], true);
-        break;
-      case 'command':
-        if (!this.main.commands[commandOrCategoryName]) {
-          return main.stringUtils.argumentsError('reload', 1, 'Unknown command for reloading specified.');
+        try {
+          ctx.main.resourceLoader.loadCommandFiles(category, true);
+        } catch (ex) {
+          return reloadMsg.edit(`Error reloading command category \`${category}\`:\n\n${ex.message}`);
         }
 
-        main.resourceLoader.loommandFiles(null, true);
-        break;
-      default:
-        return main.stringUtils.argumentsError('reload', 0, 'Unknown command argument');
-    }
+        return reloadMsg.edit(`All commands in the category \`${category}\` reloaded in ${(Date.now() - start)}ms`);
+      },
+    },
+    all: {
+      desc: 'reload all bot commands',
+      fn: async (ctx) => {
+        const reloadMsg = await ctx.reply('Reloading all bot commands...');
+
+        const start = Date.now();
+
+        try {
+          ctx.main.resourceLoader.loadCommandFiles(null, true);
+        } catch (ex) {
+          return reloadMsg.edit(`Error reloading bot commands:\n\n${ex.message}`);
+        }
+
+        return reloadMsg.edit(`All bot commands reloaded in ${(Date.now() - start)}ms`);
+      },
+    },
   },
 };

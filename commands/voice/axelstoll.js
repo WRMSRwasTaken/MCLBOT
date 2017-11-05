@@ -1,11 +1,14 @@
+const winston = require('winston');
+
 module.exports = {
   alias: ['stoll'],
-  noDM: true,
+  guildOnly: true,
   desc: 'plays a random quote of axel stoll in voice chat the invoker is currently in',
-  fn: async (message, params, main) => {
+  fn: async (ctx) => {
     try {
-      await main.audioHelper.playRandomSoundFile(message, './resources/audio/axelstoll');
+      await ctx.main.audioHelper.playRandomSoundFile(ctx.message, './resources/audio/axelstoll');
     } catch (err) {
+      winston.error('Error while playing the audio file!', err);
       return 'Ooops! I encountered an error while playing the audio file.';
     }
   },
