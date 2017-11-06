@@ -3,7 +3,7 @@ module.exports = {
     const integer = Number.parseInt(value, 10);
 
     if (Number.isNaN(integer)) {
-      throw new Error('Invalid integer value.');
+      throw new Error('Invalid integer value');
     }
 
     if (argument.min && argument.min > integer) {

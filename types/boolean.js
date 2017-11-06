@@ -9,6 +9,6 @@ module.exports = {
 
     if (falsy.includes(lc)) return false;
 
-    throw new Error('Unknown boolean value.');
+    throw new Error('Unknown boolean value');
   },
 };

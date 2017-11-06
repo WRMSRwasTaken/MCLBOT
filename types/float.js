@@ -3,7 +3,7 @@ module.exports = {
     const float = Number.parseFloat(value);
 
     if (Number.isNaN(float)) {
-      throw new Error('Invalid float value.');
+      throw new Error('Invalid float value');
     }
 
     if (argument.min && argument.min > float) {

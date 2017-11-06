@@ -14,7 +14,7 @@ module.exports = {
         }, 5000);
       }
 
-      pendingUpdates[newMember.user.id] = moment().unix();
+      pendingUpdates[newMember.user.id] = moment().unix() * 1000;
     }
   },
 };

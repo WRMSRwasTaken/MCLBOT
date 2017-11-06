@@ -6,7 +6,7 @@ module.exports = {
       return user;
     }
 
-    throw new Error('No matching users found.');
+    throw new Error('No matching users found');
   },
 
   default: context => context.author,

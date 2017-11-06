@@ -9,7 +9,7 @@ module.exports = {
       if (mentionedChannel) {
         return mentionedChannel;
       }
-      throw new Error('Unknown channel supplied.');
+      throw new Error('Unknown channel supplied');
     }
 
     const channelMatches = context.guild.channels.filter((channel) => {
@@ -25,10 +25,10 @@ module.exports = {
     }
 
     if (channelMatches.length === 0) {
-      throw new Error('No channels have been found.');
+      throw new Error('No channels have been found');
     }
 
-    throw new Error('Multiple channels have been found Please be more specific.');
+    throw new Error('Multiple channels have been found Please be more specific');
   },
 
   default: context => context.channel,

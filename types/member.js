@@ -6,7 +6,7 @@ module.exports = {
       return member;
     }
 
-    throw new Error('No matching guild members found.');
+    throw new Error('No matching guild members found');
   },
 
   default: context => context.member,
