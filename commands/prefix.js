@@ -30,7 +30,7 @@ module.exports = {
       return showPrefix(ctx);
     }
 
-    if (!ctx.member.hasPermission('ADMINISTRATOR')) {
+    if (!ctx.member.hasPermission('ADMINISTRATOR') && !ctx.isBotAdmin) {
       return ctx.reply('Sorry, but only guild administrators can set a custom bot prefix.');
     }
 

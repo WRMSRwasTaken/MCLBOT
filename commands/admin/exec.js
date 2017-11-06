@@ -3,20 +3,27 @@ const Bluebird = require('bluebird');
 
 module.exports = {
   desc: 'Runs a system command',
+  hide: true,
   owner: true,
-  args: ['command'],
-  fn: async (context, command) => {
+  arguments: [
+    {
+      label: 'command',
+      type: 'string',
+      infinite: true,
+    },
+  ],
+  fn: async (ctx, command) => {
     const start = Date.now();
 
     return new Bluebird((resolve, reject) => {
-      childProcess.exec(command.join(' '), (err, stdout, stderr) => {
+      childProcess.exec(command, (err, stdout, stderr) => {
         if (err) {
           return resolve(`There was an error while executing your command:\`\`\`\n${err.message}\n\`\`\``);
         }
 
         const time = Date.now() - start;
 
-        resolve(`STDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: Execution took ${time}ms`);
+        return resolve(`STDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: took ${time}ms`);
       });
     });
   },

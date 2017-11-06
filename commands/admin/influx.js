@@ -2,14 +2,20 @@ module.exports = {
   desc: 'Runs a SQL-like command against the bot\'s influx database',
   hide: true,
   owner: true,
-  args: ['command'],
-  fn: async (context, code) => {
+  arguments: [
+    {
+      label: 'command',
+      type: 'string',
+      infinite: true,
+    },
+  ],
+  fn: async (ctx, command) => {
     const start = Date.now();
 
     let influxOutput;
 
     try {
-      influxOutput = await context.main.influx.query(code.join(' '));
+      influxOutput = await ctx.main.influx.query(command);
     } catch (err) {
       return `There was an error while executing your InfluxDB query:\n\`\`\`\n${err.message}\n\`\`\``;
     }

@@ -11,9 +11,8 @@ module.exports = {
       infinite: true,
     },
   ],
-  fn: (context, code) => {
+  fn: (ctx, code) => {
     let evalOutput;
-    let retMsg;
 
     const start = Date.now();
 
@@ -24,27 +23,6 @@ module.exports = {
     }
 
     const time = Date.now() - start;
-
-    // if (evalOutput === undefined) {
-    //   retMsg = 'eval output:\n```JSON\nundefined\n```';
-    // } else if (evalOutput === null) {
-    //   retMsg = 'eval output:\n```JSON\nnull\n```';
-    // } else if (typeof evalOutput === 'object') {
-    //   try {
-    //     // evalOutput = JSON.stringify(evalOutput, null, 2);
-    //     evalOutput = util.inspect(evalOutput);
-    //
-    //     retMsg = `eval output:\n\`\`\`js\n${evalOutput}\n\`\`\``;
-    //   } catch (err) {
-    //     retMsg = `There was an error while eval-ing your input:\n\`\`\`\n${err.message}\n\`\`\``;
-    //   }
-    // } else {
-    //   retMsg = `eval output:\n\`\`\`\n${evalOutput.toString()}\n\`\`\``;
-    // }
-    //
-    // retMsg = `${retMsg} \ntype: ${typeof evalOutput} | :stopwatch: took ${time}ms`;
-
-    // return retMsg;
 
     return `eval output:\n\`\`\`js\n${util.inspect(evalOutput)}\n\`\`\` \ntype: ${typeof evalOutput} | :stopwatch: took ${time}ms`;
   },
