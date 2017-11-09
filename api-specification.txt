@@ -22,8 +22,8 @@ max					max number for int / float, max string length for strings
 min					min number for int / float, min string length for strings
 optional    make this argument optional (if just true see argument types for their dependent default values) -> execute the "default" function
 infinite			if the parameter takes infinite values (only for strings, arguments specified afterwards won't be set then)
-skip				if argument does not validate against specified type, try the next arg type instead of erroring and set this arg to it's default value (works only if the command is optional / a default value is set)
-default     override for the "default" function for the current argument type
+skip				if argument does not validate against specified type, try the next arg type instead of erroring, if it has a default set pass the default (works only if the command is optional)
+default     set a default for this parameter if it's optional (a function or just an object)
 
 
 Command argument types:

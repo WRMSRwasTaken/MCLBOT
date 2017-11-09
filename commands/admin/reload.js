@@ -6,7 +6,7 @@ async function reloadCommand(ctx, command) {
   try {
     ctx.main.resourceLoader.loadCommand(command, null, true);
   } catch (ex) {
-    return reloadMsg.edit(`Error reloading command \`${command}\`:\n\n${ex.message}`);
+    return reloadMsg.edit(ex.message);
   }
 
   return reloadMsg.edit(`Command \`${command}\` reloaded in ${(Date.now() - start)}ms`);
@@ -49,7 +49,7 @@ module.exports = {
         try {
           ctx.main.resourceLoader.reloadCategory(category);
         } catch (ex) {
-          return reloadMsg.edit(`Error reloading command category \`${category}\`:\n\n${ex.message}`);
+          return reloadMsg.edit(ex.message);
         }
 
         return reloadMsg.edit(`All commands in the category \`${category}\` reloaded in ${(Date.now() - start)}ms`);

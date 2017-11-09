@@ -40,7 +40,7 @@ module.exports = {
 
     const helpMsg = await ctx.reply(ctx.main.stringUtils.displayHelpPage());
 
-    const paginationHelper = await ctx.main.paginationHelper.initPagination(helpMsg, ctx.author, ctx.main.helpPages.length);
+    const paginationHelper = ctx.main.paginationHelper.initPagination(helpMsg, ctx.author, ctx.main.helpPages.length);
 
     if (!paginationHelper) {
       return false;

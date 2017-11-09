@@ -23,7 +23,7 @@ module.exports = {
 
         const time = Date.now() - start;
 
-        return resolve(`STDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: took ${time}ms`);
+        return resolve(`Exec returned:\nSTDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: took ${time}ms`);
       });
     });
   },

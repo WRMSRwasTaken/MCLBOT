@@ -22,21 +22,20 @@ module.exports = {
       icon_url: user.displayAvatarURL(),
     };
 
-    let lastSeen;
-
-    if (!user.presence.status) {
-      lastSeen = await ctx.main.redis.get(`user_last_seen:${user.id}`);
-    }
-
     embed.setThumbnail(user.displayAvatarURL());
 
-    embed.addField('ID', user.id);
-    embed.addField('Tag', user.tag);
+    embed.addField('ID', user.id, true);
+    embed.addField('Tag', user.tag, true);
     if (guildMember && guildMember.nickname) embed.addField('Nickname', guildMember.nickname);
-    if (user.presence.status) embed.addField('Status', user.presence.status);
-    if (user.presence.game) embed.addField('Playing', user.presence.game.name);
-    if (!user.presence.status && lastSeen) embed.addField('Last seen', ctx.main.stringUtils.formatUnixTimestamp(lastSeen));
-    if (guildMember && user.id !== ctx.message.author.id && guildMember.lastMessage) embed.addField('Last message', ctx.main.stringUtils.formatUnixTimestamp(guildMember.lastMessage.createdTimestamp)); // TODO: fallback to SQL
+    if (user.presence.status) embed.addField('Status', user.presence.status, true);
+    if (user.presence.activity) embed.addField('Playing', user.presence.activity.name, true);
+    if (user.presence.status === 'offline' || !user.presence.status) {
+      const lastSeen = await ctx.main.redis.get(`user_last_seen:${user.id}`);
+
+      if (lastSeen) embed.addField('Last seen', ctx.main.stringUtils.formatUnixTimestamp(parseInt(lastSeen, 10)));
+    }
+
+    if (guildMember && guildMember.lastMessage && guildMember.user.id !== ctx.main.api.user.id) embed.addField('Last message', ctx.main.stringUtils.formatUnixTimestamp(guildMember.lastMessage.createdTimestamp)); // TODO: fallback to SQL
     if (guildMember) embed.addField('Guild join date', ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp));
     embed.addField('Discord join date', ctx.main.stringUtils.formatUnixTimestamp(user.createdTimestamp));
     if (guildMember) {

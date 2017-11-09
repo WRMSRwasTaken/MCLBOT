@@ -2,57 +2,58 @@ module.exports = {
   desc: 'prints information the current discord server',
   alias: ['serverinfo', 's'],
   guildOnly: true,
-  fn: async (message, param, main) => {
-    const embed = new main.Discord.MessageEmbed();
+  fn: async (ctx) => {
+    const embed = new ctx.main.Discord.MessageEmbed();
 
     embed.author = {
-      name: message.guild.name,
-      icon_url: message.guild.iconURL,
+      name: ctx.guild.name,
+      icon_url: ctx.guild.iconURL(),
     };
 
-    embed.setThumbnail(message.guild.iconURL);
+    embed.setThumbnail(ctx.guild.iconURL());
 
-    embed.addField('ID', message.guild.id);
-    embed.addField('Owner', `<@${message.guild.owner.id}>`);
-    embed.addField('Region', message.guild.region);
-    embed.addField('Created', this.main.stringUtils.formatUnixTimestamp(message.guild.createdTimestamp));
+    embed.addField('ID', ctx.guild.id, true);
+    embed.addField('Region', ctx.guild.region, true);
+    embed.addField('Owner', `<@${ctx.guild.owner.id}>`, true);
+
+    const verificationLevels = ['none', 'low', 'medium', 'tableflip', 'double-tableflip'];
+
+    embed.addField('Verfication level', verificationLevels[ctx.guild.verificationLevel], true);
+
+    embed.addField('Created', ctx.main.stringUtils.formatUnixTimestamp(ctx.guild.createdTimestamp));
 
     let memberOffline = 0;
     let memberOnline = 0;
 
-    message.guild.members.forEach((member) => {
+    ctx.guild.members.forEach((member) => {
       if (member.presence.status === 'offline') memberOffline += 1;
       else memberOnline += 1;
     });
 
-    embed.addField('Members', `Online: ${memberOnline}, Offline: ${memberOffline} (${message.guild.memberCount} total)`);
-
-    const verificationLevels = ['none', 'low', 'medium', 'tableflip', 'double-tableflip'];
-
-    embed.addField('Verfication level', verificationLevels[message.guild.verificationLevel]);
+    embed.addField('Members', `Online: ${memberOnline}, Offline: ${memberOffline} (${ctx.guild.memberCount} total)`, true);
 
     let textChannels = 0;
     let voiceChannels = 0;
 
-    const defaultChannel = message.guild.channels.filter((channel) => {
+    const defaultChannel = ctx.guild.channels.filter((channel) => {
       if (channel.type === 'text') textChannels += 1;
       else voiceChannels += 1;
 
-      return (channel.permissionsFor(message.guild.me).has('READ_MESSAGES'));
+      return (channel.permissionsFor(ctx.guild.me).has('READ_MESSAGES'));
     }).sort((c1, c2) => c1.position - c2.position).first();
 
-    embed.addField('Channels', `Text: ${textChannels}, Voice: ${voiceChannels} (${textChannels + voiceChannels} total)`);
+    embed.addField('Channels', `Text: ${textChannels}, Voice: ${voiceChannels} (${textChannels + voiceChannels} total)`, true);
 
-    embed.addField('Default channel', `<#${defaultChannel.id}>`);
+    embed.addField('Default channel', `<#${defaultChannel.id}>`, true);
 
-    embed.addField('Roles', message.guild.roles.size);
+    embed.addField('Roles', ctx.guild.roles.size, true);
 
     let emojiString = '';
     let countEmojis = 0;
     let moreEmojis = false;
 
-    if (message.guild.emojis.size) {
-      message.guild.emojis.forEach((emoji) => {
+    if (ctx.guild.emojis.size) {
+      ctx.guild.emojis.forEach((emoji) => {
         const newEmoji = `<:${emoji.name}:${emoji.id}>`;
         if (emojiString.length + newEmoji.length <= 1024) {
           emojiString += newEmoji;
@@ -62,10 +63,10 @@ module.exports = {
         }
       });
 
-      embed.addField(`Emojis (${message.guild.emojis.size})${(moreEmojis) ? ` (only the first ${countEmojis} are shown)` : ''}`, emojiString);
+      embed.addField(`Emojis (${ctx.guild.emojis.size})${(moreEmojis) ? ` (only the first ${countEmojis} are shown)` : ''}`, emojiString);
     }
 
-    message.send({
+    ctx.reply({
       embed,
     });
   },
