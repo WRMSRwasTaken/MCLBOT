@@ -13,6 +13,7 @@ async function reloadCommand(ctx, command) {
 }
 
 module.exports = {
+  hide: true,
   owner: true,
   desc: 'load a command file',
   arguments: [

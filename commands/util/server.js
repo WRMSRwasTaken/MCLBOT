@@ -14,7 +14,7 @@ module.exports = {
 
     embed.addField('ID', ctx.guild.id, true);
     embed.addField('Region', ctx.guild.region, true);
-    embed.addField('Owner', `<@${ctx.guild.owner.id}>`, true);
+    embed.addField('Owner', `<@${ctx.guild.ownerID}>`, true);
 
     const verificationLevels = ['none', 'low', 'medium', 'tableflip', 'double-tableflip'];
 
@@ -37,14 +37,14 @@ module.exports = {
 
     const defaultChannel = ctx.guild.channels.filter((channel) => {
       if (channel.type === 'text') textChannels += 1;
-      else voiceChannels += 1;
+      if (channel.type === 'voice') voiceChannels += 1;
 
-      return (channel.permissionsFor(ctx.guild.me).has('READ_MESSAGES'));
+      return (channel.permissionsFor(ctx.guild.me).has('VIEW_CHANNEL'));
     }).sort((c1, c2) => c1.position - c2.position).first();
 
     embed.addField('Channels', `Text: ${textChannels}, Voice: ${voiceChannels} (${textChannels + voiceChannels} total)`, true);
 
-    embed.addField('Default channel', `<#${defaultChannel.id}>`, true);
+    embed.addField('Default channel', (defaultChannel) ? `<#${defaultChannel.id}>` : 'N/A', true);
 
     embed.addField('Roles', ctx.guild.roles.size, true);
 

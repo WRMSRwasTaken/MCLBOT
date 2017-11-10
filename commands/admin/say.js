@@ -1,5 +1,6 @@
 module.exports = {
   desc: 'says something in the current channel',
+  hide: true,
   owner: true,
   arguments: [
     {
