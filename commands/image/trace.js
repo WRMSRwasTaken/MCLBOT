@@ -8,6 +8,6 @@ module.exports = {
       optional: true,
     },
   ],
-  fn: async (ctx, image) => ctx.main.imageHelper.processImage(ctx, image, null, '-resize 800x800< -morphology edgeout diamond:1 -evaluate multiply 3'),
+  fn: async (ctx, image) => ctx.main.imageHelper.processImage(ctx, image, null, '-morphology edgeout diamond:1 -evaluate multiply 3'),
 };
 

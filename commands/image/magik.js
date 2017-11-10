@@ -8,6 +8,6 @@ module.exports = {
       optional: true,
     },
   ],
-  fn: async (ctx, image) => ctx.main.imageHelper.processImage(ctx, image, null, '-resize 800x800< -liquid-rescale 50% -liquid-rescale 150%'),
+  fn: async (ctx, image) => ctx.main.imageHelper.processImage(ctx, image, null, '-liquid-rescale 50% -liquid-rescale 150%'),
 };
 

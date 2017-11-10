@@ -8,6 +8,6 @@ module.exports = {
       optional: true,
     },
   ],
-  fn: async (ctx, image) => ctx.main.imageHelper.processImage(ctx, image, null, '-resize 800x800< -negate'),
+  fn: async (ctx, image) => ctx.main.imageHelper.processImage(ctx, image, null, '-negate'),
 };
 

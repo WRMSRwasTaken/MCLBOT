@@ -26,7 +26,7 @@ module.exports = {
 
     embed.addField('ID', user.id, true);
     embed.addField('Tag', user.tag, true);
-    if (guildMember && guildMember.nickname) embed.addField('Nickname', guildMember.nickname);
+    if (guildMember && guildMember.nickname) embed.addField('Nickname', guildMember.nickname, true);
     if (user.presence.status) embed.addField('Status', user.presence.status, true);
     if (user.presence.activity) embed.addField('Playing', user.presence.activity.name, true);
     if (user.presence.status === 'offline' || !user.presence.status) {
