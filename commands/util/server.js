@@ -39,7 +39,7 @@ module.exports = {
       if (channel.type === 'text') textChannels += 1;
       if (channel.type === 'voice') voiceChannels += 1;
 
-      return (channel.permissionsFor(ctx.guild.me).has('VIEW_CHANNEL'));
+      return (channel.permissionsFor(ctx.guild.me).has('VIEW_CHANNEL') && channel.type === 'text');
     }).sort((c1, c2) => c1.position - c2.position).first();
 
     embed.addField('Channels', `Text: ${textChannels}, Voice: ${voiceChannels} (${textChannels + voiceChannels} total)`, true);
