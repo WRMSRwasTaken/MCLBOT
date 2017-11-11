@@ -50,10 +50,14 @@ async function getLastImage(ctx) {
 
 module.exports = {
   parse: async (value, argument, context) => {
+    if (validator.isURL(value)) {
+      return value;
+    }
+
     const user = await context.main.userHelper.getUser(context.message, value);
 
     if (user) {
-      return user;
+      return user.displayAvatarURL();
     }
 
     throw new Error('No matching users found');

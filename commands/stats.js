@@ -20,6 +20,8 @@ module.exports = {
 
     embed.addField('Servers', ctx.main.api.guilds.size, true);
 
+    embed.addField('Channels', ctx.main.api.channels.size, true);
+
     embed.addField('Shards', (ctx.main.api.shard) ? ctx.main.api.shard.count : 'sharding disabled', true);
 
     embed.addField('Commands', Object.keys(ctx.main.commands).length, true);
