@@ -24,6 +24,8 @@ module.exports = {
 
     embed.setThumbnail(user.displayAvatarURL());
 
+    embed.setColor(guildMember.displayHexColor);
+
     embed.addField('ID', user.id, true);
     embed.addField('Tag', user.tag, true);
     if (guildMember && guildMember.nickname) embed.addField('Nickname', guildMember.nickname, true);
