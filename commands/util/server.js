@@ -1,6 +1,6 @@
 module.exports = {
   desc: 'prints information the current discord server',
-  alias: ['serverinfo', 's'],
+  alias: ['serverinfo', 's', 'guild', 'g'],
   guildOnly: true,
   fn: async (ctx) => {
     const embed = new ctx.main.Discord.MessageEmbed();

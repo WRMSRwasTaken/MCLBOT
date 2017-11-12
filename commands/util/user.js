@@ -24,7 +24,7 @@ module.exports = {
 
     embed.setThumbnail(user.displayAvatarURL());
 
-    if (guildMember) {
+    if (guildMember && guildMember.displayHexColor) {
       embed.setColor(guildMember.displayHexColor);
     }
 
