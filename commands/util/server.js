@@ -30,7 +30,7 @@ module.exports = {
       else memberOnline += 1;
     });
 
-    embed.addField('Members', `Online: ${memberOnline}, Offline: ${memberOffline} (${ctx.guild.memberCount} total)`, true);
+    embed.addField(`Members (${ctx.guild.memberCount})`, `Online: ${memberOnline}, Offline: ${memberOffline}`, true);
 
     let textChannels = 0;
     let voiceChannels = 0;
@@ -42,7 +42,7 @@ module.exports = {
       return (channel.permissionsFor(ctx.guild.me).has('VIEW_CHANNEL') && channel.type === 'text');
     }).sort((c1, c2) => c1.position - c2.position).first();
 
-    embed.addField('Channels', `Text: ${textChannels}, Voice: ${voiceChannels} (${textChannels + voiceChannels} total)`, true);
+    embed.addField(`Channels (${textChannels + voiceChannels})`, `Text: ${textChannels}, Voice: ${voiceChannels}`, true);
 
     embed.addField('Default channel', (defaultChannel) ? `<#${defaultChannel.id}>` : 'N/A', true);
 
