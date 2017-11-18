@@ -5,7 +5,7 @@
   "description": "A Discord bot that does things",
   "main": "bot.js",
   "dependencies": {
-    "axios": "^0.17.0",
+    "axios": "^0.17.1",
     "bluebird": "^3.5.1",
     "discord.js": "git://github.com/hydrabolt/discord.js.git",
     "dotenv": "^4.0.0",
@@ -17,7 +17,7 @@
     "ioredis": "^3.2.1",
     "ip": "^1.1.5",
     "lodash": "^4.17.4",
-    "moment": "^2.19.1",
+    "moment": "^2.19.2",
     "nconf": "^0.9.1",
     "node-opus": "^0.2.7",
     "node-xwhois": "^1.0.7",
@@ -26,7 +26,7 @@
     "pretty-ms": "^3.0.1",
     "prom-client": "^10.2.2",
     "prometheus-gc-stats": "^0.5.0",
-    "sequelize": "^4.22.5",
+    "sequelize": "^4.22.7",
     "sequelize-cli": "^3.0.0",
     "string": "^3.3.3",
     "validator": "^9.1.1",
@@ -36,7 +36,7 @@
   "author": "MCL",
   "license": "GPL",
   "devDependencies": {
-    "eslint": "^4.10.0",
+    "eslint": "^4.11.0",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "ffmpeg-binaries": "^3.2.2-3"
