@@ -17,22 +17,24 @@ module.exports = {
 
     main.prometheusMetrics.sqlWrites.inc();
 
+    const Op = main.db.Sequelize.Op;
+
     main.db.blacklist.destroy({
       where: {
-        $or: [
+        [Op.or]: [
           {
-            $and: {
+            [Op.and]: {
               guild_id: guild.id,
               user_id: {
-                $ne: 0,
+                [Op.ne]: 0,
               },
             },
           },
           {
-            $and: {
+            [Op.and]: {
               guild_id: guild.id,
               channel_id: {
-                $ne: 0,
+                [Op.ne]: 0,
               },
             },
           },
@@ -43,7 +45,7 @@ module.exports = {
     if (nconf.get('bot:logchannel')) {
       const embed = new main.Discord.MessageEmbed();
 
-      const botCount = guild.members.filter((u) => u.user.bot).size;
+      const botCount = guild.members.filter(u => u.user.bot).size;
 
       embed.setTitle(`Removed from ${guild.name}`);
       embed.addField('Users', guild.memberCount, true);
