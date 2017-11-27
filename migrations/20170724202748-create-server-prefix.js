@@ -1,8 +1,8 @@
 
 module.exports = {
   up(queryInterface, Sequelize) {
-    return queryInterface.createTable('server_prefix', {
-      server_id: {
+    return queryInterface.createTable('guild_prefix', {
+      guild_id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT,
@@ -22,6 +22,6 @@ module.exports = {
     });
   },
   down(queryInterface, Sequelize) {
-    return queryInterface.dropTable('server_prefix');
+    return queryInterface.dropTable('guild_prefix');
   },
 };

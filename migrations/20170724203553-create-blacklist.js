@@ -2,7 +2,7 @@
 module.exports = {
   up(queryInterface, Sequelize) {
     queryInterface.createTable('blacklist', {
-      server_id: {
+      guild_id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.BIGINT,

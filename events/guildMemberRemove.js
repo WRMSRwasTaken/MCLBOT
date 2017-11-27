@@ -9,7 +9,7 @@ module.exports = {
       {
         measurement: 'member_leave',
         tags: {
-          server_id: member.guild.id,
+          guild_id: member.guild.id,
         },
         fields: {
           user_id: member.id,

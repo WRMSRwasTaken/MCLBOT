@@ -7,7 +7,7 @@ module.exports = {
         {
           measurement: 'member_message',
           tags: {
-            server_id: message.guild.id,
+            guild_id: message.guild.id,
             user_id: message.author.id,
             channel_id: message.channel.id,
           },

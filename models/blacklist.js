@@ -1,7 +1,7 @@
 
 module.exports = function (sequelize, DataTypes) {
   const blacklist = sequelize.define('blacklist', {
-    server_id: {
+    guild_id: {
       allowNull: false,
       primaryKey: true,
       type: DataTypes.BIGINT,

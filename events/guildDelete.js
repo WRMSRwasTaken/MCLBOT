@@ -7,13 +7,13 @@ module.exports = {
 
     main.prometheusMetrics.sqlWrites.inc();
 
-    main.prefixHelper.deleteServerPrefix(guild.id);
+    main.prefixHelper.deleteGuildPrefix(guild.id);
 
     main.prometheusMetrics.influxWrites.inc(4);
-    main.influx.query(`delete from member_message where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
-    main.influx.query(`delete from member_status where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
-    main.influx.query(`delete from member_join where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
-    main.influx.query(`delete from member_leave where server_id = ${main.Influx.escape.stringLit(guild.id)}`);
+    main.influx.query(`delete from member_message where guild_id = ${main.Influx.escape.stringLit(guild.id)}`);
+    main.influx.query(`delete from member_status where guild_id = ${main.Influx.escape.stringLit(guild.id)}`);
+    main.influx.query(`delete from member_join where guild_id = ${main.Influx.escape.stringLit(guild.id)}`);
+    main.influx.query(`delete from member_leave where guild_id = ${main.Influx.escape.stringLit(guild.id)}`);
 
     main.prometheusMetrics.sqlWrites.inc();
 
@@ -22,7 +22,7 @@ module.exports = {
         $or: [
           {
             $and: {
-              server_id: guild.id,
+              guild_id: guild.id,
               user_id: {
                 $ne: 0,
               },
@@ -30,7 +30,7 @@ module.exports = {
           },
           {
             $and: {
-              server_id: guild.id,
+              guild_id: guild.id,
               channel_id: {
                 $ne: 0,
               },

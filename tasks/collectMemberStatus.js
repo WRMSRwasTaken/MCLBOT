@@ -31,7 +31,7 @@ module.exports = {
         {
           measurement: 'member_status',
           tags: {
-            server_id: guild.id,
+            guild_id: guild.id,
           },
           fields: {
             online,

@@ -52,7 +52,7 @@ Context variables / methods:
 -channel				the guild's message channel this message was sent in (none if dm)
 -member         the guild's member invoking the command
 -isMention        was the command invoked using a mention?
--serverPrefix     the bot's server prefix (isn't set if dm or mention every time)
+-guildPrefix     the bot's server prefix (isn't set if dm or mention every time)
 command 			the command object
 subcommand 			the subcommand name invoked (if any)
 -reply()				respond to the command
