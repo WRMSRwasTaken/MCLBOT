@@ -8,6 +8,6 @@ To invite this bot to your Discord server, [click this link.](https://discordapp
 
 ### Thanks to
 
-- [Matmen](https://github.com/xmatmen) for open-sourcing [fbot](https://github.com/xmatmen/fbot) and helping me out with some JavaScript questions
+- [matmen](https://github.com/xmatmen) for open-sourcing [fbot](https://github.com/xmatmen/fbot) and helping me out with some JavaScript questions
 - [NotSoSuper](https://github.com/NotSoSuper) for letting me spam his Discord server for testing purposes
 - [DBotThePony](https://github.com/roboderpy) for open-souring [DBotTheBot](https://git.dbot.serealia.ca/dbot/NotDBot)
