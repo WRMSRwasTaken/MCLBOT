@@ -22,15 +22,13 @@ module.exports = {
 
     embed.addField('Created', ctx.main.stringUtils.formatUnixTimestamp(ctx.guild.createdTimestamp));
 
-    let memberOffline = 0;
     let memberOnline = 0;
 
     ctx.guild.members.forEach((member) => {
-      if (member.presence.status === 'offline') memberOffline += 1;
-      else memberOnline += 1;
+      if (member.presence.status !== 'offline') memberOnline += 1;
     });
 
-    embed.addField(`Members (${ctx.guild.memberCount})`, `Online: ${memberOnline}, Offline: ${memberOffline}`, true);
+    embed.addField(`Members (${ctx.guild.memberCount})`, `Online: ${memberOnline}, Offline: ${ctx.guild.memberCount - memberOnline}`, true);
 
     let textChannels = 0;
     let voiceChannels = 0;
