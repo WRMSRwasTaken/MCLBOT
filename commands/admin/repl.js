@@ -2,6 +2,7 @@ module.exports = {
   desc: 'starts an interactive REPL session',
   hide: true,
   owner: true,
+  alias: 'run',
   fn: (message, param, main) => {
     if (!main.replSessions) {
       main.replSessions = [];

@@ -39,7 +39,7 @@ module.exports = {
       if (lastSeen) embed.addField('Last seen', ctx.main.stringUtils.formatUnixTimestamp(parseInt(lastSeen, 10)));
     }
 
-    if (guildMember && guildMember.lastMessage && guildMember.user.id !== ctx.main.api.user.id) embed.addField('Last message', ctx.main.stringUtils.formatUnixTimestamp(guildMember.lastMessage.createdTimestamp)); // TODO: fallback to SQL
+    if (guildMember && guildMember.lastMessage && guildMember.user.id !== ctx.main.api.user.id && user.id !== ctx.author.id) embed.addField('Last message', ctx.main.stringUtils.formatUnixTimestamp(guildMember.lastMessage.createdTimestamp)); // TODO: fallback to SQL
     if (guildMember) embed.addField('Guild join date', ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp));
     embed.addField('Discord join date', ctx.main.stringUtils.formatUnixTimestamp(user.createdTimestamp));
     if (guildMember) {

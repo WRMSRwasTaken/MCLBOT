@@ -3,7 +3,6 @@ const Bluebird = require('bluebird');
 
 module.exports = {
   desc: 'Runs a system command',
-  alias: ['run'],
   hide: true,
   owner: true,
   arguments: [
@@ -24,7 +23,7 @@ module.exports = {
 
         const time = Date.now() - start;
 
-        return resolve(`Exec returned:\nSTDOUT:\`\`\`\n${(stdout) || '<no output>'}\n\`\`\`\nSTDERR:\`\`\`\n${(stderr) || '<no output>'}\n\`\`\` \n :stopwatch: took ${time}ms`);
+        return resolve(`${(!stdout && !stderr) ? 'Exec returned no output at all' : `Exec returned:${(stdout) ? `\nSTDOUT:\`\`\`\n${stdout}\n\`\`\`` : ''}${(stderr) ? `\nSTDERR:\`\`\`\n${stderr}\n\`\`\`` : ''}`}\n :stopwatch: took ${time}ms`);
       });
     });
   },

@@ -1,49 +1,20 @@
-async function setPrefix(ctx, prefix) {
-  await ctx.main.prefixHelper.setGuildPrefix(ctx.guild.id, prefix);
-
-  return `The bot's custom prefix has been set to \`${prefix}\` for this server`;
-}
-
-async function showPrefix(ctx) {
-  const prefix = await ctx.main.prefixHelper.getGuildPrefixFromDB(ctx.guild.id);
-
-  if (prefix) {
-    return `The bot's current custom prefix for this server is \`${prefix.prefix}\``;
-  }
-
-  return `The bot's default prefix is \`${ctx.main.prefixHelper.getDefaultPrefix()}\` (No custom prefix has been set for this server)`;
-}
-
 module.exports = {
   desc: 'display or manages the bot\'s server command prefix',
   guildOnly: true,
-  arguments: [
-    {
-      label: 'prefix',
-      type: 'string',
-      infinite: true,
-      optional: true,
-    },
-  ],
-  fn: async (ctx, prefix) => {
-    if (!prefix) {
-      return showPrefix(ctx);
-    }
-
-    if (!ctx.member.hasPermission('ADMINISTRATOR') && !ctx.isBotAdmin) {
-      return ctx.reply('Sorry, but only guild administrators can set a custom bot prefix.');
-    }
-
-    return setPrefix(ctx, prefix);
-  },
   subcommands: {
     show: {
       desc: 'displays the bot\'s current server command prefix',
-      fn: async ctx => showPrefix(ctx),
+      fn: async (context) => {
+        if (context.guildPrefixDisabled) {
+          return 'The prefix has been disabled for this server. To enable it, run `prefix enable`.';
+        }
+
+        return `The bot's current prefix for this server is \`${context.guildPrefix}\` ${(context.guildPrefix === context.main.prefixHelper.getDefaultPrefix()) ? '(This is the default prefix, to set a custom prefix run `prefix set`)' : ''}`;
+      },
     },
     set: {
       desc: 'sets the bot\'s server command prefix',
-      permission: 'ADMINISTRATOR',
+      permissions: 'ADMINISTRATOR',
       arguments: [
         {
           label: 'prefix',
@@ -51,21 +22,57 @@ module.exports = {
           infinite: true,
         },
       ],
-      fn: async (ctx, prefix) => setPrefix(ctx, prefix),
+      fn: async (context, prefix) => {
+        if (context.guildPrefixDisabled) {
+          return 'The prefix has been disabled for this server. To set a custom guild prefix, enable it first with `prefix enable`.';
+        }
+
+        await context.main.prefixHelper.setGuildPrefix(context.guild.id, prefix);
+
+        return `The bot's custom prefix has been set to \`${prefix}\` for this server`;
+      },
     },
     reset: {
       desc: 'resets the bot\'s server command prefix to it\'s default value',
-      permission: 'ADMINISTRATOR',
-      fn: async (ctx) => {
-        const prefix = await ctx.main.prefixHelper.getGuildPrefixFromDB(ctx.guild.id);
-
-        if (!prefix) {
-          return `There's currently no custom prefix set for this server. (The bot's default prefix is\`${ctx.main.prefixHelper.getDefaultPrefix()}\`)`;
+      permissions: 'ADMINISTRATOR',
+      fn: async (context) => {
+        if (context.guildPrefixDisabled) {
+          return 'The prefix has been disabled for this server. To reset a guild prefix, enable it first with `prefix enable`.';
         }
 
-        await ctx.main.prefixHelper.deleteGuildPrefix(ctx.guild.id);
+        if (context.guildPrefix === context.main.prefixHelper.getDefaultPrefix()) {
+          return 'There\'s currently no custom prefix set for this server.';
+        }
 
-        return `The bot's prefix for this server has been reset to it's default: \`${ctx.main.prefixHelper.getDefaultPrefix()}\``;
+        await context.main.prefixHelper.deleteGuildPrefix(context.guild.id);
+
+        return `The bot's prefix for this server has been reset to it's default: \`${context.main.prefixHelper.getDefaultPrefix()}\``;
+      },
+    },
+    disable: {
+      desc: 'disable the bot\'s server command prefix',
+      permissions: 'ADMINISTRATOR',
+      fn: async (context) => {
+        if (context.guildPrefixDisabled) {
+          return 'The bot\'s prefix for this server is already disabled.';
+        }
+
+        await context.main.prefixHelper.disableGuildPrefix(context.guild.id);
+
+        return 'The bot\'s prefix for this server has been disabled.';
+      },
+    },
+    enable: {
+      desc: 'enable the bot\'s server command prefix',
+      permissions: 'ADMINISTRATOR',
+      fn: async (context) => {
+        if (!context.guildPrefixDisabled) {
+          return 'The bot\'s prefix for this server was not disabled before.';
+        }
+
+        await context.main.prefixHelper.enableGuildPrefix(context.guild.id);
+
+        return 'The bot\'s prefix for this server has been enabled.';
       },
     },
   },

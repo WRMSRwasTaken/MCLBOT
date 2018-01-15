@@ -1,8 +1,8 @@
-Command / cubcommand parameters:
+Command / subcommand parameters:
 ----------------------------------------------------------------------------------------
 
 -name			the subcommand name (automatically set for commands by filename, automatically set for subcommands by the object key name)
--aliases			the command aliases
+-alias			the command aliases (either string or array of strings)
 -owner       bot admin only
 -permission    guild permission needed to execute the (sub-)command
 guarded			whether the command should be protected from disabling or not
@@ -15,7 +15,6 @@ subcommands		subcommands object (only on command) with the subcommand's name as 
 Command argument parameters:
 ----------------------------------------------------------------------------------------
 
-name				internal name
 label				argument label
 type				argument type to validate against
 max					max number for int / float, max string length for strings

@@ -22,7 +22,7 @@ module.exports = {
       type: 'string',
     },
   ],
-  fn: async (ctx, command) => reloadCommand(ctx, command),
+  // fn: async (ctx, command) => reloadCommand(ctx, command),
   subcommands: {
     command: {
       desc: 'reload a single bot command',

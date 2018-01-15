@@ -68,7 +68,7 @@ module.exports = {
       result = input;
     } else {
       try {
-        result = await dns.resolve4Async(input);
+        result = await dns.resolve4Async(input); // TODO: I should add v6 support
         result = result[0];
       } catch (ex) {
         return ctx.main.stringUtils.argumentsError(ctx, 0, 'Could not resolve hostname');
@@ -89,6 +89,10 @@ module.exports = {
       rdns = await dns.resolvePtrAsync(input);
     } catch (ex) {
       rdns = 'N/A';
+    }
+
+    if (!bgp.as) {
+      return ctx.main.stringUtils.argumentsError(ctx, 0, 'IP could not be found in routing table');
     }
 
     ctx.reply(`:mag: WHOIS information:\`\`\`

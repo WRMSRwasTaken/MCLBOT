@@ -48,7 +48,7 @@ module.exports = {
         const start = Date.now();
 
         try {
-          ctx.main.resourceLoader.loadCommandFiles(category, true);
+          ctx.main.resourceLoader.loadCategory(category, true);
         } catch (ex) {
           return reloadMsg.edit(`Error reloading command category \`${category}\`:\n\n${ex.message}`);
         }
@@ -64,7 +64,7 @@ module.exports = {
         const start = Date.now();
 
         try {
-          ctx.main.resourceLoader.loadCommandFiles(null, true);
+          ctx.main.resourceLoader.loadCategory(null, true);
         } catch (ex) {
           return reloadMsg.edit(`Error reloading bot commands:\n\n${ex.message}`);
         }

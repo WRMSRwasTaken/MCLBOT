@@ -10,15 +10,11 @@ init.initLog();
 
 init.initAPI();
 
-if (!main.api.shard) {
-  init.printLogo();
-}
-
 init.checkSettings();
 
 init.initBase();
 
-//init.createRPCSocket();
+// init.createRPCSocket();
 
 if (main.shardMaster) {
   init.launchShards();
