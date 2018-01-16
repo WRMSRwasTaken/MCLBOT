@@ -1,6 +1,6 @@
 ## MCLBOT command configuration
 
-This folder contains the files the bot commands. The filename represents the command name, which will be automatically registered.
+This folder contains the files the bot commands. The filename represents the command name, which will be automatically registered. A folder represents a command category.
 
 ### file parameters
 
