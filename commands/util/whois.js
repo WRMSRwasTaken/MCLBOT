@@ -20,7 +20,7 @@ function stringToHex(s) {
 }
 
 module.exports = {
-  desc: 'Display information about a certain IP-Address or FQDN',
+  description: 'Display information about a certain IP-Address or FQDN',
   arguments: [
     {
       label: 'ip | hostname',
@@ -70,7 +70,7 @@ module.exports = {
       try {
         result = await dns.resolve4Async(input); // TODO: I should add v6 support
         result = result[0];
-      } catch (ex) {
+      } catch (err) {
         return ctx.main.stringUtils.argumentsError(ctx, 0, 'Could not resolve hostname');
       }
     }
@@ -79,7 +79,7 @@ module.exports = {
 
     try {
       bgp = await xwhois.bgpInfo(result);
-    } catch (ex) {
+    } catch (err) {
       return 'An error occurred while retrieving IP information';
     }
 
@@ -87,7 +87,7 @@ module.exports = {
 
     try {
       rdns = await dns.resolvePtrAsync(input);
-    } catch (ex) {
+    } catch (err) {
       rdns = 'N/A';
     }
 

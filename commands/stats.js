@@ -2,7 +2,7 @@ const prettyMs = require('pretty-ms');
 const prettyBytes = require('pretty-bytes');
 
 module.exports = {
-  desc: 'Display some statistics about this bot',
+  description: 'Display some statistics about this bot',
   alias: ['statistics', 'status'],
   fn: (ctx) => {
     const embed = new ctx.main.Discord.MessageEmbed();

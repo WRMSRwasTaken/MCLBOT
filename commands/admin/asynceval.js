@@ -1,10 +1,8 @@
 const util = require('util');
 
 module.exports = {
-  desc: 'Runs the text asynchonously via JavaScript\'s eval',
+  description: 'Runs the text asynchonously via JavaScript\'s eval',
   alias: ['aeval'],
-  hide: true,
-  owner: true,
   arguments: [
     {
       label: 'code',

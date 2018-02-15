@@ -1,6 +1,6 @@
 module.exports = {
   alias: ['h', 'commands'],
-  desc: 'Displays the bot\'s help pages',
+  description: 'Displays the bot\'s help pages',
   arguments: [
     {
       label: 'command',

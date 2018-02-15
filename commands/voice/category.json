@@ -1,6 +1,7 @@
 {
-  "selfPermissions": [
+  "selfPermission": [
     "CONNECT",
     "SPEAK"
-  ]
+  ],
+  "hideTyping": true
 }

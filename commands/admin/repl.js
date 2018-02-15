@@ -1,7 +1,5 @@
 module.exports = {
-  desc: 'starts an interactive REPL session',
-  hide: true,
-  owner: true,
+  description: 'starts an interactive REPL session',
   alias: 'run',
   fn: (message, param, main) => {
     if (!main.replSessions) {

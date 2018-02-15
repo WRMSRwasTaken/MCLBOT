@@ -1,7 +1,5 @@
 module.exports = {
-  desc: 'says something in the specified channel',
-  hide: true,
-  owner: true,
+  description: 'says something in the specified channel',
   arguments: [
     {
       label: 'channel id',
@@ -27,6 +25,6 @@ module.exports = {
     const cmsg = await channel.send(text);
     ctx.message.replies.push(cmsg);
 
-    return ctx.reply(`Message sent to channel \`#${channel.name}\` (ID: ${channel.id}) on server \`${channel.guild.name}\` (ID: ${channel.guild.id})`);
+    return ctx.reply(`Message sent to channel <#${channel.id}> (ID: ${channel.id}) on server \`${channel.guild.name}\` (ID: ${channel.guild.id})`);
   },
 };

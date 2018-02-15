@@ -1,6 +1,6 @@
 module.exports = {
   alias: ['invert'],
-  desc: 'replace every pixel with its complementary color',
+  description: 'replace every pixel with its complementary color',
   arguments: [
     {
       label: 'url',

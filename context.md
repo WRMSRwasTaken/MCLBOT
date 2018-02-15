@@ -4,7 +4,6 @@ The context object gets passed to numerous internal functions aswell as to the a
 
 The context object has the following variables and functions:
 
-
 - `main` the main bot object
 - `message` the [Message](https://discord.js.org/#/docs/main/master/class/Message)-object the bot reacts to
 - `author` the [User](https://discord.js.org/#/docs/main/master/class/User)-object who sent the message

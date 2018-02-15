@@ -58,7 +58,7 @@ const races = {
 };
 
 module.exports = {
-  desc: 'wow character',
+  description: 'wow character',
   arguments: [
     {
       label: 'name',
@@ -91,16 +91,16 @@ module.exports = {
         method: 'get',
         url,
       });
-    } catch (ex) {
-      if (ex.response && ex.response.data && ex.response.data) {
-        if (ex.response.data.reason === 'Realm not found.') {
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data) {
+        if (err.response.data.reason === 'Realm not found.') {
           return ctx.main.stringUtils.argumentsError(ctx, 1, 'Realm not found');
-        } else if (ex.response.data.reason === 'Character not found.') {
+        } else if (err.response.data.reason === 'Character not found.') {
           return ctx.main.stringUtils.argumentsError(ctx, 0, 'Character not found');
         }
       }
 
-      winston.error('Error while retrieving data from the Battle.net API', ex.message);
+      winston.error('Error while retrieving data from the Battle.net API', err.message);
 
       return 'An error occurred while retrieving data from the Battle.net API';
     }

@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'Replies with the bot\'s ping time',
+  description: 'Replies with the bot\'s ping time',
   fn: async (ctx) => {
     const start = Date.now();
 

@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'kicks an user from the server',
+  description: 'kicks an user from the server',
   permission: 'KICK_MEMBERS',
   guildOnly: true,
   arguments: [

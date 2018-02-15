@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'XD',
+  description: 'XD',
   arguments: [
     {
       label: '1',

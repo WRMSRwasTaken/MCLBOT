@@ -2,9 +2,7 @@ const childProcess = require('child_process');
 const Bluebird = require('bluebird');
 
 module.exports = {
-  desc: 'Runs a system command',
-  hide: true,
-  owner: true,
+  description: 'Runs a system command',
   arguments: [
     {
       label: 'command',

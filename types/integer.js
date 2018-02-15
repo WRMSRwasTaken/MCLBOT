@@ -1,6 +1,6 @@
 module.exports = {
   parse: (value, argument) => {
-    const integer = Number.parseInt(value, 10);
+    const integer = parseInt(value, 10);
 
     if (Number.isNaN(integer)) {
       throw new Error('Invalid integer value');

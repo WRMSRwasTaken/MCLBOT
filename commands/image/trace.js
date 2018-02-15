@@ -1,6 +1,6 @@
 module.exports = {
   alias: ['draw'],
-  desc: 'edge-traces an image',
+  description: 'edge-traces an image',
   arguments: [
     {
       label: 'url',

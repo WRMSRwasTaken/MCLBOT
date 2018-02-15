@@ -1,12 +1,12 @@
 module.exports = {
   parse: async (value, argument, context) => {
-    const user = await context.main.userHelper.getUser(context.message, value);
+    const user = await context.main.userHelper.getUser(context, value);
 
     if (user) {
       return user;
     }
 
-    throw new Error('No matching users found');
+    throw new Error((context.isDM) ? 'Invalid user ID entered (needed for this command in DM)' : 'No matching users found');
   },
 
   default: context => context.author,

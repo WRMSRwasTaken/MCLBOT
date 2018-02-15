@@ -2,7 +2,7 @@ const prettyMs = require('pretty-ms');
 
 module.exports = {
   name: 'heartbeat',
-  desc: 'Displays statistics about the bot\'s websocket heartbeats to the discord api',
+  description: 'Displays statistics about the bot\'s websocket heartbeats to the discord api',
   alias: ['hb'],
   fn: (ctx) => {
     const pings = ctx.main.api.pings;

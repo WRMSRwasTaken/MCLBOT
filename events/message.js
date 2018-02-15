@@ -20,10 +20,12 @@ module.exports = {
           },
         },
       ]);
+
+      main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', 31557600);
     }
 
     main.commandHandler.handleMessageEvent(message);
 
-    // REPL CODE HERE
+    // TODO: REPL CODE HERE
   },
 };

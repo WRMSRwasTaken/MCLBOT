@@ -1,9 +1,9 @@
 module.exports = {
-  desc: 'display or manages the bot\'s server command prefix',
+  description: 'display or manages the bot\'s server command prefix',
   guildOnly: true,
   subcommands: {
     show: {
-      desc: 'displays the bot\'s current server command prefix',
+      description: 'displays the bot\'s current server command prefix',
       fn: async (context) => {
         if (context.guildPrefixDisabled) {
           return 'The prefix has been disabled for this server. To enable it, run `prefix enable`.';
@@ -13,12 +13,13 @@ module.exports = {
       },
     },
     set: {
-      desc: 'sets the bot\'s server command prefix',
-      permissions: 'ADMINISTRATOR',
+      description: 'sets the bot\'s server command prefix',
+      permission: 'ADMINISTRATOR',
       arguments: [
         {
           label: 'prefix',
           type: 'string',
+          max: 255,
           infinite: true,
         },
       ],
@@ -33,8 +34,8 @@ module.exports = {
       },
     },
     reset: {
-      desc: 'resets the bot\'s server command prefix to it\'s default value',
-      permissions: 'ADMINISTRATOR',
+      description: 'resets the bot\'s server command prefix to it\'s default value',
+      permission: 'ADMINISTRATOR',
       fn: async (context) => {
         if (context.guildPrefixDisabled) {
           return 'The prefix has been disabled for this server. To reset a guild prefix, enable it first with `prefix enable`.';
@@ -50,8 +51,8 @@ module.exports = {
       },
     },
     disable: {
-      desc: 'disable the bot\'s server command prefix',
-      permissions: 'ADMINISTRATOR',
+      description: 'disable the bot\'s server command prefix',
+      permission: 'ADMINISTRATOR',
       fn: async (context) => {
         if (context.guildPrefixDisabled) {
           return 'The bot\'s prefix for this server is already disabled.';
@@ -63,8 +64,8 @@ module.exports = {
       },
     },
     enable: {
-      desc: 'enable the bot\'s server command prefix',
-      permissions: 'ADMINISTRATOR',
+      description: 'enable the bot\'s server command prefix',
+      permission: 'ADMINISTRATOR',
       fn: async (context) => {
         if (!context.guildPrefixDisabled) {
           return 'The bot\'s prefix for this server was not disabled before.';

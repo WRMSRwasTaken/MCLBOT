@@ -1,7 +1,5 @@
 module.exports = {
-  desc: 'says something in the current channel',
-  hide: true,
-  owner: true,
+  description: 'says something in the current channel',
   arguments: [
     {
       label: 'message',

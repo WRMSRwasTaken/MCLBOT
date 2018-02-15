@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'swirl image pixels about the center',
+  description: 'swirl image pixels about the center',
   arguments: [
     {
       label: 'url',

@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'bans an user from the server',
+  description: 'bans an user from the server',
   permission: 'BAN_MEMBERS',
   guildOnly: true,
   arguments: [
@@ -10,7 +10,7 @@ module.exports = {
     {
       label: 'days',
       type: 'integer',
-      skip: true,
+      skippable: true,
       optional: true,
     },
     {

@@ -1,9 +1,7 @@
 const util = require('util');
 
 module.exports = {
-  desc: 'Runs the text via JavaScript\'s eval',
-  hide: true,
-  owner: true,
+  description: 'Runs the text via JavaScript\'s eval',
   arguments: [
     {
       label: 'code',

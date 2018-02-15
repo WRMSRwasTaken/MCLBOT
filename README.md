@@ -6,7 +6,18 @@ This project is a work in progress, actually I'm working more on the bot "framew
 
 To invite this bot to your Discord server, [click this link.](https://discordapp.com/oauth2/authorize?client_id=249732355030384641&scope=bot&permissions=8)
 
-### Thanks to
+## Documentation
+
+To see how commands, events, tasks or types are structured, view the documentation in their respective folders:
+
+- [commands](commands/README.md)
+- [events](events/README.md)
+- [tasks](tasks/README.md)
+- [types](types/README.md)
+
+For the context object, see the [context documentation](context.md)
+
+## Thanks to
 
 - [matmen](https://github.com/matmen) for open-sourcing [fbot](https://github.com/matmen/fbot) and helping me out with some JavaScript questions
 - [NotSoSuper](https://github.com/NotSoSuper) for letting me spam his Discord server for testing purposes

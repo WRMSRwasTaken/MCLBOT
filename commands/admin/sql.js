@@ -1,7 +1,5 @@
 module.exports = {
-  desc: 'Runs a SQL command against the bot\'s database',
-  hide: true,
-  owner: true,
+  description: 'Runs a SQL command against the bot\'s database',
   arguments: [
     {
       label: 'command',

@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'Lists all known users with this discriminator',
+  description: 'Lists all known users with this discriminator',
   arguments: [
     {
       label: 'discriminator',

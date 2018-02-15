@@ -3,7 +3,7 @@ const winston = require('winston');
 module.exports = {
   alias: ['stoll'],
   guildOnly: true,
-  desc: 'plays a random quote of axel stoll in voice chat the invoker is currently in',
+  description: 'plays a random quote of axel stoll in voice chat the invoker is currently in',
   fn: async (ctx) => {
     try {
       await ctx.main.audioHelper.playRandomSoundFile(ctx, './resources/audio/axelstoll');

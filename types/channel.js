@@ -1,34 +1,56 @@
-const channelRegex = new RegExp('^(?:<#)?([0-9]+)>?$');
+const XRegExp = require('xregexp');
+const safe = require('safe-regex');
+const winston = require('winston');
+
+const channelRegex = XRegExp('^(<#)?(?<channelID>\\d+)>?$', 'is');
 
 module.exports = {
   parse: (value, argument, context) => {
-    const channelRegexExec = channelRegex.exec(value);
+    winston.debug('Trying to get a channel from supplied string:', value);
 
-    if (channelRegexExec) {
-      const mentionedChannel = context.guild.channels.get(channelRegexExec[1]);
+    const channelResult = XRegExp.exec(value, channelRegex);
+
+    if (channelResult && channelResult.channelID) { // channel mention or raw channel id
+      winston.debug('Is mention or channel id! Getting channel from guild channel list...');
+
+      const mentionedChannel = context.guild.channels.get(channelResult.channelID);
+
       if (mentionedChannel) {
         return mentionedChannel;
       }
+
+      winston.debug('Channel mention or channel id could not be found in the current guild!');
       throw new Error('Unknown channel supplied');
     }
 
-    const channelMatches = context.guild.channels.filter((channel) => {
-      if (channel.name.toLowerCase().includes(value.toLowerCase())) {
-        return true;
-      }
+    winston.debug('Not a channel mention or channel id! Searching guild text channel list...');
 
-      return false;
-    });
+    let channelInputRegex;
 
-    if (channelMatches.length === 1) {
-      return channelMatches[0];
+    try {
+      channelInputRegex = XRegExp(value, 'i');
+    } catch (ex) {
+      throw new Error('Invalid regular expression');
     }
 
-    if (channelMatches.length === 0) {
+    if (!safe(value)) {
+      throw new Error('Catastrophic backtracking detected');
+    }
+
+    const channelMatches = context.guild.channels
+      .filter(channel => channel.type === 'text' && XRegExp.exec(channel.name, channelInputRegex));
+
+    winston.debug('Text channels found:', channelMatches.size);
+
+    if (channelMatches.size === 1) {
+      return channelMatches.first();
+    }
+
+    if (channelMatches.size === 0) {
       throw new Error('No channels have been found');
     }
 
-    throw new Error('Multiple channels have been found Please be more specific');
+    throw new Error('Multiple channels have been found, please be more specific');
   },
 
   default: context => context.channel,

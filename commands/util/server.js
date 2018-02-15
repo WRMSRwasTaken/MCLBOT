@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'prints information the current discord server',
+  description: 'prints information the current discord server',
   alias: ['serverinfo', 's', 'guild', 'g'],
   guildOnly: true,
   fn: async (ctx) => {

@@ -5,8 +5,8 @@ async function reloadCommand(ctx, command) {
 
   try {
     ctx.main.resourceLoader.loadCommand(command, null, true);
-  } catch (ex) {
-    return reloadMsg.edit(`Error reloading command \`${command}\`:\n\n${ex.message}`);
+  } catch (err) {
+    return reloadMsg.edit(`Error reloading command \`${command}\`:\n\n${err.message}`);
   }
 
   return reloadMsg.edit(`Command \`${command}\` reloaded in ${(Date.now() - start)}ms`);
@@ -15,7 +15,7 @@ async function reloadCommand(ctx, command) {
 module.exports = {
   hide: true,
   owner: true,
-  desc: 'load a command file',
+  description: 'load a command file',
   arguments: [
     {
       label: 'command',
@@ -25,7 +25,7 @@ module.exports = {
   fn: async (ctx, command) => reloadCommand(ctx, command),
   subcommands: {
     command: {
-      desc: 'reload a single bot command',
+      description: 'reload a single bot command',
       arguments: [
         {
           label: 'command',
@@ -35,7 +35,7 @@ module.exports = {
       fn: async (ctx, command) => reloadCommand(ctx, command),
     },
     category: {
-      desc: 'reload all bot commands in the given category',
+      description: 'reload all bot commands in the given category',
       arguments: [
         {
           label: 'category',
@@ -49,15 +49,15 @@ module.exports = {
 
         try {
           ctx.main.resourceLoader.loadCategory(category, true);
-        } catch (ex) {
-          return reloadMsg.edit(`Error reloading command category \`${category}\`:\n\n${ex.message}`);
+        } catch (err) {
+          return reloadMsg.edit(`Error reloading command category \`${category}\`:\n\n${err.message}`);
         }
 
         return reloadMsg.edit(`All commands in the category \`${category}\` reloaded in ${(Date.now() - start)}ms`);
       },
     },
     all: {
-      desc: 'reload all bot commands',
+      description: 'reload all bot commands',
       fn: async (ctx) => {
         const reloadMsg = await ctx.reply('Reloading all bot commands...');
 
@@ -65,8 +65,8 @@ module.exports = {
 
         try {
           ctx.main.resourceLoader.loadCategory(null, true);
-        } catch (ex) {
-          return reloadMsg.edit(`Error reloading bot commands:\n\n${ex.message}`);
+        } catch (err) {
+          return reloadMsg.edit(`Error reloading bot commands:\n\n${err.message}`);
         }
 
         return reloadMsg.edit(`All bot commands reloaded in ${(Date.now() - start)}ms`);

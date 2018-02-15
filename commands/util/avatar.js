@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'get an user\'s avatar',
+  description: 'get an user\'s avatar',
   arguments: [
     {
       label: 'user',

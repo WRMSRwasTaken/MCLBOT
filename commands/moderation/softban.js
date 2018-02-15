@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'softly bans an user from the server (banning a member for deleting his/her messages and unbanning directly afterwards)',
+  description: 'softly bans an user from the server (banning a member for deleting his/her messages and unbanning directly afterwards)',
   permission: 'BAN_MEMBERS',
   guildOnly: true,
   arguments: [
@@ -10,7 +10,7 @@ module.exports = {
     {
       label: 'days',
       type: 'integer',
-      skip: true,
+      skippable: true,
       optional: true,
     },
     {

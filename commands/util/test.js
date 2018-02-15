@@ -1,5 +1,5 @@
 module.exports = {
   name: 'test',
-  desc: 'Just a test',
+  description: 'Just a test',
   fn: () => 'Is it working?',
 };

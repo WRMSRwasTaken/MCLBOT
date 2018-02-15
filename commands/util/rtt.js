@@ -1,7 +1,7 @@
 const winston = require('winston');
 
 module.exports = {
-  desc: 'Measures the latency of sending a text message and recieving it',
+  description: 'Measures the latency of sending a text message and recieving it',
   fn: async (ctx) => {
     if (!ctx.main.pings) {
       ctx.main.pings = {};

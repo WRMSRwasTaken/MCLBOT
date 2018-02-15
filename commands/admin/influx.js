@@ -1,7 +1,5 @@
 module.exports = {
-  desc: 'Runs a SQL-like command against the bot\'s influx database',
-  hide: true,
-  owner: true,
+  description: 'Runs a SQL-like command against the bot\'s influx database',
   arguments: [
     {
       label: 'command',

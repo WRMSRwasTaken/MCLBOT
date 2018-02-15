@@ -1,5 +1,5 @@
 module.exports = {
-  desc: 'Leave the current server',
+  description: 'Leave the current server',
   guildOnly: true,
   permission: 'ADMINISTRATOR',
   fn: async (ctx) => {

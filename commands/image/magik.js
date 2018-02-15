@@ -1,6 +1,6 @@
 module.exports = {
   alias: ['imagemagic', 'imagemagick', 'magic', 'magick', 'cas', 'liquid'],
-  desc: 'rescales an image with seam-carving multiple times leading to image distortion',
+  description: 'rescales an image with seam-carving multiple times leading to image distortion',
   arguments: [
     {
       label: 'url | user',

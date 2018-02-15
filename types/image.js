@@ -49,15 +49,15 @@ async function getLastImage(ctx) {
 }
 
 module.exports = {
-  parse: async (value, argument, context) => {
+  parse: async (value, argument, context) => { // TODO: emoji support
     if (validator.isURL(value)) {
       return value;
     }
 
-    const user = await context.main.userHelper.getUser(context.message, value);
+    const user = await context.main.userHelper.getUser(context, value);
 
     if (user) {
-      return user.displayAvatarURL();
+      return user.displayAvatarURL({ size: 2048 });
     }
 
     throw new Error('No matching users found');

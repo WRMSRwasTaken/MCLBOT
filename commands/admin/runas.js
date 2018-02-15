@@ -1,9 +1,7 @@
 const winston = require('winston');
 
 module.exports = {
-  desc: 'Run a command as a specific guild member',
-  hide: true,
-  owner: true,
+  description: 'Run a command as a specific guild member',
   guildOnly: true,
   arguments: [
     {
@@ -14,7 +12,6 @@ module.exports = {
       label: 'command',
       type: 'string',
       infinite: true,
-      optional: true,
     },
   ],
   fn: async (ctx, member, command) => {
