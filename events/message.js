@@ -1,6 +1,6 @@
 module.exports = {
   fn: (main, message) => {
-    if (message.guild && !message.author.bot) {
+    if (message.guild) {
       main.prometheusMetrics.influxWrites.inc();
 
       main.influx.writePoints([
@@ -20,11 +20,11 @@ module.exports = {
           },
         },
       ]);
+
+      main.prometheusMetrics.redisWrites.inc();
+
+      main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', 31557600);
     }
-
-    main.prometheusMetrics.redisWrites.inc();
-
-    main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', 31557600);
 
     main.commandHandler.handleMessageEvent(message);
 
