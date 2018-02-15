@@ -20,9 +20,11 @@ module.exports = {
           },
         },
       ]);
-
-      main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', 31557600);
     }
+
+    main.prometheusMetrics.redisWrites.inc();
+
+    main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', 31557600);
 
     main.commandHandler.handleMessageEvent(message);
 

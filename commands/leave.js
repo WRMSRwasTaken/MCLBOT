@@ -3,7 +3,7 @@ module.exports = {
   guildOnly: true,
   permission: 'ADMINISTRATOR',
   fn: async (ctx) => {
-    const msg = await ctx.reply('Do you really me to leave your server?');
+    const msg = await ctx.reply('Do you really want me to leave this server?');
 
     const confirm = ctx.main.confirmationHelper.initConfirm(msg, ctx.author);
 
