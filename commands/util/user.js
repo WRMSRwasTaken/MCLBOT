@@ -24,10 +24,7 @@ module.exports = {
 
     const embed = new ctx.main.Discord.MessageEmbed();
 
-    embed.author = {
-      name: user.tag,
-      icon_url: user.displayAvatarURL(),
-    };
+    embed.setAuthor(user.tag, user.displayAvatarURL());
 
     embed.setThumbnail(user.displayAvatarURL());
 

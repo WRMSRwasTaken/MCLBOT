@@ -20,4 +20,4 @@ The context object has the following variables and functions:
 - `guildPrefixDisabled` true, if the guild has disabled the prefix system (only mentions work, ignored in selfbot mode)
 - `guildPrefix` the bot's guild prefix (`undefined` if message has been sent via DM and the bot is not running in selfbot mode or if the guild has the prefix disabled, else it is set to it's default prefix)
 - `startsWithPrefix` if the message sent in a guild channel, in selfbot mode in DM channels aswell, starts with the bot's guild prefix (`undefined` if not sent in a guild without selfbot mode)
-- `reply()` wrapper-function around `send()` to answer / output command output. This should be always be preferred over `channel.send()` because this function allows the bot to handle edits and permission problems more efficiently.
+- `reply()` wrapper-function around `channel.send()` to answer / output command output. This should be always be preferred over `channel.send()` because this function allows the bot to handle edits and permission problems more efficiently.

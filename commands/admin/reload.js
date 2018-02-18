@@ -26,6 +26,7 @@ module.exports = {
   subcommands: {
     command: {
       description: 'reload a single bot command',
+      alias: 'c',
       arguments: [
         {
           label: 'command',

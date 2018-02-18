@@ -1,3 +1,5 @@
+const nconf = require('nconf');
+
 module.exports = {
   fn: (main, message) => {
     if (message.guild) {
@@ -23,7 +25,7 @@ module.exports = {
 
       main.prometheusMetrics.redisWrites.inc();
 
-      main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', 31557600);
+      main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', nconf.get('bot:redisStoreTTL'));
     }
 
     main.commandHandler.handleMessageEvent(message);

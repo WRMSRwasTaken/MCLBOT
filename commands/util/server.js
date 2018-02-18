@@ -5,10 +5,7 @@ module.exports = {
   fn: async (ctx) => {
     const embed = new ctx.main.Discord.MessageEmbed();
 
-    embed.author = {
-      name: ctx.guild.name,
-      icon_url: ctx.guild.iconURL(),
-    };
+    embed.setAuthor(ctx.guild.name, ctx.guild.iconURL());
 
     embed.setThumbnail(ctx.guild.iconURL());
 

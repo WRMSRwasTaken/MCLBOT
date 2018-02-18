@@ -1,6 +1,6 @@
 # MCLBOT
 
-This is a Discord bot I work on sporadically to learn both [Node.js](http://nodejs.org) and [discord.js](https://github.com/hydrabolt/discord.js).
+This is a Discord bot I work on sporadically to learn both [Node.js](http://nodejs.org) and [discord.js](https://discord.js.org).
 
 This project is a work in progress, actually I'm working more on the bot "framework" itself than writing / adding bot commands.
 

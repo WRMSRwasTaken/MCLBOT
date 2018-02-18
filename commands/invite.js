@@ -1,7 +1,6 @@
 const axios = require('axios');
 
 module.exports = {
-  name: 'invite',
   description: 'Prints an OAuth link to invite this bot to your discord server, or if an invite token is provided print some information about it',
   arguments: [
     {
