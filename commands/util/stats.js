@@ -6,6 +6,7 @@ module.exports = {
     {
       label: 'member',
       type: 'member',
+      optional: true,
     },
   ],
   fn: async (ctx, member) => {
