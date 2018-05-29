@@ -3,7 +3,7 @@ module.exports = {
   description: 'replace every pixel with its complementary color',
   arguments: [
     {
-      label: 'url',
+      label: 'url | user | emoji',
       type: 'image',
       optional: true,
     },

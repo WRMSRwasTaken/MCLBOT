@@ -2,7 +2,7 @@ module.exports = {
   description: 'swirl image pixels about the center',
   arguments: [
     {
-      label: 'url',
+      label: 'url | user | emoji',
       type: 'image',
       optional: true,
     },

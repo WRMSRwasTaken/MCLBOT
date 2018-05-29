@@ -3,7 +3,7 @@ module.exports = {
   description: 'rescales an image with seam-carving multiple times leading to image distortion',
   arguments: [
     {
-      label: 'url | user',
+      label: 'url | user | emoji',
       type: 'image',
       optional: true,
     },
