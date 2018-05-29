@@ -9,6 +9,7 @@
     "no-param-reassign": "off", // e.g. the context object needs to be modified a lot
     "no-await-in-loop": "off", // we need that for our command parser
     "no-restricted-syntax":"off", // this is literally just for allowing for loops instead of using forEach
-    "no-bitwise": "off" // why isn't this allowed?!
+    "no-bitwise": "off", // why isn't this allowed?!
+    "no-plusplus": "off" // same
   }
 }
