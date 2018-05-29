@@ -35,7 +35,7 @@ module.exports = {
       if (channel.type === 'voice') voiceChannels += 1;
 
       return (channel.permissionsFor(ctx.guild.me).has('VIEW_CHANNEL') && channel.type === 'text');
-    }).sort((c1, c2) => c1.position - c2.position).first();
+    }).sort((c1, c2) => c1.rawPosition - c2.rawPosition).first();
 
     embed.addField(`Channels (${textChannels + voiceChannels})`, `Text: ${textChannels}, Voice: ${voiceChannels}`, true);
 
@@ -44,21 +44,49 @@ module.exports = {
     embed.addField('Roles', ctx.guild.roles.size, true);
 
     let emojiString = '';
+    let animatedEmojiString = '';
+
     let countEmojis = 0;
+    let totalEmojis = 0;
+
+    let countAnimatedEmojis = 0;
+    let totalAnimatedEmojis = 0;
+
     let moreEmojis = false;
+    let moreAnimatedEmojis = false;
 
     if (ctx.guild.emojis.size) {
       ctx.guild.emojis.forEach((emoji) => {
-        const newEmoji = `<:${emoji.name}:${emoji.id}>`;
-        if (emojiString.length + newEmoji.length <= 1024) {
-          emojiString += newEmoji;
-          countEmojis += 1;
+        const newEmoji = emoji.toString();
+
+        if (emoji.animated) {
+          if (animatedEmojiString.length + newEmoji.length <= 1024) {
+            animatedEmojiString += newEmoji;
+            countAnimatedEmojis += 1;
+          } else {
+            moreAnimatedEmojis = true;
+          }
+
+          totalAnimatedEmojis += 1;
         } else {
-          moreEmojis = true;
+          if (emojiString.length + newEmoji.length <= 1024) {
+            emojiString += newEmoji;
+            countEmojis += 1;
+          } else {
+            moreEmojis = true;
+          }
+
+          totalEmojis += 1;
         }
       });
 
-      embed.addField(`Emojis (${ctx.guild.emojis.size})${(moreEmojis) ? ` (only the first ${countEmojis} are shown)` : ''}`, emojiString);
+      if (countEmojis) {
+        embed.addField(`Emojis (${totalEmojis})${(moreEmojis) ? ` (only the first ${countEmojis} are shown)` : ''}`, emojiString);
+      }
+
+      if (countAnimatedEmojis) {
+        embed.addField(`Animated emojis (${totalAnimatedEmojis})${(moreAnimatedEmojis) ? ` (only the first ${countAnimatedEmojis} are shown)` : ''}`, animatedEmojiString);
+      }
     }
 
     ctx.reply({

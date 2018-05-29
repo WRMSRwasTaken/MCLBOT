@@ -1,6 +1,6 @@
 module.exports = {
-  parse: (value, argument, context) => {
-    const member = context.main.userHelper.getGuildMember(context, value);
+  parse: async (value, argument, context) => {
+    const member = await context.main.userHelper.getGuildMember(context, value);
 
     if (member) {
       return member;

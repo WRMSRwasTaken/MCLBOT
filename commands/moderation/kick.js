@@ -1,22 +1,30 @@
 module.exports = {
-  description: 'kicks an user from the server',
+  description: 'kicks a user from the server',
   permission: 'KICK_MEMBERS',
+  selfPermission: 'KICK_MEMBERS',
   guildOnly: true,
   arguments: [
     {
       label: 'member',
       type: 'member',
-    },
-    {
-      label: 'reason',
-      type: 'string',
       infinite: true,
-      optional: true,
     },
   ],
-  fn: async (ctx, member, reason) => {
+  flags: {
+    reason: {
+      label: 'reason',
+      type: 'string',
+      short: 'r',
+      infinite: true,
+    },
+  },
+  fn: async (ctx, member, flags) => {
+    if (!ctx.main.userHelper.checkGuildMemberHierarchy(ctx, member)) {
+      return `Sorry, but the member \`${member.user.tag}\` is above your top role or the same.`;
+    }
+
     if (member.user.id === ctx.main.api.user.id) {
-      return 'Sorry, but I cannot kick myself.';
+      return 'Sorry, but I won\'t kick myself. If you want me to leave, use the `leave` command.';
     }
 
     if (!member.kickable) {
@@ -36,7 +44,7 @@ module.exports = {
     });
 
     confirm.on('true', async () => {
-      await member.kick(reason);
+      await member.kick(flags.reason);
 
       msg.edit(`Member \`${member.user.tag}\` has been kicked.`);
     });

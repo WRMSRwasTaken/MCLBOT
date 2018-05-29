@@ -1,5 +1,5 @@
 module.exports = {
-  description: 'get an user\'s avatar',
+  description: 'get a user\'s avatar',
   arguments: [
     {
       label: 'user',
@@ -7,5 +7,12 @@ module.exports = {
       optional: true,
     },
   ],
+  flags: {
+    size: {
+      label: 'image size',
+      short: 's',
+      type: 'integer',
+    },
+  },
   fn: async (ctx, user) => `\`${user.tag}\`'s avatar is: ${user.displayAvatarURL({ size: 2048 })}`,
 };

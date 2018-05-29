@@ -1,6 +1,7 @@
 module.exports = {
   description: 'display or manages the bot\'s server command prefix',
   guildOnly: true,
+  fn: 'show',
   subcommands: {
     show: {
       description: 'displays the bot\'s current server command prefix',

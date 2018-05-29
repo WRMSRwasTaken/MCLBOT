@@ -1,28 +1,8 @@
-async function reloadCommand(ctx, command) {
-  const reloadMsg = await ctx.reply(`Reloading command \`${command}\`...`);
-
-  const start = Date.now();
-
-  try {
-    ctx.main.resourceLoader.loadCommand(command, null, true);
-  } catch (err) {
-    return reloadMsg.edit(err.message);
-  }
-
-  return reloadMsg.edit(`Command \`${command}\` reloaded in ${(Date.now() - start)}ms`);
-}
-
 module.exports = {
   hide: true,
   owner: true,
   description: 'reload a single bot command',
-  arguments: [
-    {
-      label: 'command',
-      type: 'string',
-    },
-  ],
-  // fn: async (ctx, command) => reloadCommand(ctx, command),
+  fn: 'command',
   subcommands: {
     command: {
       description: 'reload a single bot command',
@@ -33,7 +13,19 @@ module.exports = {
           type: 'string',
         },
       ],
-      fn: async (ctx, command) => reloadCommand(ctx, command),
+      fn: async (ctx, command) => {
+        const reloadMsg = await ctx.reply(`Reloading command \`${command}\`...`);
+
+        const start = Date.now();
+
+        try {
+          ctx.main.resourceLoader.loadCommand(command, null, true);
+        } catch (err) {
+          return reloadMsg.edit(err.message);
+        }
+
+        return reloadMsg.edit(`Command \`${command}\` reloaded in ${(Date.now() - start)}ms`);
+      },
     },
     category: {
       description: 'reload all bot commands in the given category',

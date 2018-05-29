@@ -1,5 +1,4 @@
-
-module.exports = function (sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   const guild_settings = sequelize.define('guild_settings', {
     guild_id: {
       allowNull: false,
@@ -18,11 +17,9 @@ module.exports = function (sequelize, DataTypes) {
   }, {
     underscored: true,
     tableName: 'guild_settings',
-    classMethods: {
-      associate(models) {
-        // associations can be defined here
-      },
-    },
   });
+  guild_settings.associate = (models) => {
+    // associations can be defined here
+  };
   return guild_settings;
 };

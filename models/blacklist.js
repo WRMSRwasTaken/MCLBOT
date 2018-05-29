@@ -1,5 +1,4 @@
-
-module.exports = function (sequelize, DataTypes) {
+module.exports = (sequelize, DataTypes) => {
   const blacklist = sequelize.define('blacklist', {
     guild_id: {
       allowNull: false,
@@ -19,11 +18,9 @@ module.exports = function (sequelize, DataTypes) {
   }, {
     underscored: true,
     tableName: 'blacklist',
-    classMethods: {
-      associate(models) {
-        // associations can be defined here
-      },
-    },
   });
+  blacklist.associate = (models) => {
+    // associations can be defined here
+  };
   return blacklist;
 };

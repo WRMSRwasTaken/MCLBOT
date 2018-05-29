@@ -10,7 +10,7 @@ module.exports = {
 
     const channelResult = XRegExp.exec(value, channelRegex);
 
-    if (channelResult && channelResult.channelID) { // channel mention or raw channel id
+    if (channelResult) { // channel mention or raw channel id
       winston.debug('Is mention or channel id! Getting channel from guild channel list...');
 
       const mentionedChannel = context.guild.channels.get(channelResult.channelID);

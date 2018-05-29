@@ -2,7 +2,7 @@ module.exports = {
   description: 'Shut down the bot',
   alias: ['exit', 'quit', 'die'],
   fn: async (ctx) => {
-    const msg = await ctx.reply('Confirm bot shutdown');
+    const msg = await ctx.reply('Confirm bot shutdown:');
 
     const confirm = ctx.main.confirmationHelper.initConfirm(msg, ctx.author);
 

@@ -16,7 +16,8 @@ module.exports = {
     const start = Date.now();
 
     try {
-      evalOutput = await eval(code);
+      // evalOutput = await eval(code);
+      evalOutput = await eval(`(async()=>{${code}})()`);
     } catch (err) {
       return `There was an error while asynchonously eval-ing your input:\n\`\`\`\n${err}\n\`\`\``;
     }

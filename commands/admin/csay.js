@@ -15,11 +15,11 @@ module.exports = {
     const channel = ctx.main.api.channels.get(channelid);
 
     if (!channel) {
-      return ctx.main.stringUtils.argumentsError(ctx, 0, 'Invalid channel ID (the bot needs to be on that server)');
+      return ctx.main.stringUtils.argumentError(ctx, 0, 'Invalid channel ID (the bot needs to be on that server)');
     }
 
     if (!channel.permissionsFor(channel.guild.me).has('SEND_MESSAGES')) {
-      return ctx.main.stringUtils.argumentsError('csay', 0, 'Can not send the message to this channel. Missing `SEND_MESSAGES` permission');
+      return ctx.main.stringUtils.argumentError('csay', 0, 'Can not send the message to this channel. Missing `SEND_MESSAGES` permission');
     }
 
     const cmsg = await channel.send(text);

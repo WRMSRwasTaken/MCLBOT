@@ -6,11 +6,15 @@ module.exports = {
     {
       label: 'member',
       type: 'member',
+      infinite: true,
       optional: true,
     },
   ],
   fn: async (ctx, member) => {
+    ctx.main.prometheusMetrics.influxWrites.inc();
+
     let memberStats = await ctx.main.influx.query(`select count(message_id) as messages, sum(attachment_count) as attachments, sum(char_count) as chars, sum(user_mention_count) as mentionedUsers, sum(word_count) as words from member_message where user_id = ${ctx.main.Influx.escape.stringLit(member.user.id)} and guild_id = ${ctx.main.Influx.escape.stringLit(ctx.guild.id)} and time > now() - 1d`);
+
     memberStats = memberStats[0];
 
     const embed = new ctx.main.Discord.MessageEmbed();

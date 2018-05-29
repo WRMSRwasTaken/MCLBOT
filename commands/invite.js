@@ -1,22 +1,27 @@
 const axios = require('axios');
+const Bluebird = require('bluebird');
 
 module.exports = {
   description: 'Prints an OAuth link to invite this bot to your discord server, or if an invite token is provided print some information about it',
-  arguments: [
-    {
-      label: 'token',
-      type: 'string',
-      optional: true,
-    },
-  ],
+  // arguments: [
+  //   {
+  //     label: 'token',
+  //     type: 'string',
+  //     optional: true,
+  //   },
+  // ],
   fn: async (ctx, token) => {
-    if (!token) {
-      return `I am still in development, so expect bugs, downtime and only a few commands.\n\nIf you want to invite me to your server anyway, use this link:\n<https://discordapp.com/oauth2/authorize?client_id=${ctx.main.api.user.id}&scope=bot&permissions=8>\n\n(Note: The \`Administrator\` permission is reserved for future commands, like Administration / Moderation. You can un check that but those commands will be unavailable then.)\n\nThe development page can be found here: <https://github.com/WRMSRwasTaken/MCLBOT>`;
+    if (true) {
+      const msg = await ctx.reply('no u');
+
+      await Bluebird.delay(2000);
+
+      return msg.edit(`I am still in early development, please see <https://github.com/WRMSRwasTaken/MCLBOT> first.\n\nIf you want to invite me to your server anyway, use this link:\n<https://discordapp.com/oauth2/authorize?client_id=${ctx.main.api.user.id}&scope=bot&permissions=8>\n\n(Note: The \`Administrator\` permission is required for administration / moderation commands. You can un check that but those commands will be unavailable then.)`);
     }
 
     let apiResponse;
 
-    const url = `https://discordapp.com/api/v6/invite/${token}?with_counts=true`;
+    const url = `https://discordapp.com/api/v7/invite/${token}?with_counts=true`;
 
     try {
       apiResponse = await axios({
@@ -25,7 +30,7 @@ module.exports = {
       });
     } catch (err) {
       if (err.response.status === 404) {
-        return ctx.main.stringUtils.argumentsError(ctx, 0, 'Invalid token');
+        return ctx.main.stringUtils.argumentError(ctx, 0, 'Invalid token');
       }
 
       return 'An error occurred while retrieving data from the Discord API';

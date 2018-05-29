@@ -77,7 +77,7 @@ module.exports = {
   ],
   fn: async (ctx, name, realm, region) => {
     if (!regions.includes(region.toLowerCase())) {
-      return ctx.main.stringUtils.argumentsError(ctx, 2, 'Invalid region');
+      return ctx.main.stringUtils.argumentError(ctx, 2, 'Invalid region');
     }
 
     let apiResponse;
@@ -94,9 +94,9 @@ module.exports = {
     } catch (err) {
       if (err.response && err.response.data && err.response.data) {
         if (err.response.data.reason === 'Realm not found.') {
-          return ctx.main.stringUtils.argumentsError(ctx, 1, 'Realm not found');
+          return ctx.main.stringUtils.argumentError(ctx, 1, 'Realm not found');
         } else if (err.response.data.reason === 'Character not found.') {
-          return ctx.main.stringUtils.argumentsError(ctx, 0, 'Character not found');
+          return ctx.main.stringUtils.argumentError(ctx, 0, 'Character not found');
         }
       }
 

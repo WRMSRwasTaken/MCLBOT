@@ -29,7 +29,7 @@ module.exports = {
   ],
   fn: async (ctx, input) => {
     if ((!validator.isURL(input) && !validator.isIP(input)) || input.includes('/')) {
-      return ctx.main.stringUtils.argumentsError(ctx, 0, 'Not a valid hostname nor a valid FQDN');
+      return ctx.main.stringUtils.argumentError(ctx, 0, 'Not a valid hostname nor a valid FQDN');
     }
 
     let result;
@@ -71,7 +71,7 @@ module.exports = {
         result = await dns.resolve4Async(input); // TODO: I should add v6 support
         result = result[0];
       } catch (err) {
-        return ctx.main.stringUtils.argumentsError(ctx, 0, 'Could not resolve hostname');
+        return ctx.main.stringUtils.argumentError(ctx, 0, 'Could not resolve hostname');
       }
     }
 
@@ -92,7 +92,7 @@ module.exports = {
     }
 
     if (!bgp.as) {
-      return ctx.main.stringUtils.argumentsError(ctx, 0, 'IP could not be found in routing table');
+      return ctx.main.stringUtils.argumentError(ctx, 0, 'IP could not be found in routing table');
     }
 
     ctx.reply(`:mag: WHOIS information:\`\`\`

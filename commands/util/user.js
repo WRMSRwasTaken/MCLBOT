@@ -12,9 +12,16 @@ module.exports = {
     {
       label: 'user',
       type: 'user',
+      infinite: true,
       optional: true,
     },
   ],
+  flags: {
+    stats: {
+      label: 'statistics',
+      short: 's',
+    },
+  },
   fn: async (ctx, user) => {
     let guildMember;
 
@@ -45,29 +52,22 @@ module.exports = {
       if (lastSeen) embed.addField('Last seen', ctx.main.stringUtils.formatUnixTimestamp(parseInt(lastSeen, 10)));
     }
 
-    if (guildMember && guildMember.user.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
-      let timestamp;
-
-      if (guildMember.lastMessage) {
-        timestamp = guildMember.lastMessage.createdTimestamp;
-      } else {
-        timestamp = await ctx.main.redis.get(`member_last_message:${ctx.guild.id}:${user.id}`);
-
-        ctx.main.prometheusMetrics.redisReads.inc();
-
-        if (timestamp) {
-          timestamp = parseInt(timestamp, 10);
-        }
-      }
+    if (guildMember && guildMember.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
+      const timestamp = await ctx.main.userHelper.getLastMessageTimestamp(ctx, guildMember);
 
       if (timestamp) {
         embed.addField('Last message', ctx.main.stringUtils.formatUnixTimestamp(timestamp));
       }
     }
-    if (guildMember) embed.addField('Guild join date', ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp));
+
+    if (guildMember && guildMember.joinedTimestamp) {
+      embed.addField('Guild join date', ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp));
+    }
+
     embed.addField('Discord join date', ctx.main.stringUtils.formatUnixTimestamp(user.createdTimestamp));
+
     if (guildMember) {
-      embed.addField(`Roles (${guildMember.roles.size})`, guildMember.roles.map(role => role.name).join(', '));
+      embed.addField(`Roles (${guildMember.roles.size})`, guildMember.roles.sort((r1, r2) => r1.position - r2.position).map(role => role.name).join(', '));
     }
 
     ctx.reply({

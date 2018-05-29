@@ -1,6 +1,6 @@
 ## MCLBOT context object
 
-The context object gets passed to numerous internal functions aswell as to the actual command object. It describes the environment in which a command is executed and provides some functions for accessing the bot-internal functions. 
+The context object gets passed to numerous internal functions aswell as to the actual command object. It describes the environment in which a command is executed and provides some functions for accessing the bot-internal functions.
 
 The context object has the following variables and functions:
 
@@ -20,4 +20,10 @@ The context object has the following variables and functions:
 - `guildPrefixDisabled` true, if the guild has disabled the prefix system (only mentions work, ignored in selfbot mode)
 - `guildPrefix` the bot's guild prefix (`undefined` if message has been sent via DM and the bot is not running in selfbot mode or if the guild has the prefix disabled, else it is set to it's default prefix)
 - `startsWithPrefix` if the message sent in a guild channel, in selfbot mode in DM channels aswell, starts with the bot's guild prefix (`undefined` if not sent in a guild without selfbot mode)
+- `rawCommand` the raw command message string (without any prefixes)
+- `command` the object of the called command
+- `subCommand` the object of the called command's subcommand (if any)
+- `rawCommandParameters` the raw command parameter string (including flags)
+- `parsedArguments` array of the parsed arguments for the called (sub-)command
+- `parsedFlags` array of the parsed flags for the called (sub-) command
 - `reply()` wrapper-function around `channel.send()` to answer / output command output. This should be always be preferred over `channel.send()` because this function allows the bot to handle edits and permission problems more efficiently.

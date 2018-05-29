@@ -1,28 +1,35 @@
 module.exports = {
-  description: 'bans an user from the server',
+  description: 'bans a user from the server',
   permission: 'BAN_MEMBERS',
+  selfPermission: 'BAN_MEMBERS',
   guildOnly: true,
   arguments: [
     {
       label: 'member',
       type: 'member',
-    },
-    {
-      label: 'days',
-      type: 'integer',
-      skippable: true,
-      optional: true,
-    },
-    {
-      label: 'reason',
-      type: 'string',
       infinite: true,
-      optional: true,
     },
   ],
-  fn: async (ctx, member, days, reason) => {
+  flags: {
+    days: {
+      label: 'days',
+      type: 'integer',
+      short: 'd',
+    },
+    reason: {
+      label: 'reason',
+      type: 'string',
+      short: 'r',
+      infinite: true,
+    },
+  },
+  fn: async (ctx, member, flags) => {
+    if (!ctx.main.userHelper.checkGuildMemberHierarchy(ctx, member)) {
+      return `Sorry, but the member \`${member.user.tag}\` is above your top role or the same.`;
+    }
+
     if (member.user.id === ctx.main.api.user.id) {
-      return 'Sorry, but I cannot ban myself.';
+      return 'Sorry, but I cannot ban myself. If you want me to leave, use the `leave` command.';
     }
 
     if (!member.bannable) {
@@ -42,7 +49,7 @@ module.exports = {
     });
 
     confirm.on('true', async () => {
-      await member.ban({ days, reason });
+      await member.ban({ days: flags.days, reason: flags.reason });
 
       msg.edit(`Member \`${member.user.tag}\` has been banned.`);
     });
