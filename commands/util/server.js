@@ -21,9 +21,9 @@ module.exports = {
 
     let memberOnline = 0;
 
-    ctx.guild.members.forEach((member) => {
+    for (const member of ctx.guild.members) {
       if (member.presence.status !== 'offline') memberOnline += 1;
-    });
+    }
 
     embed.addField(`Members (${ctx.guild.memberCount})`, `Online: ${memberOnline}, Offline: ${ctx.guild.memberCount - memberOnline}`, true);
 
@@ -56,7 +56,7 @@ module.exports = {
     let moreAnimatedEmojis = false;
 
     if (ctx.guild.emojis.size) {
-      ctx.guild.emojis.forEach((emoji) => {
+      for (const emoji of ctx.guild.emojis) {
         const newEmoji = emoji.toString();
 
         if (emoji.animated) {
@@ -78,7 +78,7 @@ module.exports = {
 
           totalEmojis += 1;
         }
-      });
+      }
 
       if (countEmojis) {
         embed.addField(`Emojis (${totalEmojis})${(moreEmojis) ? ` (only the first ${countEmojis} are shown)` : ''}`, emojiString);

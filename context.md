@@ -22,7 +22,8 @@ The context object has the following variables and functions:
 - `startsWithPrefix` if the message sent in a guild channel, in selfbot mode in DM channels aswell, starts with the bot's guild prefix (`undefined` if not sent in a guild without selfbot mode)
 - `rawCommand` the raw command message string (without any prefixes)
 - `command` the object of the called command
-- `subCommand` the object of the called command's subcommand (if any)
+- `subcommand` the object of the called command's subcommand (if any)
+- `isSubcommandRedirect` true, if the subcommand has been called throuth a redirect from the root command
 - `rawCommandParameters` the raw command parameter string (including flags)
 - `parsedArguments` array of the parsed arguments for the called (sub-)command
 - `parsedFlags` array of the parsed flags for the called (sub-) command

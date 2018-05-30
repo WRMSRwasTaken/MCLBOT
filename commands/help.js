@@ -8,12 +8,12 @@ module.exports = {
       optional: true,
     },
     {
-      label: 'subCommand',
+      label: 'subcommand',
       type: 'string',
       optional: true,
     },
   ],
-  fn: async (ctx, command, subCommand) => {
+  fn: async (ctx, command, subcommand) => {
     if (!ctx.isBotAdmin) {
       return 'The help command is currently disabled.';
     }
@@ -40,11 +40,11 @@ module.exports = {
       return 'Help for unknown command requested.';
     }
 
-    if (!helpCommand.subcommands && subCommand) {
+    if (!helpCommand.subcommands && subcommand) {
       return `Command \`${helpCommand.name}\` has no subcommands.`;
     }
 
-    const helpSubCommand = helpCommand.subcommands[subCommand] || helpCommand.subcommands[helpCommand.subcommandAliases[subCommand]];
+    const helpSubCommand = helpCommand.subcommands[subcommand] || helpCommand.subcommands[helpCommand.subcommandAliases[subcommand]];
 
     // if()
 

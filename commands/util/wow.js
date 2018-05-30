@@ -109,11 +109,11 @@ module.exports = {
 
     const character = apiResponse.data;
 
-    character.talents.forEach((talent) => {
+    for (const talent of character.talents) {
       if (talent.selected) {
         spec = talent.spec.name;
       }
-    });
+    }
 
     const embed = new ctx.main.Discord.MessageEmbed();
 
