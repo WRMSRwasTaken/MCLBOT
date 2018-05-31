@@ -1,13 +1,12 @@
 const util = require('util');
 
 module.exports = {
-  description: 'test2',
+  description: 'test4',
   cooldown: 0,
   arguments: [
     {
       label: 'testarg',
       type: 'string',
-      infinite: true,
     },
   ],
   flags: {

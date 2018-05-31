@@ -1,13 +1,12 @@
 const util = require('util');
 
 module.exports = {
-  description: 'test2',
+  description: 'test3',
   cooldown: 0,
   arguments: [
     {
       label: 'testarg',
       type: 'string',
-      infinite: true,
     },
   ],
   flags: {
@@ -15,6 +14,7 @@ module.exports = {
       label: 'test',
       type: 'string',
       short: 't',
+      infinite: true,
     },
   },
   fn: async (ctx, test, flags) => `eval output:\n\`\`\`js\n${util.inspect(test)}\n\`\`\`\n\`\`\`js\n${util.inspect(flags)}\n\`\`\``,
