@@ -32,6 +32,6 @@ This folder contains the files the bot commands. The filename represents the com
   - `min` minimum number for int and float, minimum length for strings
   - `max` maximum number for int and float, maximum length for strings
   - `infinite` the flag takes infinite values (only for type `string`, will end on reaching the next flag or the input end)
-- `fn()` command function, with the context object (see the [context documentation](../context.md)) as the first parameter and the configured command arguments as the following parameters, the last parameter will be always the flag object (if flags are configured). This will be executed if a matching subcommand can't be found (if this isn't set in the root command, a valid subcommand will be required).
+- `fn()` command function, with the context object (see the [context documentation](../context.md)) as the first parameter and the configured command arguments as the following parameters, the last parameter will be always the flag object (or an empty object, if no flags have been passed or defined). This will be executed if a matching subcommand can't be found (if this isn't set in the root command, a valid subcommand will be required).
 Can be also a string, pointing to the subcommand name which will be run, if no subcommand is passed by the user (subcommand redirection).
 - `subcommands` object with the respective subcommand's name as object keys, that can be configured with all parameters above
