@@ -22,7 +22,9 @@ module.exports = {
     let memberOnline = 0;
 
     for (const member of ctx.guild.members) {
-      if (member.presence.status !== 'offline') memberOnline += 1;
+      if (member.presence) {
+        if (member.presence.status !== 'offline') memberOnline += 1;
+      }
     }
 
     embed.addField(`Members (${ctx.guild.memberCount})`, `Online: ${memberOnline}, Offline: ${ctx.guild.memberCount - memberOnline}`, true);
