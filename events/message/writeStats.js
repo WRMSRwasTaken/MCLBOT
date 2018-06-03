@@ -27,9 +27,5 @@ module.exports = {
 
       main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', nconf.get('bot:redisStoreTTL'));
     }
-
-    main.commandHandler.handleMessageEvent(message);
-
-    // TODO: REPL CODE HERE
   },
 };

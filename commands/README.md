@@ -2,6 +2,8 @@
 
 This folder contains the files the bot commands. The filename represents the command name, which will be automatically registered. A folder represents a command category.
 
+Every category folder can contain a file called `category.json` for defining parameters that will be applied for all commands in the given category. However, these can be overwritten by the respective commands. 
+
 ### file parameters
 
 - `description` the description of the (sub-) command

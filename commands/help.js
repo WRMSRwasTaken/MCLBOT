@@ -46,12 +46,45 @@ module.exports = {
 
     const helpSubCommand = helpCommand.subcommands[subcommand] || helpCommand.subcommands[helpCommand.subcommandAliases[subcommand]];
 
-    // if()
-
-    if (!ctx.main.commands[command]) {
-      return `Help for command \`${ctx.main.aliases[command]}\`: ${ctx.main.stringUtils.displayCommandHelp(ctx.main.aliases[command])}`;
+    if (!helpSubCommand) {
+      return 'Help for unknown subcommand requested.';
     }
-    return `Help for command \`${command}\`: ${ctx.main.stringUtils.displayCommandHelp(command)}`;
+
+    let output = '```';
+
+    if (command.description) {
+      output += `Description: ${command.description}\n`;
+    }
+
+    if (command.alias) {
+      output += `Alias${(Array.isArray(command.alias)) ? '(es)' : ''}: ${(Array.isArray(command.alias)) ? command.alias.join(', ') : command.alias}\n`;
+    }
+
+    if (command.arguments) {
+      output += 'Usage: ';
+      for (const argument of command.arguments) {
+        output += `${(argument.optional) ? '[' : '<'}${argument.label}${(argument.optional) ? ']' : '>'} `;
+      }
+      output += '\n';
+    } else if (!command.fn) {
+      output += 'Base command is not executable. (Using a subcommand is mandatory)\n';
+    }
+
+    if (command.subcommands) {
+      output += 'Subcommands: ';
+      for (const subcommand of command.subcommands) {
+        output += `${subcommand.name}, `;
+      }
+      output += '\n';
+    }
+
+    output += '```';
+    return output;
+
+    // if (!ctx.main.commands[command]) {
+    //   return `Help for command \`${ctx.main.aliases[command]}\`: ${ctx.main.stringUtils.displayCommandHelp(ctx.main.aliases[command])}`;
+    // }
+    // return `Help for command \`${command}\`: ${ctx.main.stringUtils.displayCommandHelp(command)}`;
 
     //
     // if (ctx.main.commands[params] || ctx.main.aliases[params]) {

@@ -5,9 +5,9 @@ module.exports = {
   noSelfbot: true,
   fn: (main) => {
     if (foo) {
-      main.api.user.setPresence({ activity: { name: `on ${main.api.guilds.size} servers` } });
+      main.api.user.setPresence({ activity: { type: 'WATCHING', name: `on ${main.api.guilds.size} servers` } });
     } else {
-      main.api.user.setPresence({ activity: { name: `Use @${main.api.user.username} help` } });
+      main.api.user.setPresence({ activity: { type: 'LISTENING', name: `@${main.api.user.username} help` } });
     }
 
     foo = !foo;

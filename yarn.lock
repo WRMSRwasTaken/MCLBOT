@@ -623,9 +623,9 @@ detect-libc@^1.0.2, detect-libc@^1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
 
-"discord.js@git+https://github.com/discordjs/discord.js.git":
+"discord.js@https://github.com/discordjs/discord.js":
   version "12.0.0-dev"
-  resolved "git+https://github.com/discordjs/discord.js.git#934e90b921cba8b1498609f90c63da3ef81959aa"
+  resolved "https://github.com/discordjs/discord.js#faf27fabc055cb3850e823cf36c0af21c0139c35"
   dependencies:
     pako "^1.0.0"
     prism-media "^0.2.0"
@@ -646,9 +646,9 @@ doctrine@^2.1.0:
   dependencies:
     esutils "^2.0.2"
 
-dotenv@^5.0.1:
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-5.0.1.tgz#a5317459bd3d79ab88cff6e44057a6a3fbb1fcef"
+dotenv@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.0.0.tgz#24e37c041741c5f4b25324958ebbc34bca965935"
 
 dottie@^2.0.0:
   version "2.0.0"
@@ -1909,9 +1909,13 @@ moment-timezone@^0.5.14:
   dependencies:
     moment ">= 2.9.0"
 
-"moment@>= 2.9.0", moment@^2.20.0, moment@^2.22.1:
+"moment@>= 2.9.0", moment@^2.20.0:
   version "2.22.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
+
+moment@^2.22.2:
+  version "2.22.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 mout@^0.11.0:
   version "0.11.1"
