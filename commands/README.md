@@ -14,6 +14,7 @@ Every category folder can contain a file called `category.json` for defining par
 - `guarded` boolean value to whether the (sub-) command should be protected from disabling it or not
 - `permission` string or array or strings of permissions for a user, needed to be able to run this  (sub-) command, e.g. `ADMINISTRATOR` (setting this will automatically set `guildOnly` to true), for all permissions, see the [discord.js documentation](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=s-FLAGS)
 - `selfPermission` string or array or strings of permissions needed for the bot member itself to run, e.g. `ATTACH_FILES` (ignored in DMs)
+- `middleware` string ir array of strings of middleware names to run before running the actual command
 - `cooldown` integer value in seconds needed or a user to run this  (sub-) command again
 - `hideTyping` boolean value: whether to hide the typing indicator while this command is being processed or not
 - `voice` boolean value: defines this command as a voice command, enabling special checks (`joinable` & `speakable`) for the target voice channel & setting `hideTyping` to true
