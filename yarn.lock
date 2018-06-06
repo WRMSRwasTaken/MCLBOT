@@ -625,11 +625,11 @@ detect-libc@^1.0.2, detect-libc@^1.0.3:
 
 "discord.js@https://github.com/discordjs/discord.js":
   version "12.0.0-dev"
-  resolved "https://github.com/discordjs/discord.js#faf27fabc055cb3850e823cf36c0af21c0139c35"
+  resolved "https://github.com/discordjs/discord.js#46af6e3396e94f795c7f539035a36e733139be07"
   dependencies:
     pako "^1.0.0"
     prism-media "^0.2.0"
-    snekfetch "^3.6.0"
+    snekfetch "^4.0.1"
     tweetnacl "^1.0.0"
     ws "^4.0.0"
 
@@ -2732,9 +2732,9 @@ smart-buffer@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/smart-buffer/-/smart-buffer-4.0.1.tgz#07ea1ca8d4db24eb4cac86537d7d18995221ace3"
 
-snekfetch@^3.6.0:
-  version "3.6.4"
-  resolved "https://registry.yarnpkg.com/snekfetch/-/snekfetch-3.6.4.tgz#d13e80a616d892f3d38daae4289f4d258a645120"
+snekfetch@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/snekfetch/-/snekfetch-4.0.1.tgz#679d82632882a0b2ccf17fc3cc18acd2e135356e"
 
 sntp@2.x.x:
   version "2.1.0"
@@ -3110,9 +3110,9 @@ validator@*, validator@^9.4.1:
   version "9.4.1"
   resolved "https://registry.yarnpkg.com/validator/-/validator-9.4.1.tgz#abf466d398b561cd243050112c6ff1de6cc12663"
 
-validator@^10.2.0:
-  version "10.2.0"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-10.2.0.tgz#61d6b10c3d5c9f368c75c2ce8ca2b792522eaafa"
+validator@^10.3.0:
+  version "10.3.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-10.3.0.tgz#157a8c0981858cff381f59aabcdb8f83b57317cc"
 
 vary@~1.1.2:
   version "1.1.2"

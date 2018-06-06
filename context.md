@@ -7,6 +7,7 @@ The context object has the following variables and functions:
 - `main` the main bot object
 - `message` the [Message](https://discord.js.org/#/docs/main/master/class/Message)-object the bot reacts to
 - `author` the [User](https://discord.js.org/#/docs/main/master/class/User)-object who sent the message
+- `member` the [GuildMember](https://discord.js.org/#/docs/main/master/class/GuildMember)-object who sent the message (if sent in a guild channel)
 - `channel` the channel in which this message was sent, either:
   - [TextChannel](https://discord.js.org/#/docs/main/master/class/TextChannel) if it was sent in a guild channel
   - [DMChannel](https://discord.js.org/#/docs/main/master/class/DMChannel) if it was sent via DM

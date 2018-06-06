@@ -24,18 +24,6 @@ module.exports = {
     },
   },
   fn: async (ctx, member, flags) => {
-    if (!ctx.main.userHelper.checkGuildMemberHierarchy(ctx, member)) {
-      return `Sorry, but the member \`${member.user.tag}\` is above your top role or the same.`;
-    }
-
-    if (member.user.id === ctx.main.api.user.id) {
-      return 'Sorry, but I cannot ban myself. If you want me to leave, use the `leave` command.';
-    }
-
-    if (!member.bannable) {
-      return `Sorry, but the member \`${member.user.tag}\` is not bannable.`;
-    }
-
     const msg = await ctx.reply(`Do you really want to ban the member \`${member.user.tag}\`?`);
 
     const confirm = ctx.main.confirmationHelper.initConfirm(msg, ctx.author);

@@ -44,7 +44,7 @@
     "socks-proxy-agent": "^4.0.1",
     "string": "^3.3.3",
     "timestring": "^5.0.1",
-    "validator": "^10.2.0",
+    "validator": "^10.3.0",
     "winston": "^2.4.2",
     "xregexp": "^4.1.1",
     "zlib-sync": "^0.1.4"

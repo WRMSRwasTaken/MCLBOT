@@ -23,14 +23,6 @@ module.exports = {
     },
   ],
   fn: async (ctx, member, days, reason) => {
-    if (member.user.id === ctx.main.api.user.id) {
-      return 'Sorry, but I cannot softban myself.';
-    }
-
-    if (!member.bannable) {
-      return `Sorry, but the member \`${member.user.tag}\` is not bannable.`;
-    }
-
     const msg = await ctx.reply(`Do you really want to softban the member \`${member.user.tag}\`?`);
 
     const confirm = ctx.main.confirmationHelper.initConfirm(msg, ctx.author);
