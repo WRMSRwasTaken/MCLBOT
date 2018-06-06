@@ -16,6 +16,7 @@ To see how commands, events, tasks or types are structured, view the documentati
 - [events](events/README.md)
 - [tasks](tasks/README.md)
 - [types](types/README.md)
+- [middleware](middleware/README.md)
 
 For the context object, see the [context documentation](context.md).
 
