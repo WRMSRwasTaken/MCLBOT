@@ -21,7 +21,7 @@ module.exports = {
 
     let memberOnline = 0;
 
-    for (const member of ctx.guild.members) {
+    for (const member of ctx.guild.members.values()) {
       if (member.presence) {
         if (member.presence.status !== 'offline') memberOnline += 1;
       }
@@ -58,7 +58,7 @@ module.exports = {
     let moreAnimatedEmojis = false;
 
     if (ctx.guild.emojis.size) {
-      for (const emoji of ctx.guild.emojis) {
+      for (const emoji of ctx.guild.emojis.values()) {
         const newEmoji = emoji.toString();
 
         if (emoji.animated) {
