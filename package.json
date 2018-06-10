@@ -25,7 +25,6 @@
     "influx": "^5.0.7",
     "ioredis": "^3.2.2",
     "ip": "^1.1.5",
-    "libsodium-wrappers": "^0.7.3",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "nconf": "^0.10.0",
