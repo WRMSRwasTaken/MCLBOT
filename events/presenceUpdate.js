@@ -4,7 +4,7 @@ const nconf = require('nconf');
 /*
 
 This event gets triggered multiple times per user (to be exact: for every guild in common with the presence changing user),
-so we need a sort of queue system to wait for all presence updates to finish but still just update the database once per user
+so we need some sort of a debounce system to wait for all presence updates to finish but still just update the database once per user
 
  */
 

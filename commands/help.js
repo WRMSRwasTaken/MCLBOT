@@ -34,7 +34,7 @@ module.exports = {
       return true;
     }
 
-    const helpCommand = this.main.commands[command] || this.main.commands[this.main.aliases[command]];
+    const helpCommand = ctx.main.commands[command] || ctx.main.commands[ctx.main.aliases[command]];
 
     if (!helpCommand) {
       return 'Help for unknown command requested.';
@@ -44,37 +44,37 @@ module.exports = {
       return `Command \`${helpCommand.name}\` has no subcommands.`;
     }
 
-    const helpSubCommand = helpCommand.subcommands[subcommand] || helpCommand.subcommands[helpCommand.subcommandAliases[subcommand]];
+    if (subcommand) {
+      const helpSubCommand = helpCommand.subcommands[subcommand] || helpCommand.subcommands[helpCommand.subcommandAliases[subcommand]];
 
-    if (!helpSubCommand) {
-      return 'Help for unknown subcommand requested.';
+      if (!helpSubCommand) {
+        return 'Help for unknown subcommand requested.';
+      }
     }
 
     let output = '```';
 
-    if (command.description) {
-      output += `Description: ${command.description}\n`;
+    if (helpCommand.description) {
+      output += `Description: ${helpCommand.description}\n`;
     }
 
-    if (command.alias) {
-      output += `Alias${(Array.isArray(command.alias)) ? '(es)' : ''}: ${(Array.isArray(command.alias)) ? command.alias.join(', ') : command.alias}\n`;
+    if (helpCommand.alias) {
+      output += `Alias${(Array.isArray(helpCommand.alias)) ? '(es)' : ''}: ${(Array.isArray(helpCommand.alias)) ? helpCommand.alias.join(', ') : helpCommand.alias}\n`;
     }
 
-    if (command.arguments) {
+    if (helpCommand.arguments) {
       output += 'Usage: ';
-      for (const argument of command.arguments) {
+      for (const argument of helpCommand.arguments) {
         output += `${(argument.optional) ? '[' : '<'}${argument.label}${(argument.optional) ? ']' : '>'} `;
       }
       output += '\n';
-    } else if (!command.fn) {
+    } else if (!helpCommand.fn) {
       output += 'Base command is not executable. (Using a subcommand is mandatory)\n';
     }
 
-    if (command.subcommands) {
-      output += 'Subcommands: ';
-      for (const subcommand of command.subcommands) {
-        output += `${subcommand.name}, `;
-      }
+    if (helpCommand.subcommands) {
+      output += `Subcommands: ${Object.keys(helpCommand.subcommands).join(', ')}`;
+
       output += '\n';
     }
 

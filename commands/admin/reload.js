@@ -1,7 +1,7 @@
 module.exports = {
   hide: true,
   owner: true,
-  description: 'reload a single bot command',
+  description: 'Reload functionality for MCLBOT',
   fn: 'command',
   subcommands: {
     command: {
