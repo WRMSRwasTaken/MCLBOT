@@ -1,5 +1,6 @@
 const moment = require('moment');
 const winston = require('winston');
+const nconf = require('nconf');
 
 /*
 
@@ -13,10 +14,8 @@ This is also a nice bonus for people who remove the bot from their server and ch
 
  */
 
-const graceTime = 60 * 10; // 10 minutes grace time window
-
 module.exports = {
-  interval: 60,
+  interval: 60 * 5,
   fn: async (main) => {
     const Op = main.db.Sequelize.Op;
 
@@ -25,7 +24,7 @@ module.exports = {
     const guilds = await main.db.delete_guild_settings_queue.findAll({
       where: {
         created_at: {
-          [Op.lt]: moment().subtract(graceTime, 'seconds').toDate(),
+          [Op.lt]: moment().subtract(nconf.get('bot:deleteSettingsGraceTime'), 'seconds').toDate(),
         },
       },
     });

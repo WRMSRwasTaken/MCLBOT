@@ -1,5 +1,6 @@
 {
   "middleware": [
     "checkModerationTarget"
-  ]
+  ],
+  "cooldown": 0
 }

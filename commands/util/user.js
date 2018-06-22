@@ -44,12 +44,19 @@ module.exports = {
     if (guildMember && guildMember.nickname) embed.addField('Nickname', guildMember.nickname, true);
     if (user.presence.status) embed.addField('Status', user.presence.status, true);
     if (user.presence.activity) embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
-    if (user.presence.status === 'offline' || !user.presence.status) {
-      const lastSeen = await ctx.main.redis.get(`user_last_seen:${user.id}`);
 
-      ctx.main.prometheusMetrics.redisReads.inc();
+    const lastSeen = await ctx.main.redis.get(`user_last_seen:${user.id}`);
 
-      if (lastSeen) embed.addField('Last seen', ctx.main.stringUtils.formatUnixTimestamp(parseInt(lastSeen, 10)));
+    ctx.main.prometheusMetrics.redisReads.inc();
+
+    if (lastSeen) {
+      const time = ctx.main.stringUtils.formatUnixTimestamp(parseInt(lastSeen, 10));
+
+      if (user.presence.status === 'offline' || !user.presence.status) {
+        embed.addField('Last time seen', time);
+      } else {
+        embed.addField('Last time offline', time);
+      }
     }
 
     if (guildMember && guildMember.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
