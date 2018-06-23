@@ -19,7 +19,7 @@ Every category folder can contain a file called `category.json` for defining par
 - `hideTyping` boolean value: whether to hide the typing indicator while this command is being processed or not
 - `voice` boolean value: defines this command as a voice command, enabling special checks (`joinable` & `speakable`) for the target voice channel & setting `hideTyping` to true
 - `arguments` object or array of objects for the (sub-) command parameter configuration:
-  - `label` the argument label to display in help output
+  - `label` the argument label to display in help output (optional, if not set the type will be shown)
   - `type` the argument type, see the types folder for all argument types
   - `min` minimum number for int and float, minimum length for strings
   - `max` maximum number for int and float, maximum length for strings
@@ -28,7 +28,7 @@ Every category folder can contain a file called `category.json` for defining par
   - `skippable` if a passed argument does not validate against specified type, pass the current argument input to the next argument instead of cancelling the command and run the default function / value for this parameter input if set (works only if the command is optional)
   - `default` function (which will be passed the context object) or value providing a default input for this parameter, this overrides the `default` function of an argument type (if both are blank, `undefined` will be passed instead)
 - `flags` object (key names are the flag names) consisting of objects describing each flag for the (sub-) command flag configuration:
-  - `label` the flag label to display in help output
+  - `label` the flag label to display in help output (optional, if not set the type will be shown)
   - `type` the flag type, see the types folder for all argument types. If not set, all other options are ignored (the flag takes no argument then) and the flag will be set to true if the user passes it
   - `short` one letter string to pass this flag without having to type the full name
   - `global` boolean value: whether the flag should be available for all subcommands too (root command only)

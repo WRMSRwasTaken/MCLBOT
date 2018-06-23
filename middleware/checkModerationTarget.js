@@ -20,6 +20,12 @@ module.exports = {
       return false;
     }
 
+    if (target.user.id === ctx.guild.ownerID) {
+      ctx.reply(`Sorry, but the target member \`${target.user.tag}\` is the guild owner.`);
+
+      return false;
+    }
+
     if (ctx.isBotAdmin || ctx.guild.ownerID === ctx.author.id) {
       return true;
     }

@@ -106,7 +106,9 @@ module.exports = {
       }
 
       for (const argument of propertyCommand.arguments) {
-        output += `${(argument.optional) ? '[' : '<'}${argument.label}${(argument.optional) ? ']' : '>'} `;
+        const label = argument.label || argument.type;
+
+        output += `${(argument.optional) ? '[' : '<'}${label}${(argument.optional) ? ']' : '>'} `;
       }
 
       output += ' (<> means mandatory parameter, [] means optional parameter)';
@@ -127,8 +129,12 @@ module.exports = {
 
       let spaces = true;
 
-      for (const flag of Object.keys(helpCommand.flags)) {
-        output += ` ${(spaces) ? '' : '      '}--${flag}${(helpCommand.flags[flag].type) ? ` <${helpCommand.flags[flag].type}>` : ''}${(helpCommand.flags[flag].short) ? ` / -${helpCommand.flags[flag].short}` : ''}${(helpCommand.flags[flag].type) ? ` <${helpCommand.flags[flag].type}>` : ''}\n`;
+      for (const flagName of Object.keys(helpCommand.flags)) {
+        const flag = helpCommand.flags[flagName];
+
+        const label = flag.label || flag.type;
+
+        output += ` ${(spaces) ? '' : '      '}--${flag.name}${(flag.type) ? ` <${label}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${label}>` : ''}${(flag.global) ? ' (Global flag, applies to subcommands aswell)' : ''}\n`;
 
         spaces = false;
       }
