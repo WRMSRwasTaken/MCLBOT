@@ -2,7 +2,7 @@ const XRegExp = require('xregexp');
 const safe = require('safe-regex');
 const winston = require('winston');
 
-const channelRegex = XRegExp('^(<#)?(?<channelID>\\d+)>?$', 'is');
+const channelRegex = XRegExp('^(<#)?(?<channelID>\\d+)>?$');
 
 module.exports = {
   parse: (value, argument, context) => {

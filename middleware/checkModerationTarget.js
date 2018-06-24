@@ -2,6 +2,10 @@ module.exports = {
   run: async (ctx) => {
     const target = ctx.parsedArguments[0];
 
+    if (!target) {
+      return true;
+    }
+
     if (target.user.id === ctx.main.api.user.id) {
       ctx.reply('Sorry, but I cannot target myself.');
 

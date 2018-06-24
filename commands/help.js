@@ -16,8 +16,8 @@ module.exports = {
     },
   ],
   fn: async (ctx, command, subcommand) => {
-    if (!ctx.isBotAdmin) {
-      return 'The help command is currently disabled.';
+    if (!ctx.isBotAdmin && !command) {
+      return 'The help overview command is currently disabled for now. However, it is enabled for displaying help if specific commands with: help <command>';
     }
 
     if (!command) {
@@ -36,130 +36,138 @@ module.exports = {
       return true;
     }
 
-    const helpCommand = ctx.main.commands[command] || ctx.main.commands[ctx.main.aliases[command]];
+    const commandObject = ctx.main.commands[command] || ctx.main.commands[ctx.main.aliases[command]];
 
-    if (!helpCommand) {
+    if (!commandObject) {
       return 'Help for unknown command requested.';
     }
 
-    if (!helpCommand.subcommands && subcommand) {
-      return `Command \`${helpCommand.name}\` has no subcommands.`;
+    if (!commandObject.subcommands && subcommand) {
+      return `Command \`${commandObject.name}\` has no subcommands.`;
     }
 
-    let helpSubCommand;
+    let subcommandObject;
 
     if (subcommand) {
-      helpSubCommand = helpCommand.subcommands[subcommand] || helpCommand.subcommands[helpCommand.subcommandAliases[subcommand]];
+      subcommandObject = commandObject.subcommands[subcommand] || commandObject.subcommands[commandObject.subcommandAliases[subcommand]];
 
-      if (!helpSubCommand) {
+      if (!subcommandObject) {
         return 'Help for unknown subcommand requested.';
       }
     }
 
-    const redirect = typeof helpCommand.fn === 'string' && !subcommand;
+    const redirect = typeof commandObject.fn === 'string' && !subcommand;
 
     if (redirect) {
-      helpSubCommand = helpCommand.subcommands[helpCommand.fn];
+      subcommandObject = commandObject.subcommands[commandObject.fn];
     }
 
-    const propertyCommand = helpSubCommand || helpCommand;
+    const commandObjectToHandle = subcommandObject || commandObject;
 
-    let output = '```';
+    const embed = new ctx.main.Discord.MessageEmbed();
 
-    if (redirect && helpCommand.description) {
-      output += `Description: ${helpCommand.description}\n`;
-    } else if (!redirect && propertyCommand.description) {
-      output += `Description: ${propertyCommand.description}\n`;
+    let hasArguments = false;
+
+    embed.setTitle(`Help for command: ${commandObject.name} ${(subcommand) ? subcommandObject.name : ''}`);
+
+    if (redirect && commandObject.description) {
+      embed.addField('Description', commandObject.description, false);
+    } else if (!redirect && commandObjectToHandle.description) {
+      embed.addField('Description', commandObjectToHandle.description, false);
     }
 
-    if (redirect && helpCommand.alias) {
-      output += `Alias${(Array.isArray(helpCommand.alias)) ? '(es)' : ''}: ${(Array.isArray(helpCommand.alias)) ? helpCommand.alias.join(', ') : helpCommand.alias}\n`;
-    } else if (!redirect && propertyCommand.alias) {
-      output += `Alias${(Array.isArray(propertyCommand.alias)) ? '(es)' : ''}: ${(Array.isArray(propertyCommand.alias)) ? propertyCommand.alias.join(', ') : propertyCommand.alias}\n`;
+    if (redirect && commandObject.alias) {
+      embed.addField(`Alias${(Array.isArray(commandObject.alias)) ? '(es)' : ''}`, (Array.isArray(commandObject.alias)) ? commandObject.alias.join(', ') : commandObject.alias, false);
+    } else if (!redirect && commandObjectToHandle.alias) {
+      embed.addField(`Alias${(Array.isArray(commandObjectToHandle.alias)) ? '(es)' : ''}`, (Array.isArray(commandObjectToHandle.alias)) ? commandObjectToHandle.alias.join(', ') : commandObjectToHandle.alias, false);
     }
 
-    if (helpCommand.fn) {
-      let cooldown = ctx.main.commandHandler.getProperty(ctx, 'cooldown', helpCommand, helpSubCommand);
+    if (commandObjectToHandle.fn) {
+      let cooldown = ctx.main.commandHandler.getProperty(ctx, 'cooldown', commandObject, subcommandObject);
 
       if (cooldown === undefined) {
         cooldown = nconf.get('bot:defaultCooldown');
       }
 
       if (cooldown !== 0) {
-        output += `Cooldown: ${cooldown} seconds\n`;
+        embed.addField('Cooldown', `${cooldown} seconds`, false);
       }
     }
 
-    if (!helpCommand.fn) {
-      output += 'Base command is not executable. (Using a subcommand is mandatory)\n';
-    } else if (propertyCommand.arguments) {
-      output += 'Usage: ';
-
-      output += helpCommand.name;
-
-      output += ' ';
+    if (!commandObjectToHandle.fn && !subcommand) {
+      embed.addField('Base command is not executable', 'Using a subcommand is mandatory', false);
+    } else if (commandObjectToHandle.arguments) {
+      let usageText = commandObject.name;
+      usageText += ' ';
 
       if (subcommand) {
-        output += helpSubCommand.name;
-
-        output += ' ';
+        usageText += subcommandObject.name;
+        usageText += ' ';
       }
 
-      for (const argument of propertyCommand.arguments) {
+      for (const argument of commandObjectToHandle.arguments) {
         const label = argument.label || argument.type;
 
-        output += `${(argument.optional) ? '[' : '<'}${label}${(argument.optional) ? ']' : '>'} `;
+        usageText += `${(argument.optional) ? '[' : '<'}${label}${(argument.optional) ? ']' : '>'} `;
       }
 
-      output += ' (<> means mandatory parameter, [] means optional parameter)';
+      embed.addField('Usage', usageText, false);
 
-      output += '\n';
-    } else {
-      output += 'Command takes no arguments.\n';
+      hasArguments = true;
     }
 
-    if (helpCommand.subcommands && !subcommand) {
-      output += `Subcommands: ${Object.keys(helpCommand.subcommands).join(', ')} (To see help for a subcommand, type help <command> <subcommand>)`;
+    let flagText = '';
 
-      output += '\n';
-    }
+    if (subcommand && commandObject.flags) {
+      for (const flagName of Object.keys(commandObject.flags)) {
+        const flag = commandObject.flags[flagName];
 
-    if (helpCommand.flags) {
-      output += 'Flags:';
-
-      let spaces = true;
-
-      for (const flagName of Object.keys(helpCommand.flags)) {
-        const flag = helpCommand.flags[flagName];
+        if (!flag.global) {
+          continue; // eslint-disable-line no-continue
+        }
 
         const label = flag.label || flag.type;
 
-        output += ` ${(spaces) ? '' : '      '}--${flag.name}${(flag.type) ? ` <${label}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${label}>` : ''}${(flag.global) ? ' (Global flag, applies to subcommands aswell)' : ''}\n`;
-
-        spaces = false;
+        flagText += `--${flag.name}${(flag.type) ? ` <${label}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${label}>` : ''}\n`;
       }
     }
 
-    output += '```';
-    return output;
+    if (commandObjectToHandle.flags && commandObjectToHandle.fn) {
+      for (const flagName of Object.keys(commandObjectToHandle.flags)) {
+        const flag = commandObjectToHandle.flags[flagName];
 
-    // if (!ctx.main.commands[command]) {
-    //   return `Help for command \`${ctx.main.aliases[command]}\`: ${ctx.main.stringUtils.displayCommandHelp(ctx.main.aliases[command])}`;
-    // }
-    // return `Help for command \`${command}\`: ${ctx.main.stringUtils.displayCommandHelp(command)}`;
+        const label = flag.label || flag.type;
 
-    //
-    // if (ctx.main.commands[params] || ctx.main.aliases[params]) {
-    //   if (!ctx.main.commands[params]) {
-    //     return `Help for command \`${ctx.main.aliases[params]}\`: ${ctx.main.stringUtils.displayCommandHelp(ctx.main.aliases[params])}`;
-    //   }
-    //   return `Help for command \`${params}\`: ${ctx.main.stringUtils.displayCommandHelp(params)}`;
-    // }
+        flagText += `--${flag.name}${(flag.type) ? ` <${label}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${label}>` : ''}\n`;
+      }
+    }
 
-    // if (!main.commandHandler.isDM(message)) {
-    //   message.send(`<@${message.author.id}> I've sent you a PM`);
-    // }
-    //
-    // const currentPage = (!isNaN(tryParsedNumber)) ? tryParsedNumber : 1;
+    if (flagText) {
+      embed.addField('Flags', flagText, false);
+
+      hasArguments = true;
+    }
+
+    if (commandObjectToHandle.subcommands && !subcommand) {
+      let subcommandText = '';
+
+      for (const subcommandName of Object.keys(commandObjectToHandle.subcommands)) {
+        const tempSubcommand = commandObjectToHandle.subcommands[subcommandName];
+
+        subcommandText += `${tempSubcommand.name} - ${tempSubcommand.description}\n`;
+      }
+
+      subcommandText += '\n';
+
+      embed.addField('Subcommands', subcommandText, false);
+    }
+
+    if (hasArguments) {
+      embed.setFooter('Argument legend: <> means mandatory parameter, [] means optional parameter');
+    }
+
+    ctx.reply({
+      embed,
+    });
   },
 };
