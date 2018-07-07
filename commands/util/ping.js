@@ -16,7 +16,7 @@ module.exports = {
 
     ctx.main.pings[nonce] = {};
 
-    winston.debug('Nonce is:', nonce);
+    winston.debug('Nonce is: %d', nonce);
 
     ctx.main.pings[nonce].message = ctx.message;
 

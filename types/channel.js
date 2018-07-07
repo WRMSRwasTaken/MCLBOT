@@ -6,7 +6,7 @@ const channelRegex = XRegExp('^(<#)?(?<channelID>\\d+)>?$');
 
 module.exports = {
   parse: (value, argument, context) => {
-    winston.debug('Trying to get a channel from supplied string:', value);
+    winston.debug('Trying to get a channel from supplied string: %s', value);
 
     const channelResult = XRegExp.exec(value, channelRegex);
 
@@ -40,7 +40,7 @@ module.exports = {
     const channelMatches = context.guild.channels
       .filter(channel => channel.type === 'text' && XRegExp.exec(channel.name, channelInputRegex));
 
-    winston.debug('Text channels found:', channelMatches.size);
+    winston.debug('Text channels found: %d', channelMatches.size);
 
     if (channelMatches.size === 1) {
       return channelMatches.first();

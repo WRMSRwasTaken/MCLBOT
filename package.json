@@ -13,13 +13,13 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bluebird": "^3.5.1",
-    "bottleneck": "^2.3.1",
-    "bufferutil": "^3.0.5",
+    "bottleneck": "^2.5.1",
+    "bufferutil": "^4.0.0",
     "discord.js": "https://github.com/discordjs/discord.js",
     "dotenv": "^6.0.0",
     "erlpack": "^0.1.2",
     "express": "^4.16.3",
-    "ffmpeg-binaries": "^3.2.2-3",
+    "ffmpeg-binaries": "^4.0.0",
     "fs-extra": "^6.0.1",
     "gm": "^1.23.1",
     "influx": "^5.0.7",
@@ -36,7 +36,7 @@
     "pretty-ms": "^3.2.0",
     "prom-client": "^11.0.0",
     "prometheus-gc-stats": "^0.5.1",
-    "raven": "^2.6.2",
+    "raven": "^2.6.3",
     "safe-regex": "^1.1.0",
     "sequelize": "^4.37.10",
     "sequelize-cli": "^4.0.0",
@@ -44,13 +44,13 @@
     "string": "^3.3.3",
     "timestring": "^5.0.1",
     "validator": "^10.3.0",
-    "winston": "^2.4.2",
-    "xregexp": "^4.1.1",
+    "winston": "^3.0.0",
+    "xregexp": "^4.2.0",
     "zlib-sync": "^0.1.4"
   },
   "devDependencies": {
-    "eslint": "^4.19.1",
-    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint": "^5.0.1",
+    "eslint-config-airbnb-base": "^13.0.0",
     "eslint-plugin-import": "^2.12.0"
   }
 }

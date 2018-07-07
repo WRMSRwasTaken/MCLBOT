@@ -84,7 +84,7 @@ module.exports = {
 
     const url = `https://${region}.api.battle.net/wow/character/${realm}/${encodeURIComponent(name)}?fields=items,guild,talents&apikey=${nconf.get('external:bnetapi')}`;
 
-    winston.debug('Fetching character information with url', url);
+    winston.debug('Fetching character information with url: %s', url);
 
     try {
       apiResponse = await axios({
@@ -100,7 +100,7 @@ module.exports = {
         }
       }
 
-      winston.error('Error while retrieving data from the Battle.net API', err.message);
+      winston.error('Error while retrieving data from the Battle.net API: %s', err.message);
 
       return 'An error occurred while retrieving data from the Battle.net API';
     }
