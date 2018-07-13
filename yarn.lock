@@ -731,12 +731,12 @@ diagnostics@^1.0.1:
 
 "discord.js@https://github.com/discordjs/discord.js":
   version "12.0.0-dev"
-  resolved "https://github.com/discordjs/discord.js#95b2dd3fe63ec9b6c7cec4f63f8276f4d907f228"
+  resolved "https://github.com/discordjs/discord.js#7d2744be89f90fa16b77b6fbad95902e26f4564a"
   dependencies:
     form-data "^2.3.2"
     node-fetch "^2.1.2"
     pako "^1.0.0"
-    prism-media "^0.3.0"
+    prism-media hydrabolt/prism-media
     tweetnacl "^1.0.0"
     ws "^4.0.0"
 
@@ -2625,9 +2625,9 @@ pretty-ms@^3.2.0:
   dependencies:
     parse-ms "^1.0.0"
 
-prism-media@^0.3.0:
+prism-media@hydrabolt/prism-media:
   version "0.3.1"
-  resolved "https://registry.yarnpkg.com/prism-media/-/prism-media-0.3.1.tgz#5331522d1194b544c65db4a66ea3854e6916a258"
+  resolved "https://codeload.github.com/hydrabolt/prism-media/tar.gz/ead016c69b1f341898cb264746c355b982502c62"
 
 process-nextick-args@~2.0.0:
   version "2.0.0"
