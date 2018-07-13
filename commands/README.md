@@ -17,7 +17,6 @@ Every category folder can contain a file called `category.json` for defining par
 - `middleware` string ir array of strings of middleware names to run before running the actual command
 - `cooldown` integer value in seconds needed or a user to run this  (sub-) command again
 - `hideTyping` boolean value: whether to hide the typing indicator while this command is being processed or not
-- `voice` boolean value: defines this command as a voice command, enabling special checks (`joinable` & `speakable`) for the target voice channel & setting `hideTyping` to true
 - `nsfw` mark this command nsfw (only executable in nsfw marked channels then)
 - `arguments` object or array of objects for the (sub-) command parameter configuration:
   - `label` the argument label to display in help output (optional, if not set the type will be shown)
