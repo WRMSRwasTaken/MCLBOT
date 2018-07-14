@@ -34,9 +34,15 @@ async function clean(ctx, filter, limit) {
 
     winston.debug('Fetching %d messages from the discord api...', amount);
 
-    const messages = await ctx.channel.messages.fetch({limit: amount});
+    const messages = await ctx.channel.messages.fetch({ limit: amount });
 
-    const messagesToDelete = messages.filter(filter);
+    let messagesToDelete;
+
+    if (filter) {
+      messagesToDelete = messages.filter(filter);
+    } else {
+      messagesToDelete = messages;
+    }
 
     searched += messages.size;
 
@@ -143,11 +149,7 @@ module.exports = {
     },
     all: {
       description: 'Deletes messages',
-      fn: async (ctx, flags) => {
-        const filter = true;
-
-        return clean(ctx, filter, flags.max);
-      },
+      fn: async (ctx, flags) => clean(ctx, false, flags.max),
     },
   },
 };
