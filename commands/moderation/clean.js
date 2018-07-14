@@ -6,10 +6,14 @@ const defaultMessages = 50;
 async function cleanSingle(ctx, messages) {
   winston.debug('Will now single delete %d messages...', messages.size);
 
+  let deleted = 0;
+
   for (const message of messages.values()) {
     if (message.deletable) {
       try {
         await message.delete();
+
+        deleted += 1;
       } catch (ex) {
         // do nothing on purpose
       }
@@ -17,34 +21,51 @@ async function cleanSingle(ctx, messages) {
   }
 
   winston.debug('Done single delete %d messages', messages.size);
+
+  return deleted;
 }
 
 async function clean(ctx, filter, limit) {
+  let searched = 0;
+  let deleted = 0;
+
   for (let i = limit || defaultMessages; i > 0; i -= 100) {
     const amount = (i <= 100) ? i : 100;
 
     winston.debug('Fetching %d messages from the discord api...', amount);
 
-    const messagesToDelete = await ctx.channel.messages.fetch({ limit: amount });
+    const messages = await ctx.channel.messages.fetch({limit: amount});
 
-    if (messagesToDelete.last().createdAt < moment().subtract(2, 'weeks').toDate()) {
-      winston.debug('Last message is older than 2 weeks, falling back to manually deleting messages');
+    const messagesToDelete = messages.filter(filter);
 
-      await cleanSingle(ctx, messagesToDelete);
-    } else {
-      try {
-        await ctx.channel.bulkDelete(messagesToDelete.array());
+    searched += messages.size;
 
-        winston.debug('Calling bulkDelete() succeeded!');
-      } catch (ex) {
-        winston.debug('Calling bulkDelete() failed (%s), falling back to manually deleting messages', ex.message);
+    if (messagesToDelete.size > 0) {
+      if (messagesToDelete.last().createdAt < moment().subtract(2, 'weeks').toDate()) {
+        winston.debug('Last message is older than 2 weeks, falling back to manually deleting messages');
 
-        await cleanSingle(ctx, messagesToDelete);
+        deleted += await cleanSingle(ctx, messagesToDelete);
+      } else {
+        try {
+          await ctx.channel.bulkDelete(messagesToDelete.array());
+
+          winston.debug('Calling bulkDelete() succeeded!');
+
+          deleted += messagesToDelete.size;
+        } catch (ex) {
+          winston.debug('Calling bulkDelete() failed (%s), falling back to manually deleting messages', ex.message);
+
+          deleted += await cleanSingle(ctx, messagesToDelete);
+        }
       }
     }
   }
 
   winston.debug('clean() for %d messages finished', limit || defaultMessages);
+
+  ctx.message.deleted = false;
+
+  return `Removed ${deleted} message${(deleted === 1) ? '' : 's'} out of ${searched} searched message${(searched === 1) ? '' : 's'}.`;
 }
 
 module.exports = {
