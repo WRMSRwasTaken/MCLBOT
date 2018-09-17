@@ -12,7 +12,7 @@ const pendingUpdates = {};
 
 module.exports = {
   fn: (main, oldMember, newMember) => {
-    if (newMember.presence.status === 'offline') {
+    if (newMember.presence && newMember.presence.status === 'offline') {
       if (!pendingUpdates[newMember.user.id]) {
         setTimeout(() => {
           main.prometheusMetrics.redisWrites.inc();

@@ -25,6 +25,7 @@ The context object has the following variables and functions:
 - `rawCommand` the raw command message string (without any prefixes)
 - `command` the object of the called command
 - `subcommand` the object of the called command's subcommand (if any)
+- `category` the command's category (if any)
 - `isSubcommandRedirect` true, if the subcommand has been called throuth a redirect from the root command
 - `rawCommandParameters` the raw command parameter string (including flags)
 - `parsedArguments` array of the parsed arguments for the called (sub-)command

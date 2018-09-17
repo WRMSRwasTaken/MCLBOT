@@ -106,9 +106,7 @@ module.exports = {
       }
 
       for (const argument of commandObjectToHandle.arguments) {
-        const label = argument.label || argument.type;
-
-        usageText += `${(argument.optional) ? '[' : '<'}${label}${(argument.optional) ? ']' : '>'} `;
+        usageText += `${(argument.optional) ? '[' : '<'}${argument.label || argument.type}${(argument.optional) ? ']' : '>'} `;
       }
 
       embed.addField('Usage', usageText, false);
@@ -126,9 +124,7 @@ module.exports = {
           continue; // eslint-disable-line no-continue
         }
 
-        const label = flag.label || flag.type;
-
-        flagText += `--${flag.name}${(flag.type) ? ` <${label}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${label}>` : ''}\n`;
+        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\n`;
       }
     }
 
@@ -136,9 +132,7 @@ module.exports = {
       for (const flagName of Object.keys(commandObjectToHandle.flags)) {
         const flag = commandObjectToHandle.flags[flagName];
 
-        const label = flag.label || flag.type;
-
-        flagText += `--${flag.name}${(flag.type) ? ` <${label}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${label}>` : ''}\n`;
+        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\n`;
       }
     }
 

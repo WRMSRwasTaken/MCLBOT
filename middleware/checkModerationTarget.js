@@ -18,14 +18,14 @@ module.exports = {
       return false;
     }
 
-    if (target.roles.highest.position >= ctx.guild.me.roles.highest.position) { // This should (hopefully) eliminate the need to check e.g. the "bannable" property of the target member
-      ctx.reply(`Sorry, but the target member \`${target.user.tag}\` is above my top role or the same.`);
+    if (target.user.id === ctx.guild.ownerID) {
+      ctx.reply(`Sorry, but the target member \`${target.user.tag}\` is the guild owner.`);
 
       return false;
     }
 
-    if (target.user.id === ctx.guild.ownerID) {
-      ctx.reply(`Sorry, but the target member \`${target.user.tag}\` is the guild owner.`);
+    if (target.roles.highest.position >= ctx.guild.me.roles.highest.position) { // This should (hopefully) eliminate the need to check e.g. the "bannable" property of the target member
+      ctx.reply(`Sorry, but the target member \`${target.user.tag}\` is above my top role or the same.`);
 
       return false;
     }

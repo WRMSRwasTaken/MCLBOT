@@ -2,7 +2,7 @@ const util = require('util');
 
 module.exports = {
   description: 'test3',
-  cooldown: 0,
+  cooldown: false,
   arguments: [
     {
       label: 'testarg',

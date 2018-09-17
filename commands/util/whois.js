@@ -21,6 +21,7 @@ function stringToHex(s) {
 
 module.exports = {
   description: 'Display information about a certain IP-Address or FQDN',
+  alias: ['ip'],
   arguments: [
     {
       label: 'ip | hostname',
@@ -35,33 +36,91 @@ module.exports = {
     let result;
 
     if (validator.isIP(input)) {
-      if (ip.isPrivate(input)) {
-        if (input === '255.255.255.255') {
-          return `\`${input}\` is a limited broadcast address`;
-        }
-
+      if (ip.isV4Format(input)) {
         if (ip.cidrSubnet('10.0.0.0/8').contains(input) || ip.cidrSubnet('192.168.0.0/16').contains(input) || ip.cidrSubnet('172.16.0.0/12').contains(input)) {
           return `\`${input}\` is a private network address`;
         }
-
-        if (ip.cidrSubnet('127.0.0.0/8').contains(input) || input === '::1') {
+        if (ip.cidrSubnet('0.0.0.0/32').contains(input)) {
+          return `\`${input}\` refers to this host in the local network (only valid as source address)`;
+        }
+        if (ip.cidrSubnet('0.0.0.0/8').contains(input)) {
+          return `\`${input}\` refers to a source host in the local network`;
+        }
+        if (ip.cidrSubnet('100.64.0.0/10').contains(input)) {
+          return `\`${input}\` is a shared address space IP (for use with carrier-grade NAT)`;
+        }
+        if (ip.cidrSubnet('127.0.0.0/8').contains(input)) {
           return `\`${input}\` is a local loopback address`;
         }
-
-        if (ip.cidrSubnet('169.254.0.0/16').contains(input) || ip.cidrSubnet('fe80::/64').contains(input)) {
+        if (ip.cidrSubnet('169.254.0.0/16').contains(input)) {
           return `\`${input}\` is a link local address`;
         }
-
-        if (ip.cidrSubnet('224.0.0.0/4').contains(input) || ip.cidrSubnet('ff00::/8').contains(input)) {
+        if (ip.cidrSubnet('192.0.0.0/24').contains(input)) {
+          return `\`${input}\` is an IP for IETF protocol assignments`;
+        }
+        if (ip.cidrSubnet('192.0.2.0/24').contains(input)) {
+          return `\`${input}\` is an IP used for documentation and examples (TEST-NET-1)`;
+        }
+        if (ip.cidrSubnet('192.88.99.0/24').contains(input)) {
+          return `\`${input}\` is a reserved IP. That /24 subnet has been formerly used for IPv6 to IPv4 relay (6to4).`;
+        }
+        if (ip.cidrSubnet('198.18.0.0/15').contains(input)) {
+          return `\`${input}\` is an IP used for benchmark testing of inter-network communications between two seperate subnets (/15)`;
+        }
+        if (ip.cidrSubnet('198.51.100.0/24').contains(input)) {
+          return `\`${input}\` is an IP used for documentation and examples (TEST-NET-2)`;
+        }
+        if (ip.cidrSubnet('203.0.113.0/24').contains(input)) {
+          return `\`${input}\` is an IP used for documentation and examples (TEST-NET-3)`;
+        }
+        if (ip.cidrSubnet('224.0.0.0/4').contains(input)) {
           return `\`${input}\` is a multicast address`;
         }
-
+        if (ip.cidrSubnet('240.0.0.0/4').contains(input)) {
+          return `\`${input}\` is a reserved address for future use`;
+        }
+        if (input === '255.255.255.255') {
+          return `\`${input}\` is a limited broadcast address`;
+        }
+      } else {
+        if (input === '::1') {
+          return `\`${input}\` is a local loopback address`;
+        }
+        if (ip.cidrSubnet('fc00::/7').contains(input)) {
+          return `\`${input}\` is a unique local address`;
+        }
+        if (ip.cidrSubnet('ff00::/8').contains(input)) {
+          return `\`${input}\` is a multicast address`;
+        }
         if (ip.cidrSubnet('fec0::/10').contains(input)) {
           return `\`${input}\` is a site local address (deprecated)`;
         }
-
-        if (ip.cidrSubnet('fc00::/7').contains(input)) {
-          return `\`${input}\` is a unique local address`;
+        if (ip.cidrSubnet('fe80::/10').contains(input)) {
+          return `\`${input}\` is a link local address`;
+        }
+        if (ip.cidrSubnet('2002::/16').contains(input)) {
+          return `\`${input}\` is a reserved IP. That /16 subnet has been formerly used for IPv6 to IPv4 relay (6to4).`;
+        }
+        if (ip.cidrSubnet('64:ff9b::/96').contains(input)) {
+          return `\`${input}\` is an IP inside a subnet used for IPv4/IPv6 translation`;
+        }
+        if (ip.cidrSubnet('100::/64').contains(input)) {
+          return `\`${input}\` is an IP inside the discard prefix (used by routers)`;
+        }
+        if (ip.cidrSubnet('::ffff:0:0/96').contains(input)) {
+          return `\`${input}\` is a IPv4 mapped address`;
+        }
+        if (ip.cidrSubnet('::ffff:0:0:0/96').contains(input)) {
+          return `\`${input}\` is a IPv4 translated address`;
+        }
+        if (ip.cidrSubnet('2001::/32').contains(input)) {
+          return `\`${input}\` is an IP used for Teredo tunneling`;
+        }
+        if (ip.cidrSubnet('2001:20::/28').contains(input)) {
+          return `\`${input}\` is an IP used for ORCHIDv2`;
+        }
+        if (ip.cidrSubnet('2001:db8::/32').contains(input)) {
+          return `\`${input}\` is an IP used for documentation and examples`;
         }
       }
 

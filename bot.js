@@ -17,15 +17,9 @@ const init = new Init(main);
 
 init.loadSettings();
 
-init.initLog();
-
-init.initAPI();
-
-init.checkSettings();
-
 init.initBase();
 
-// init.createRPCSocket();
+init.checkSettings();
 
 if (main.shardMaster) {
   init.launchShards();
