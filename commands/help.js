@@ -86,11 +86,14 @@ module.exports = {
       let cooldown = ctx.main.commandHandler.getProperty(ctx, 'cooldown', commandObject, subcommandObject);
 
       if (cooldown === undefined) {
-        cooldown = nconf.get('bot:defaultCooldown');
+        cooldown = {
+          actions: nconf.get('bot:defaultCooldownActions'),
+          period: nconf.get('bot:defaultCooldownPeriod'),
+        };
       }
 
-      if (cooldown !== 0) {
-        embed.addField('Cooldown', `${cooldown} seconds`, false);
+      if (cooldown !== false) {
+        embed.addField('Cooldown', `Max. ${cooldown.actions} actions in ${cooldown.period} seconds`, false);
       }
     }
 
