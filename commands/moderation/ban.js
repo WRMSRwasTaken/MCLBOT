@@ -44,6 +44,12 @@ module.exports = {
         return ctx.main.stringUtils.argumentError(ctx, 0, 'Invalid user given (for users not on this server you must supply the user ID, aka hackbanning)');
       }
 
+      const bans = await ctx.guild.fetchBans();
+
+      if (bans.has(userid)) {
+        return ctx.main.stringUtils.argumentError(ctx, 0, `User \`${user.tag}\` is already banned from this server`);
+      }
+
       userToBan = user;
       hackban = true;
     }
