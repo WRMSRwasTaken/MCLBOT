@@ -4,5 +4,4 @@ This folder contains the middleware files which one or more are run (if specifie
 
 ### file parameters
 
-- `run()` the actual function that will be called if this middleware is going to run, the following arguments will be passed:
-  * `context` the context object, see the [context documentation](../context.md)
+- `run()` the actual function that will be called if this middleware is going to run, with the context object (see the [context documentation](../context.md)) as the first parameter and the configured command arguments as the following parameters, the last parameter will be always the flag object (or an empty object, if no flags have been passed or defined).

@@ -1,7 +1,5 @@
 module.exports = {
-  run: async (ctx) => {
-    const target = ctx.parsedArguments[0];
-
+  run: async (ctx, target) => {
     if (!target) {
       return true;
     }
