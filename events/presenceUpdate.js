@@ -11,19 +11,19 @@ so we need some sort of a debounce system to wait for all presence updates to fi
 const pendingUpdates = {};
 
 module.exports = {
-  fn: (main, oldMember, newMember) => {
-    if (newMember.presence && newMember.presence.status === 'offline') {
-      if (!pendingUpdates[newMember.user.id]) {
+  fn: (main, oldPresence, newPresence) => {
+    if (newPresence.status === 'offline') {
+      if (!pendingUpdates[newPresence.user.id]) {
         setTimeout(() => {
           main.prometheusMetrics.redisWrites.inc();
 
-          main.redis.set(`user_last_seen:${newMember.user.id}`, pendingUpdates[newMember.user.id], 'EX', nconf.get('bot:redisStoreTTL'));
+          main.redis.set(`user_last_seen:${newPresence.user.id}`, pendingUpdates[newPresence.user.id], 'EX', nconf.get('bot:redisStoreTTL'));
 
-          delete pendingUpdates[newMember.user.id];
+          delete pendingUpdates[newPresence.user.id];
         }, 5000);
       }
 
-      pendingUpdates[newMember.user.id] = moment().unix() * 1000;
+      pendingUpdates[newPresence.user.id] = moment().unix() * 1000;
     }
   },
 };
