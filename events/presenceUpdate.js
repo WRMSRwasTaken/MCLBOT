@@ -1,4 +1,3 @@
-const moment = require('moment');
 const nconf = require('nconf');
 
 /*
@@ -23,7 +22,7 @@ module.exports = {
         }, 5000);
       }
 
-      pendingUpdates[newPresence.user.id] = moment().unix() * 1000;
+      pendingUpdates[newPresence.user.id] = Date.now();
     }
   },
 };
