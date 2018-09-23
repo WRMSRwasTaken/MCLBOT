@@ -10,4 +10,3 @@ module.exports = {
   ],
   fn: async (ctx, image) => ctx.main.imageHelper.processImage(ctx, image, null, '-liquid-rescale 50% -liquid-rescale 150%'),
 };
-

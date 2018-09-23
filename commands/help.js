@@ -127,7 +127,7 @@ module.exports = {
           continue; // eslint-disable-line no-continue
         }
 
-        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\n`;
+        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short} ${(flag.type) ? ` <${flag.label || flag.type}>` : ''}` : ''}\n`;
       }
     }
 
@@ -135,7 +135,7 @@ module.exports = {
       for (const flagName of Object.keys(commandObjectToHandle.flags)) {
         const flag = commandObjectToHandle.flags[flagName];
 
-        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short}` : ''}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\n`;
+        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short} ${(flag.type) ? ` <${flag.label || flag.type}>` : ''}` : ''}\n`;
       }
     }
 
