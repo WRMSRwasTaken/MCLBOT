@@ -37,6 +37,7 @@ module.exports = {
     reset: {
       description: 'resets the bot\'s server command prefix to it\'s default value',
       permission: 'ADMINISTRATOR',
+      alias: ['clear'],
       fn: async (context) => {
         if (context.guildPrefixDisabled) {
           return 'The prefix has been disabled for this server. To reset a guild prefix, enable it first with `prefix enable`.';
@@ -79,4 +80,3 @@ module.exports = {
     },
   },
 };
-
