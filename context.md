@@ -32,3 +32,4 @@ The context object has the following variables and functions:
 - `parsedArguments` array of the parsed arguments for the called (sub-)command
 - `parsedFlags` array of the parsed flags for the called (sub-) command
 - `reply()` wrapper-function around `channel.send()` to answer / output command output. This should be always be preferred over `channel.send()` because this function allows the bot to handle edits and permission problems more efficiently.
+- `deleteReplies()` deletes all replies the bot sent so far for the invoke message
