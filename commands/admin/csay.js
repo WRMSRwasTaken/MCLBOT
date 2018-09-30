@@ -23,7 +23,7 @@ module.exports = {
     }
 
     const cmsg = await channel.send(text);
-    ctx.message.replies.push(cmsg);
+    ctx.replies.push(cmsg);
 
     return ctx.reply(`Message sent to channel <#${channel.id}> (ID: ${channel.id}) on server \`${channel.guild.name}\` (ID: ${channel.guild.id})`);
   },

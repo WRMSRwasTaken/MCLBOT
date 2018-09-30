@@ -15,6 +15,7 @@ The context object has the following variables and functions:
 - `isBotAdmin` if the message author is a bot administrator (always true in selfbot mode)
 - `isEdited` if the message has been edited
 - `messageEdits` how many times the author's message has been edited
+- `replies` an array of messages the bot sent as reply to the invoke message
 - `guild` the [Guild](https://discord.js.org/#/docs/main/master/class/Guild)-object the message has been sent in (`undefined` if not)
 - `member` the [GuildMember](https://discord.js.org/#/docs/main/master/class/GuildMember)-object representing the user's guild member (`undefined` if not sent in a guild)
 - `isDM` true, if the message has been sent via DM
