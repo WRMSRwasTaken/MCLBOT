@@ -262,9 +262,9 @@ boom@2.x.x:
   dependencies:
     hoek "2.x.x"
 
-bottleneck@2.10.0:
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.10.0.tgz#276c1cd97a3df7967f72aa035572d68bf6241e44"
+bottleneck@2.11.2:
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/bottleneck/-/bottleneck-2.11.2.tgz#e1690e14f664cc3e37096863252061da8600fe47"
 
 brace-expansion@^1.1.7:
   version "1.1.11"
@@ -600,6 +600,12 @@ debug@^3.1.0:
   dependencies:
     ms "2.0.0"
 
+debug@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-4.0.1.tgz#f9bb36d439b8d1f0dd52d8fb6b46e4ebb8c1cd5b"
+  dependencies:
+    ms "^2.1.1"
+
 decamelize@^1.1.1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/decamelize/-/decamelize-1.2.0.tgz#f6534d15148269b20352e7bee26f501f9a191290"
@@ -725,7 +731,7 @@ diagnostics@^1.1.1:
 
 "discord.js@https://github.com/discordjs/discord.js":
   version "12.0.0-dev"
-  resolved "https://github.com/discordjs/discord.js#4a24e8c12c1eeef84b804ea21c5b5d1f0573c24a"
+  resolved "https://github.com/discordjs/discord.js#27d2ce7baf9a25d2e5eec76cd66b8ca14aabd5ee"
   dependencies:
     form-data "^2.3.2"
     node-fetch "^2.1.2"
@@ -933,15 +939,15 @@ eslint-visitor-keys@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#3f3180fb2e291017716acb4c9d6d5b5c34a6a81d"
 
-eslint@5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.6.0.tgz#b6f7806041af01f71b3f1895cbb20971ea4b6223"
+eslint@5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-5.6.1.tgz#348134e32ccc09abb2df1bf282b3f6eed8c7b480"
   dependencies:
     "@babel/code-frame" "^7.0.0"
     ajv "^6.5.3"
     chalk "^2.1.0"
     cross-spawn "^6.0.5"
-    debug "^3.1.0"
+    debug "^4.0.1"
     doctrine "^2.1.0"
     eslint-scope "^4.0.0"
     eslint-utils "^1.3.1"
@@ -1140,6 +1146,10 @@ file-entry-cache@^2.0.0:
     flat-cache "^1.2.1"
     object-assign "^4.0.1"
 
+file-type@10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/file-type/-/file-type-10.0.0.tgz#084f32ab827238aa9a1482195ca7448c77a006b3"
+
 file-type@^3.8.0:
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/file-type/-/file-type-3.9.0.tgz#257a078384d1db8087bc449d107d52a52672b9e9"
@@ -1151,10 +1161,6 @@ file-type@^5.2.0:
 file-type@^6.1.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/file-type/-/file-type-6.2.0.tgz#e50cd75d356ffed4e306dc4f5bcf52a79903a919"
-
-file-type@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/file-type/-/file-type-9.0.0.tgz#a68d5ad07f486414dfb2c8866f73161946714a18"
 
 finalhandler@1.1.1:
   version "1.1.1"
@@ -1529,9 +1535,9 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
 
-ioredis@4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.0.0.tgz#fabf1cf8724f14fd0885233cf2f4fbc6e1e59da2"
+ioredis@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/ioredis/-/ioredis-4.0.1.tgz#266f18534fb7d8a28ca752cd5ade8150684e46e7"
   dependencies:
     cluster-key-slot "^1.0.6"
     debug "^3.1.0"
@@ -1550,7 +1556,7 @@ ioredis@4.0.0:
     lodash.sample "^4.2.1"
     lodash.shuffle "^4.2.0"
     lodash.values "^4.3.0"
-    redis-commands "^1.2.0"
+    redis-commands "^1.3.5"
     redis-errors "^1.2.0"
     redis-parser "^3.0.0"
     standard-as-callback "^1.0.0"
@@ -2461,9 +2467,9 @@ parse-json@^2.2.0:
   dependencies:
     error-ex "^1.2.0"
 
-parse-ms@^1.0.0:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/parse-ms/-/parse-ms-1.0.1.tgz#56346d4749d78f23430ca0c713850aef91aa361d"
+parse-ms@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/parse-ms/-/parse-ms-2.0.0.tgz#7b3640295100caf3fa0100ccceb56635b62f9d62"
 
 parseurl@~1.3.2:
   version "1.3.2"
@@ -2536,9 +2542,9 @@ pg-types@~1.12.1:
     postgres-date "~1.0.0"
     postgres-interval "^1.1.0"
 
-pg@^7.4.3:
-  version "7.4.3"
-  resolved "https://registry.yarnpkg.com/pg/-/pg-7.4.3.tgz#f7b6f93f5340ecc2596afbb94a13e3d6b609834b"
+pg@7.5.0:
+  version "7.5.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-7.5.0.tgz#c2853bef2fcb91424ba2f649fd951ce866a84760"
   dependencies:
     buffer-writer "1.0.1"
     packet-reader "0.3.1"
@@ -2612,11 +2618,11 @@ pretty-bytes@^5.0.0:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-5.1.0.tgz#6237ecfbdc6525beaef4de722cc60a58ae0e6c6d"
 
-pretty-ms@^3.2.0:
-  version "3.2.0"
-  resolved "https://registry.yarnpkg.com/pretty-ms/-/pretty-ms-3.2.0.tgz#87a8feaf27fc18414d75441467d411d6e6098a25"
+pretty-ms@4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/pretty-ms/-/pretty-ms-4.0.0.tgz#31baf41b94fd02227098aaa03bd62608eb0d6e92"
   dependencies:
-    parse-ms "^1.0.0"
+    parse-ms "^2.0.0"
 
 prism-media@amishshah/prism-media:
   version "0.3.1"
@@ -2630,9 +2636,9 @@ progress@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
 
-prom-client@^11.0.0:
-  version "11.1.1"
-  resolved "https://registry.yarnpkg.com/prom-client/-/prom-client-11.1.1.tgz#21b7e9dc0ceaae3c72a5ccd2e796d79bf1584eae"
+prom-client@11.1.3:
+  version "11.1.3"
+  resolved "https://registry.yarnpkg.com/prom-client/-/prom-client-11.1.3.tgz#bd9566ddcc6cb52e47732547191d777fbe35d12e"
   dependencies:
     tdigest "^0.1.1"
 
@@ -2734,9 +2740,9 @@ readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.3.0, readable
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-redis-commands@^1.2.0:
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.3.5.tgz#4495889414f1e886261180b1442e7295602d83a2"
+redis-commands@^1.3.5:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/redis-commands/-/redis-commands-1.4.0.tgz#52f9cf99153efcce56a8f86af986bd04e988602f"
 
 redis-errors@^1.0.0, redis-errors@^1.2.0:
   version "1.2.0"
@@ -2930,9 +2936,9 @@ sequelize-cli@4.1.1:
     umzug "^2.1.0"
     yargs "^8.0.2"
 
-sequelize@4.38.1:
-  version "4.38.1"
-  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.38.1.tgz#4fd832c33c0ff44a6516bf7133b1ec6311fa4297"
+sequelize@4.39.0:
+  version "4.39.0"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-4.39.0.tgz#0e070a4705367e4b0779183f812c72f478ff12b9"
   dependencies:
     bluebird "^3.5.0"
     cls-bluebird "^2.1.0"
@@ -3392,9 +3398,9 @@ validator@*, validator@^10.4.0:
   version "10.6.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.6.0.tgz#a9bdce685b3c3e8480e7ebbb9eb95c54cd9733b0"
 
-validator@10.7.1:
-  version "10.7.1"
-  resolved "https://registry.yarnpkg.com/validator/-/validator-10.7.1.tgz#dd4cc750c2134ce4a15a2acfc7b233669d659c5b"
+validator@10.8.0:
+  version "10.8.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-10.8.0.tgz#8acb15a5c39411cbc8ef2be0c98c2514da4410a7"
 
 vary@~1.1.2:
   version "1.1.2"
