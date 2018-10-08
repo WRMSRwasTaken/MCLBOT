@@ -5,6 +5,7 @@ module.exports = {
   subcommands: {
     show: {
       description: 'displays the bot\'s current server command prefix',
+      alias: ['print'],
       fn: async (context) => {
         if (context.guildPrefixDisabled) {
           return 'The prefix has been disabled for this server. To enable it, run `prefix enable`.';
