@@ -1,6 +1,6 @@
 module.exports = {
   run: async (ctx, target) => {
-    if (!target) {
+    if (!target || !target.user) {
       return true;
     }
 
