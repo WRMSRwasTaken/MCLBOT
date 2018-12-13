@@ -36,6 +36,7 @@ Every category folder can contain a file called `category.json` for defining par
   - `global` boolean value: whether the flag should be available for all subcommands too (root command only)
   - `min` minimum number for int and float, minimum length for strings
   - `max` maximum number for int and float, maximum length for strings
+  - `description` an optional flag description to show in the help output
   - `infinite` the flag takes infinite values (only for type `string`, will end on reaching the next flag or the input end)
 - `fn()` command function, with the context object (see the [context documentation](../context.md)) as the first parameter and the configured command arguments as the following parameters, the last parameter will be always the flag object (or an empty object, if no flags have been passed or defined). This will be executed if a matching subcommand can't be found (if this isn't set in the root command, a valid subcommand will be required).
 Can be also a string, pointing to the subcommand name which will be run, if no subcommand is passed by the user (subcommand redirection).

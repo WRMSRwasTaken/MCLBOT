@@ -1,5 +1,5 @@
 module.exports = {
-  description: 'Shut down the bot',
+  description: 'Shutdown the bot', // TODO: make this shard-aware
   alias: ['exit', 'quit', 'die'],
   fn: async (ctx) => {
     const msg = await ctx.reply('Confirm bot shutdown:');

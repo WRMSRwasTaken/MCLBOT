@@ -1,7 +1,7 @@
 const S = require('string');
 
 module.exports = {
-  description: 'Runs a redis command against the bot\'s database',
+  description: 'Runs a command against the bot\'s Redis backend',
   arguments: [
     {
       label: 'command',

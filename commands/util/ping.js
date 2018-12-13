@@ -1,16 +1,33 @@
 const winston = require('winston');
+const prettyMs = require('pretty-ms');
 
 module.exports = {
   description: 'Measures the latency of sending a text message and receiving it',
   alias: 'rtt',
-  fn: async (ctx) => {
+  flags: {
+    detailed: {
+      short: 'd',
+      description: 'Show detailed latency statistics',
+    },
+  },
+  fn: async (ctx, flags) => {
     if (!ctx.main.pings) {
       ctx.main.pings = {};
     }
 
-    function sendStats(editMsg, initial, rtt, diff) {
-      editMsg.edit(`:stopwatch: Message latency statistics:\`\`\`Initial send time: ${initial}ms\n        Total RTT: ${rtt}ms\n   Timestamp diff: ${diff}ms\`\`\``);
+    function sendStats(editMsg, initial, rtt, diff, handle) {
+      if (flags.detailed) {
+        editMsg.edit(`:stopwatch: Message latency statistics:\`\`\`Websocket latency: ${prettyMs(ctx.main.api.ws.ping)}\n   Handle latency: ${handle}ms\nInitial send time: ${initial}ms\n        Total RTT: ${rtt}ms\n   Timestamp diff: ${diff}ms\`\`\``);
+      } else {
+        editMsg.edit(`:ping_pong: \`${rtt + handle}ms\``);
+      }
     }
+
+    const startTimestamp = Date.now();
+
+    const userTimestamp = ctx.message.editedTimestamp || ctx.message.createdTimestamp;
+
+    const handleLatency = (Date.now() - userTimestamp < 0) ? userTimestamp - Date.now() : Date.now() - userTimestamp;
 
     const nonce = Math.floor(Math.random() * (99999 + 1));
 
@@ -34,7 +51,7 @@ module.exports = {
 
         if (ctx.main.pings[innerNonce].sendDuration) {
           winston.debug('Received own message after sending finished.');
-          sendStats(ctx.main.pings[innerNonce].pingMsg, ctx.main.pings[innerNonce].sendDuration, receiveTimestamp - ctx.main.pings[innerNonce].startTimestamp, ctx.main.pings[innerNonce].startTimestamp - ctx.main.pings[innerNonce].pingMsg.createdTimestamp);
+          sendStats(ctx.main.pings[innerNonce].pingMsg, ctx.main.pings[innerNonce].sendDuration, receiveTimestamp - ctx.main.pings[innerNonce].startTimestamp, ctx.main.pings[innerNonce].startTimestamp - ctx.main.pings[innerNonce].pingMsg.createdTimestamp, handleLatency);
           delete ctx.main.pings[innerNonce];
         }
       }
@@ -43,10 +60,10 @@ module.exports = {
     winston.debug('Registering temp rtt msg handler...');
     ctx.main.api.on('message', msgReceiver);
 
-    const startTimestamp = Date.now();
     ctx.main.pings[nonce].startTimestamp = startTimestamp;
 
     const pingMsg = await ctx.reply(':stopwatch: Pinging...', { nonce });
+
     ctx.main.pings[nonce].pingMsg = pingMsg;
 
     const sendDuration = Date.now() - startTimestamp;
@@ -55,7 +72,7 @@ module.exports = {
 
     if (ctx.main.pings[nonce].receiveTimestamp) {
       winston.debug('Received own message before sending finished.');
-      sendStats(pingMsg, sendDuration, ctx.main.pings[nonce].receiveTimestamp - startTimestamp, startTimestamp - pingMsg.createdTimestamp);
+      sendStats(pingMsg, sendDuration, ctx.main.pings[nonce].receiveTimestamp - startTimestamp, startTimestamp - pingMsg.createdTimestamp, handleLatency);
       delete ctx.main.pings[nonce];
     }
   },

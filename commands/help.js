@@ -2,7 +2,7 @@ const nconf = require('nconf');
 
 module.exports = {
   alias: ['h', 'commands'],
-  description: 'Displays the bot\'s help pages',
+  description: 'Displays the bot\'s help pages, or information about a command (if provided)',
   arguments: [
     {
       label: 'command',
@@ -16,22 +16,121 @@ module.exports = {
     },
   ],
   fn: async (ctx, command, subcommand) => {
-    if (!ctx.isBotAdmin && !command) {
-      return 'The help overview command is currently disabled for now. However, it is enabled for displaying help if specific commands with: help <command>';
-    }
-
     if (!command) {
-      const helpMsg = await ctx.reply(ctx.main.stringUtils.displayHelpPage());
+      const resultsPerPage = 10;
 
-      const paginationHelper = ctx.main.paginationHelper.initPagination(ctx, ctx.main.helpPages.length);
+      let pageCount = 1; // one page for the overview of categories
 
-      if (!paginationHelper) {
+      const pageMaps = {};
+
+      let categoryOverviewText = '';
+
+      if (ctx.main.uncategorizedCommands.length > 0) { // the 1st page for uncategorized commands
+        let uncategorizedSize = 0;
+
+        for (const iterCommand of ctx.main.uncategorizedCommands) {
+          if (!ctx.main.commandHandler.getProperty(ctx, 'hide', ctx.main.commands[iterCommand])) {
+            uncategorizedSize += 1;
+          }
+        }
+
+        if (uncategorizedSize > 0) {
+          pageCount += 1;
+
+          let pagesForThisCategory = Math.floor(uncategorizedSize / resultsPerPage) - 1;
+
+          if (uncategorizedSize % resultsPerPage !== 0) {
+            pagesForThisCategory += 1;
+          }
+
+          categoryOverviewText += `\n• **uncategorized**: Page ${pageCount}${(pagesForThisCategory > 0) ? ` - ${pageCount + pagesForThisCategory}` : ''}`;
+
+          for (let i = pageCount; i <= pageCount + pagesForThisCategory; i += 1) {
+            pageMaps[i] = {
+              category: 'uncategorized',
+              first: pageCount,
+              last: pageCount + pagesForThisCategory,
+            };
+          }
+
+          pageCount += pagesForThisCategory;
+        }
+      }
+
+      for (const category of Object.keys(ctx.main.categories)) {
+        let categorySize = 0;
+
+        for (const iterCommand of ctx.main.categories[category]) {
+          if (!ctx.main.commandHandler.getProperty(ctx, 'hide', ctx.main.commands[iterCommand])) {
+            categorySize += 1;
+          }
+        }
+
+        if (categorySize === 0) {
+          continue; // eslint-disable-line no-continue
+        }
+
+        pageCount += 1;
+
+        let pagesForThisCategory = Math.floor(categorySize / resultsPerPage) - 1;
+
+        if (categorySize % resultsPerPage !== 0) {
+          pagesForThisCategory += 1;
+        }
+
+        categoryOverviewText += `\n• **${category}**: Page ${pageCount}${(pagesForThisCategory > 0) ? ` - ${pageCount + pagesForThisCategory}` : ''}`;
+
+        for (let i = pageCount; i <= pageCount + pagesForThisCategory; i += 1) {
+          pageMaps[i] = {
+            category,
+            first: pageCount,
+            last: pageCount + pagesForThisCategory,
+          };
+        }
+
+        pageCount += pagesForThisCategory;
+      }
+
+      const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx, 'MCLBOT help', pageCount);
+
+      if (!paginatedEmbed) {
         return false;
       }
 
-      paginationHelper.on('paginate', (pageNumber) => {
-        helpMsg.edit(ctx.main.stringUtils.displayHelpPage(pageNumber));
+      paginatedEmbed.on('paginate', async (pageNumber) => {
+        let pageText;
+
+        if (pageNumber === 1) {
+          pageText = `Category overview:\n${categoryOverviewText}`;
+        } else {
+          pageText = `Commands in category \`${pageMaps[pageNumber].category}\`${(pageMaps[pageNumber].last > pageMaps[pageNumber].first) ? ` (${pageNumber - pageMaps[pageNumber].first + 1} / ${pageMaps[pageNumber].last - pageMaps[pageNumber].first + 1})` : ''}:\n\n`;
+
+          const offset = resultsPerPage * (pageNumber - pageMaps[pageNumber].first);
+
+          const category = pageMaps[pageNumber].category;
+          const categoryCommands = (category === 'uncategorized') ? ctx.main.uncategorizedCommands : ctx.main.categories[category];
+
+          let resultCount;
+
+          if (categoryCommands.length > offset + resultsPerPage) {
+            resultCount = offset + resultsPerPage - 1;
+          } else {
+            resultCount = categoryCommands.length - 1;
+          }
+
+          for (let i = offset; i <= resultCount; i += 1) {
+            const iteratedCommand = categoryCommands[i];
+
+            pageText += `• **${iteratedCommand}**: ${ctx.main.commands[iteratedCommand].description}\n`;
+          }
+
+          pageText += '\nFor help with a specific command type `help <command>`';
+        }
+
+        paginatedEmbed.emit('update', pageText);
       });
+
+      paginatedEmbed.emit('paginate', 1);
 
       return true;
     }
@@ -66,7 +165,7 @@ module.exports = {
 
     const embed = new ctx.main.Discord.MessageEmbed();
 
-    let hasArguments = false;
+    let showFooter = false;
 
     embed.setTitle(`Help for command: ${commandObject.name} ${(subcommand) ? subcommandObject.name : ''}`);
 
@@ -114,7 +213,7 @@ module.exports = {
 
       embed.addField('Usage', usageText, false);
 
-      hasArguments = true;
+      showFooter = true;
     }
 
     let flagText = '';
@@ -127,7 +226,7 @@ module.exports = {
           continue; // eslint-disable-line no-continue
         }
 
-        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short} ${(flag.type) ? ` <${flag.label || flag.type}>` : ''}` : ''}\n`;
+        flagText += `• \`--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\`${(flag.short) ? ` / \`-${flag.short} ${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\`` : ''}${(flag.description) ? `\n    ${flag.description}` : ''}\n`; // eslint-disable-line no-irregular-whitespace
       }
     }
 
@@ -135,35 +234,41 @@ module.exports = {
       for (const flagName of Object.keys(commandObjectToHandle.flags)) {
         const flag = commandObjectToHandle.flags[flagName];
 
-        flagText += `--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}${(flag.short) ? ` / -${flag.short} ${(flag.type) ? ` <${flag.label || flag.type}>` : ''}` : ''}\n`;
+        flagText += `• \`--${flag.name}${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\`${(flag.short) ? ` / \`-${flag.short} ${(flag.type) ? ` <${flag.label || flag.type}>` : ''}\`` : ''}${(flag.description) ? `\n    ${flag.description}` : ''}\n`; // eslint-disable-line no-irregular-whitespace
       }
     }
 
     if (flagText) {
       embed.addField('Flags', flagText, false);
 
-      hasArguments = true;
+      showFooter = true;
     }
 
-    if (commandObjectToHandle.subcommands && !subcommand) {
+    if ((commandObjectToHandle.subcommands && !subcommand) || (redirect && commandObject.subcommands && !subcommand)) {
+      let cmdObj = commandObjectToHandle;
+
+      if (redirect) {
+        cmdObj = commandObject;
+      }
+
       let subcommandText = '';
 
-      for (const subcommandName of Object.keys(commandObjectToHandle.subcommands)) {
-        const tempSubcommand = commandObjectToHandle.subcommands[subcommandName];
+      for (const subcommandName of Object.keys(cmdObj.subcommands)) {
+        const tempSubcommand = cmdObj.subcommands[subcommandName];
 
-        subcommandText += `${tempSubcommand.name} - ${tempSubcommand.description}\n`;
+        subcommandText += `• ${tempSubcommand.name}${(tempSubcommand.description) ? `\n    ${tempSubcommand.description}` : ''}\n`; // eslint-disable-line no-irregular-whitespace
       }
 
       subcommandText += '\n';
 
-      embed.addField('Subcommands', subcommandText, false);
+      embed.addField(`Subcommands (for subcommand help use \`help ${commandObject.name} <subcommand>\`)`, subcommandText, false);
     }
 
-    if (hasArguments) {
+    if (showFooter) {
       embed.setFooter('Argument legend: <> means mandatory parameter, [] means optional parameter');
     }
 
-    ctx.reply({
+    return ctx.reply({
       embed,
     });
   },

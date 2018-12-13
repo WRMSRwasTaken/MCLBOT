@@ -9,20 +9,21 @@ module.exports = {
       type: 'member',
       infinite: true,
     },
-    {
+  ],
+  flags: {
+    days: {
       label: 'days',
       type: 'integer',
-      skippable: true,
-      optional: true,
+      short: 'd',
     },
-    {
+    reason: {
       label: 'reason',
       type: 'string',
+      short: 'r',
       infinite: true,
-      optional: true,
     },
-  ],
-  fn: async (ctx, member, days, reason) => {
+  },
+  fn: async (ctx, member, flags) => {
     const msg = await ctx.reply(`Do you really want to softban the member \`${member.user.tag}\`?`);
 
     const confirm = ctx.main.confirmationHelper.initConfirm(msg, ctx.author);
@@ -36,7 +37,7 @@ module.exports = {
     });
 
     confirm.on('true', async () => {
-      await member.ban({ days, reason });
+      await member.ban({ days: flags.days, reason: flags.reason });
 
       await ctx.guild.unban(member, 'Ban removal for softban');
 

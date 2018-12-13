@@ -1,7 +1,7 @@
 const util = require('util');
 
 module.exports = {
-  description: 'Evaluates code on all bot shards',
+  description: 'Evaluates JavaScript code on all bot shards',
   arguments: [
     {
       label: 'code',

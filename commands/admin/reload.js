@@ -27,7 +27,7 @@ module.exports = {
         return reloadMsg.edit(`Command \`${command}\` reloaded in ${(Date.now() - start)}ms`);
       },
     },
-    category: {
+    category: { // TODO: reload category seems to be broken because it just appends those in ctx.main.categories
       description: 'reload all bot commands in the given category',
       arguments: [
         {

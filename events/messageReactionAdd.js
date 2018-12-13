@@ -5,7 +5,7 @@ module.exports = {
     main.paginationHelper.handleMessageReactionAddEvent(messageReaction, user);
 
     if (!nconf.get('bot:selfbot')) {
-      if (messageReaction.emoji.name === '❌' && main.owner.includes(user.id) && messageReaction.message.deletable) {
+      if (messageReaction.emoji.name === '❌' && user.id === nconf.get('bot:owner') && messageReaction.message.deletable) {
         messageReaction.message.delete();
       }
     }

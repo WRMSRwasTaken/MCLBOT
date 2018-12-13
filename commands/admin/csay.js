@@ -1,5 +1,5 @@
 module.exports = {
-  description: 'says something in the specified channel',
+  description: 'Says something in the specified channel',
   arguments: [
     {
       label: 'channel id',

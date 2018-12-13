@@ -3,6 +3,7 @@ const Bluebird = require('bluebird');
 
 module.exports = {
   description: 'Runs a system command',
+  alias: 'run',
   arguments: [
     {
       label: 'command',

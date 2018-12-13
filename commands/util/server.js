@@ -2,48 +2,66 @@ module.exports = {
   description: 'prints information the current discord server',
   alias: ['serverinfo', 's', 'guild', 'g'],
   guildOnly: true,
-  fn: async (ctx) => {
+  arguments: [
+    {
+      label: 'guild id',
+      type: 'string',
+      optional: true,
+    },
+  ],
+  fn: async (ctx, guildID) => {
+    let guild;
+
+    if (!guildID) {
+      guild = ctx.guild;
+    } else if (!ctx.main.api.guilds.get(guildID)) {
+      return ctx.main.stringUtils.argumentError(ctx, 0, 'Unknown server / guild ID (I have to be on that server to retrieve information about it)');
+    } else {
+      guild = ctx.main.api.guilds.get(guildID); // TODO: add a switch to make args in DM mandatory
+    }
+
+
     const embed = new ctx.main.Discord.MessageEmbed();
 
-    embed.setAuthor(ctx.guild.name, ctx.guild.iconURL());
+    embed.setAuthor(guild.name, guild.iconURL());
 
-    embed.setThumbnail(ctx.guild.iconURL());
+    embed.setThumbnail(guild.iconURL());
 
-    embed.addField('ID', ctx.guild.id, true);
-    embed.addField('Region', ctx.guild.region, true);
-    embed.addField('Owner', `<@${ctx.guild.ownerID}>`, true);
+    embed.addField('ID', guild.id, true);
+    embed.addField('Region', guild.region, true);
+    embed.addField('Owner', `<@${guild.ownerID}>`, true); // TODO: this fails for users not on the target server
 
     const verificationLevels = ['none', 'low', 'medium', 'tableflip', 'double-tableflip'];
 
-    embed.addField('Verfication level', verificationLevels[ctx.guild.verificationLevel], true);
+    embed.addField('Verfication level', verificationLevels[guild.verificationLevel], true);
 
-    embed.addField('Created', ctx.main.stringUtils.formatUnixTimestamp(ctx.guild.createdTimestamp));
+    embed.addField('Created', ctx.main.stringUtils.formatUnixTimestamp(guild.createdTimestamp));
 
     let memberOnline = 0;
 
-    for (const member of ctx.guild.members.values()) {
+    for (const member of guild.members.values()) {
       if (member.presence) {
         if (member.presence.status !== 'offline') memberOnline += 1;
       }
     }
 
-    embed.addField(`Members (${ctx.guild.memberCount})`, `Online: ${memberOnline}, Offline: ${ctx.guild.memberCount - memberOnline}`, true);
+    embed.addField(`Members (${guild.memberCount})`, `Online: ${memberOnline}, Offline: ${guild.memberCount - memberOnline}`, true);
 
     let textChannels = 0;
     let voiceChannels = 0;
 
-    const defaultChannel = ctx.guild.channels.filter((channel) => {
+    const defaultChannel = guild.channels.filter((channel) => {
       if (channel.type === 'text') textChannels += 1;
       if (channel.type === 'voice') voiceChannels += 1;
 
-      return (channel.permissionsFor(ctx.guild.me).has('VIEW_CHANNEL') && channel.type === 'text');
+      return (channel.permissionsFor(guild.me).has('VIEW_CHANNEL') && channel.type === 'text');
     }).sort((c1, c2) => c1.rawPosition - c2.rawPosition).first();
 
     embed.addField(`Channels (${textChannels + voiceChannels})`, `Text: ${textChannels}, Voice: ${voiceChannels}`, true);
 
-    embed.addField('Default channel', (defaultChannel) ? `<#${defaultChannel.id}>` : 'N/A', true);
+    embed.addField('Default channel', (defaultChannel) ? `<#${defaultChannel.id}>` : 'N/A', true); // TODO: this fails for users not on the target server
 
-    embed.addField('Roles', ctx.guild.roles.size, true);
+    embed.addField('Roles', guild.roles.size, true);
 
     let emojiString = '';
     let animatedEmojiString = '';
@@ -57,8 +75,8 @@ module.exports = {
     let moreEmojis = false;
     let moreAnimatedEmojis = false;
 
-    if (ctx.guild.emojis.size) {
-      for (const emoji of ctx.guild.emojis.values()) {
+    if (guild.emojis.size) {
+      for (const emoji of guild.emojis.values()) {
         const newEmoji = emoji.toString();
 
         if (emoji.animated) {

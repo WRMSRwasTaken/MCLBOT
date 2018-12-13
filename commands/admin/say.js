@@ -1,5 +1,5 @@
 module.exports = {
-  description: 'says something in the current channel',
+  description: 'Says something in the current channel',
   arguments: [
     {
       label: 'message',

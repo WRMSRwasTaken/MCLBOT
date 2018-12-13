@@ -59,7 +59,7 @@ module.exports = {
       const shardMemUsages = await ctx.main.api.shard.broadcastEval('process.memoryUsage().heapTotal');
       memUsage = shardMemUsages.reduce((p, v) => p + v, 0);
     } else {
-      wsLatency = ctx.main.api.ping;
+      wsLatency = ctx.main.api.ws.ping;
       memUsage = process.memoryUsage().heapTotal;
     }
 

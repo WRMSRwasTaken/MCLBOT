@@ -47,7 +47,7 @@ async function clean(ctx, filter, limit) {
     searched += messages.size;
 
     if (messagesToDelete.size > 0) {
-      if (messagesToDelete.last().createdAt < moment().subtract(2, 'weeks').toDate()) {
+      if (messagesToDelete.last().createdAt < Date.now() - 1209600000) {
         winston.debug('Last message is older than 2 weeks, falling back to manually deleting messages');
 
         deleted += await cleanSingle(ctx, messagesToDelete);

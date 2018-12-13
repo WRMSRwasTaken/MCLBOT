@@ -4,7 +4,7 @@ module.exports = {
   description: 'Shows the bot\'s sharding status',
   fn: async (ctx) => { // thanks matmen for the idea
     if (!ctx.main.api.shard) {
-      return 'This bot is not running in sharded mode. Use `info` to get the stats of this instance.';
+      return 'This bot is not running in sharded mode (this bot is not on enough servers :sob:). Use `info` to get the stats of this instance.';
     }
 
     const tableWidths = [

@@ -24,7 +24,7 @@ module.exports = {
     const guilds = await main.db.delete_guild_settings_queue.findAll({
       where: {
         created_at: {
-          [Op.lt]: moment().subtract(nconf.get('bot:deleteSettingsGraceTime'), 'seconds').toDate(),
+          [Op.lt]: Date.now() - nconf.get('bot:deleteSettingsGraceTime') * 1000,
         },
       },
     });
