@@ -1,40 +1,47 @@
 const winston = require('winston');
 
-const badWords = ['shit', 'bad'];
-
-function containsBadWord(text) {
-  for (let i = 0; i < badWords.length; i += 1) {
-    if (text.toLowerCase().includes(badWords[i])) {
-      return true;
-    }
-  }
-
-  return false;
-}
-
 module.exports = {
-  fn: (main, oldMember, newMember) => {
-    if (newMember.user.id !== main.api.user.id) {
+  fn: async (main, oldMember, newMember) => {
+    if (oldMember.nickname === newMember.nickname) {
       return;
     }
 
-    if (newMember.displayName === main.api.user.username) {
-      return;
-    }
+    if (oldMember.nickname && newMember.nickname) {
+      winston.debug(`Nickname changed for user ${newMember.user.tag} on guild ${newMember.guild.name}: from ${oldMember.nickname} to ${newMember.nickname}`);
 
-    winston.debug(`My display name on the server ${newMember.guild.name} (ID: ${newMember.guild.id}) has been changed from ${oldMember.displayName} to ${newMember.displayName}`);
+      main.prometheusMetrics.sqlWrites.inc(1);
 
-    if (containsBadWord(newMember.displayName)) {
-      winston.warn(`My new display name on the server ${newMember.guild.name} (ID: ${newMember.guild.id}) - ${newMember.displayName} - is something mean, so I am going to revert that to my old one.`);
+      await main.db.name_logs.create({
+        user_id: newMember.user.id,
+        type: 4,
+        guild_id: newMember.guild.id,
+        before: oldMember.nickname,
+        after: newMember.nickname,
+      });
+    } else if (newMember.nickname) {
+      winston.debug(`A nickname has been added for user ${newMember.user.tag} on guild ${newMember.guild.name}: ${newMember.nickname}`);
 
-      if (containsBadWord(oldMember.displayName)) {
-        winston.warn(`Uh oh... my old nick on the server ${newMember.guild.name} (ID: ${newMember.guild.id}) - ${oldMember.displayName} - is something mean too, so I am going to revert to my default nick.`);
-        newMember.guild.me.setNickname('');
+      main.prometheusMetrics.sqlWrites.inc(1);
 
-        return;
-      }
+      await main.db.name_logs.create({
+        user_id: newMember.user.id,
+        type: 4,
+        guild_id: newMember.guild.id,
+        before: null,
+        after: newMember.nickname,
+      });
+    } else if (oldMember.nickname) {
+      winston.debug(`The nickname has been deleted for user ${newMember.user.tag} on guild ${newMember.guild.name}`);
 
-      newMember.guild.me.setNickname(oldMember.displayName);
+      main.prometheusMetrics.sqlWrites.inc(1);
+
+      await main.db.name_logs.create({
+        user_id: newMember.user.id,
+        type: 4,
+        guild_id: newMember.guild.id,
+        before: oldMember.nickname,
+        after: null,
+      });
     }
   },
 };

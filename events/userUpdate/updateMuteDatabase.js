@@ -6,7 +6,7 @@ module.exports = {
       return;
     }
 
-    winston.debug(`User ${oldUser.tag} changed tag to ${newUser.tag}`);
+    winston.debug(`User ${oldUser.tag} changed tag to ${newUser.tag}, checking if the user has entries in the mute database...`);
 
     main.prometheusMetrics.sqlReads.inc();
 
@@ -19,6 +19,8 @@ module.exports = {
     if (!isMuted) {
       return;
     }
+
+    winston.debug(`User ${newUser.tag} has entries in the mute database, updating information...`);
 
     main.prometheusMetrics.sqlWrites.inc();
 
