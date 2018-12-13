@@ -31,7 +31,7 @@ module.exports = {
       });
     }
 
-    if (isMuted.expires_at < Date.now() + 10000) {
+    if (isMuted.expires_at && isMuted.expires_at < Date.now() + 10000) {
       winston.debug(`User ${member.user.tag} joined guild ${member.guild.name} has been muted there, but the mute would expire in less than 10 seconds anyway, so we're going to discard the mute status...`);
 
       return;
@@ -42,6 +42,9 @@ module.exports = {
     const context = {
       main,
       guild: member.guild,
+      author: {
+        id: isMuted.invoker_id,
+      },
     };
 
     main.userHelper.muteMember(context, member, null, true);

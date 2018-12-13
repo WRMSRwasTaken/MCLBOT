@@ -8,7 +8,7 @@ module.exports = {
   subcommands: {
     add: {
       description: 'Add / create a new reminder',
-      alias: ['create'],
+      alias: ['create', 'set'],
       arguments: [
         {
           label: 'duration',
