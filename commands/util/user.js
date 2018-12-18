@@ -77,6 +77,23 @@ module.exports = {
       embed.addField(`Roles (${guildMember.roles.size})`, guildMember.roles.sort((r1, r2) => r1.position - r2.position).map(role => role.name).join(', '));
     }
 
+    const commonGuilds = ctx.main.userHelper.getGuildsInCommon(user);
+    let commonGuildsField = '';
+    let commonGuildsShown = 0;
+
+    for (const commonGuild of commonGuilds) {
+      if (commonGuildsField !== '') {
+        commonGuildsField += ', ';
+      }
+
+      if (commonGuildsField.length + commonGuild.name.length + 4 <= 1024) {
+        commonGuildsField += `\`${commonGuild.name}\``;
+        commonGuildsShown += 1;
+      }
+    }
+
+    embed.addField(`Seen on (${commonGuilds.length}) ${(commonGuilds.length > commonGuildsShown) ? ` (only the first ${commonGuildsShown} are shown)` : ''}`, commonGuildsField);
+
     ctx.reply({
       embed,
     });

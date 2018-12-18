@@ -82,30 +82,31 @@ module.exports = {
 
         switch (row.type) {
           case 1:
-            paginatedList += '[Name] ';
+            paginatedList += `\`${row.after}\``;
             break;
           case 2:
-            paginatedList += '[Discrim] ';
+            paginatedList += `[Discrim] \`#${row.before}\` => #\`${row.after}\``;
             break;
           case 3:
-            paginatedList += '[Tag] ';
+            paginatedList += `[Tag] \`${row.after}\``;
             break;
           case 4:
             paginatedList += '[Nick] ';
+
+            if (row.type === 4 && !row.before) {
+              paginatedList += `\`${row.after}\``;
+            } else if (row.type === 4 && !row.after) {
+              paginatedList += '<removed nick>';
+            } else {
+              paginatedList += `\`${row.after}\``;
+            }
+
             break;
           default:
             break;
         }
 
-        if (row.type === 4 && !row.before) {
-          paginatedList += `(added) \`${row.after}\``;
-        } else if (row.type === 4 && !row.after) {
-          paginatedList += `(removed) \`${row.before}\``;
-        } else {
-          paginatedList += `\`${row.before}\` => \`${row.after}\``;
-        }
-
-        paginatedList += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.created_at)}`;
+        paginatedList += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.created_at, 1)}`;
       }
 
       let newPageCount = Math.floor(logCount / resultsPerPage);

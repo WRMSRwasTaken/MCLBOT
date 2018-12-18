@@ -118,7 +118,7 @@ module.exports = {
               paginatedList += '\n';
             }
 
-            paginatedList += `__${row.fake_id}.__ at ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date.getTime())}\n**${row.text}**`;
+            paginatedList += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date.getTime(), 2)}\n**${row.text}**`;
           }
 
           let newPageCount = Math.floor(reminderCount / resultsPerPage);
