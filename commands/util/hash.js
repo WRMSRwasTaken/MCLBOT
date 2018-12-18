@@ -23,7 +23,7 @@ module.exports = {
     },
   },
   fn: async (ctx, algorithm, input) => {
-    if (!hashes[algorithm]) {
+    if (!hashes.includes(algorithm)) {
       return ctx.main.stringUtils.argumentError(ctx, 0, 'Invalid hash algorithm given. Use `hash list` to get a list of supported hashing algorithms');
     }
 
