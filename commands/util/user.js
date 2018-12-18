@@ -74,7 +74,28 @@ module.exports = {
     embed.addField('Discord join date', ctx.main.stringUtils.formatUnixTimestamp(user.createdTimestamp));
 
     if (guildMember) {
-      embed.addField(`Roles (${guildMember.roles.size})`, guildMember.roles.sort((r1, r2) => r1.position - r2.position).map(role => role.name).join(', '));
+      const roles = guildMember.roles.sort((r1, r2) => r1.position - r2.position);
+      let rolesField = '';
+      let rolesShown = 0;
+
+      for (const role of roles.values()) {
+        if (role.name === '@everyone') {
+          continue; // eslint-disable-line no-continue
+        }
+
+        if (rolesField !== '') {
+          rolesField += ', ';
+        }
+
+        if (rolesField.length + role.toString().length + 2 <= 1024) {
+          rolesField += role.toString();
+          rolesShown += 1;
+        }
+      }
+
+      if (rolesShown > 0) {
+        embed.addField(`Roles (${guildMember.roles.size - 1}) ${(guildMember.roles.size - 1 > rolesShown) ? ` (only the first ${rolesShown} are shown)` : ''}`, rolesField);
+      }
     }
 
     const commonGuilds = ctx.main.userHelper.getGuildsInCommon(user);
@@ -92,7 +113,9 @@ module.exports = {
       }
     }
 
-    embed.addField(`Seen on (${commonGuilds.length}) ${(commonGuilds.length > commonGuildsShown) ? ` (only the first ${commonGuildsShown} are shown)` : ''}`, commonGuildsField);
+    if (commonGuildsShown > 0) {
+      embed.addField(`Seen on (${commonGuilds.length}) ${(commonGuilds.length > commonGuildsShown) ? ` (only the first ${commonGuildsShown} are shown)` : ''}`, commonGuildsField);
+    }
 
     ctx.reply({
       embed,
