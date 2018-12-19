@@ -12,10 +12,10 @@ module.exports = {
       type: Sequelize.BIGINT,
     },
     before: {
-      type: Sequelize.STRING(32), // Discord's max username / nickname length is 32
+      type: Sequelize.STRING(40),
     },
     after: {
-      type: Sequelize.STRING(32),
+      type: Sequelize.STRING(40),
     },
     created_at: {
       allowNull: false,

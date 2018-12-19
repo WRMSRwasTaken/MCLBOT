@@ -12,10 +12,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.BIGINT,
     },
     before: {
-      type: DataTypes.STRING(32), // Discord's max username / nickname length is 32
+      type: DataTypes.STRING(40),
     },
     after: {
-      type: DataTypes.STRING(32),
+      type: DataTypes.STRING(40),
     },
   }, {
     underscored: true,
