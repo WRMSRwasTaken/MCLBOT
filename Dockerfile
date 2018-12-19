@@ -14,7 +14,7 @@ WORKDIR /mclbot
 
 COPY . .
 
-RUN yarn install
+RUN yarn install --production
 
 EXPOSE 3000 9400
 CMD [ "/usr/bin/node", "/mclbot/bot.js" ]
