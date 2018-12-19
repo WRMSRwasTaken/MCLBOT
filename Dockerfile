@@ -16,4 +16,5 @@ COPY . .
 
 RUN yarn install
 
+EXPOSE 3000 9400
 CMD [ "/usr/bin/node", "/mclbot/bot.js" ]
