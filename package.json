@@ -21,7 +21,6 @@
     "dotenv": "6.2.0",
     "erlpack": "^0.1.2",
     "express": "4.16.4",
-    "ffmpeg-binaries": "^4.0.0",
     "file-type": "10.6.0",
     "fs-extra": "7.0.1",
     "gm": "^1.23.1",
@@ -34,7 +33,6 @@
     "node-opus": "0.3.1",
     "node-xwhois": "^1.0.7",
     "pg": "7.7.1",
-    "pg-hstore": "^2.3.2",
     "pretty-bytes": "^5.0.0",
     "pretty-ms": "4.0.0",
     "prom-client": "11.2.0",
@@ -55,6 +53,7 @@
   "devDependencies": {
     "eslint": "5.10.0",
     "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "^2.12.0"
+    "eslint-plugin-import": "^2.12.0",
+    "ffmpeg-binaries": "^4.0.0"
   }
 }
