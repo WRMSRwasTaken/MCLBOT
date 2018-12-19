@@ -1,4 +1,4 @@
-FROM amd64/alpine:latest
+FROM amd64/alpine:edge
 
 RUN apk add --update \
 ffmpeg \
