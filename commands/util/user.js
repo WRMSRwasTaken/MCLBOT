@@ -98,23 +98,25 @@ module.exports = {
       }
     }
 
-    const commonGuilds = ctx.main.userHelper.getGuildsInCommon(user);
-    let commonGuildsField = '';
-    let commonGuildsShown = 0;
+    if (user.id !== ctx.main.api.user.id) {
+      const commonGuilds = ctx.main.userHelper.getGuildsInCommon(user);
+      let commonGuildsField = '';
+      let commonGuildsShown = 0;
 
-    for (const commonGuild of commonGuilds) {
-      if (commonGuildsField !== '') {
-        commonGuildsField += ', ';
+      for (const commonGuild of commonGuilds) {
+        if (commonGuildsField !== '') {
+          commonGuildsField += ', ';
+        }
+
+        if (commonGuildsField.length + commonGuild.name.length + 4 <= 1024) {
+          commonGuildsField += `\`${commonGuild.name}\``;
+          commonGuildsShown += 1;
+        }
       }
 
-      if (commonGuildsField.length + commonGuild.name.length + 4 <= 1024) {
-        commonGuildsField += `\`${commonGuild.name}\``;
-        commonGuildsShown += 1;
+      if (commonGuildsShown > 0) {
+        embed.addField(`Seen on (${commonGuilds.length}) ${(commonGuilds.length > commonGuildsShown) ? ` (only the first ${commonGuildsShown} are shown)` : ''}`, commonGuildsField);
       }
-    }
-
-    if (commonGuildsShown > 0) {
-      embed.addField(`Seen on (${commonGuilds.length}) ${(commonGuilds.length > commonGuildsShown) ? ` (only the first ${commonGuildsShown} are shown)` : ''}`, commonGuildsField);
     }
 
     ctx.reply({

@@ -11,6 +11,10 @@ module.exports = {
   fn: async (ctx, user) => {
     const resultsPerPage = 10;
 
+    if (user.id === ctx.main.api.user.id) {
+      return 'no';
+    }
+
     const commonGuilds = ctx.main.userHelper.getGuildsInCommon(user);
 
     if (commonGuilds.length === 0) {
@@ -46,7 +50,7 @@ module.exports = {
         pageText += `• ${commonGuilds[i]}\n`;
       }
 
-      paginatedEmbed.emit('update', pageText, false, commonGuilds.length);
+      paginatedEmbed.emit('updateContent', pageText, commonGuilds.length);
     });
 
     paginatedEmbed.emit('paginate', 1);
