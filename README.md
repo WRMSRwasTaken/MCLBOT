@@ -2,7 +2,7 @@
 
 This is a (still unfinished) Discord bot I work on sporadically to learn both [Node.js](http://nodejs.org) and [discord.js](https://discord.js.org).
 
-This project is pretty much a work in progress, going to be a "proof of concept" how a good internal structure of a Discord bot could look like. If you have any suggestions please do not hesitate to contact me: `WRMSR#1550` on Discord (but please mention my bot, otherwise I won't accept you).
+This project is pretty much a work in progress, going to be a "proof of concept" how a good internal structure of a Discord bot could look like. If you have any suggestions please do not hesitate to contact me: `WRMSR#1337` on Discord (but please mention my bot, otherwise I won't accept you).
 
 To invite this bot to your Discord server, [click this link.](https://discordapp.com/oauth2/authorize?client_id=249732355030384641&scope=bot&permissions=8)
 
