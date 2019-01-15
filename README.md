@@ -34,4 +34,4 @@ For the context object, see the [context documentation](context.md).
 - [matmen](https://gitlab.com/matmen) for open-sourcing [fbot](https://gitlab.com/matmen/fbot) and helping me out with some JavaScript questions
 - [NotSoSuper](https://github.com/NotSoSuper) for letting me spam his Discord server for testing purposes (and actually promoting me to mod, lol)
 - [DBot](https://gitlab.com/DBotThePony) for open-sourcing [NotDBot](https://gitlab.com/DBotThePony/DBotTheDiscordBot)
-- The [people](https://github.com/discordjs/Commando/graphs/contributors) behind [discord.js Commando](https://discord.js.org/#/docs/commando)
+- The [people](https://github.com/discordjs/Commando/graphs/contributors) behind [discord.js Commando](https://discord.js.org/#/docs/commando) (I'm not actually using Commando, it just inspired me how to declare commands)
