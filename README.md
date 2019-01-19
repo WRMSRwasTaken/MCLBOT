@@ -8,7 +8,7 @@ To invite this bot to your Discord server, [click this link.](https://discordapp
 
 ## Installation / Selfhosting
 
-Tbe bot's default configuration is in the [settings.js](lib/settings.js) file, however it is not recommended to change settings there, as they might get overwritten on the next git pull. To change settings, create a file named `.env` in the bot's root directory and place the overwritten parameters there, as seen in [the Twelve-Factor App](https://12factor.net/config) methodology.
+The bot's default configuration is in the [settings.js](lib/settings.js) file, however it is not recommended to change settings there, as they might get overwritten on the next git pull. To change settings, create a file named `.env` in the bot's root directory and place the overwritten parameters there, as seen in [the Twelve-Factor App](https://12factor.net/config) methodology.
 
 For example: To store your bot token, insert `bot.token=<token>` in that file. Or if you want to add a database password, add `database.password=<password>`.
 
