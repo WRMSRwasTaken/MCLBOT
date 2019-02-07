@@ -95,19 +95,29 @@ module.exports = {
       'Mem usage',
     ]);
 
-    const shardPings = await ctx.main.api.shard.fetchClientValues('ping');
+    const shardPings = await ctx.main.api.shard.fetchClientValues('ws.ping');
     const shardGuilds = await ctx.main.api.shard.fetchClientValues('guilds.size');
     const shardUsers = await ctx.main.api.shard.fetchClientValues('users.size');
     const shardMemUsages = await ctx.main.api.shard.broadcastEval('process.memoryUsage().heapTotal');
 
     for (let shardID = 0; shardID < ctx.main.api.shard.count; shardID++) {
-      list += drawTableRow([
-        `${shardID === ctx.main.api.shard.id ? '> ' : '  '}${shardID}`,
-        `${Math.round(shardPings[shardID])}ms`,
-        shardGuilds[shardID],
-        shardUsers[shardID],
-        prettyBytes(shardMemUsages[shardID]),
-      ]);
+      if (shardGuilds[shardID] > 0) {
+        list += drawTableRow([
+          `${shardID === ctx.main.api.shard.id ? '> ' : '  '}${shardID}`,
+          `${Math.round(shardPings[shardID])}ms`,
+          shardGuilds[shardID],
+          shardUsers[shardID],
+          prettyBytes(shardMemUsages[shardID]),
+        ]);
+      } else {
+        list += drawTableRow([
+          `${shardID === ctx.main.api.shard.id ? '> ' : '  '}${shardID}`,
+          'N/A',
+          'N/A',
+          'N/A',
+          prettyBytes(shardMemUsages[shardID]),
+        ]);
+      }
     }
 
     const avgPing = Math.round(shardPings.reduce((p, v) => (p + v) / 2, shardPings[0]));
