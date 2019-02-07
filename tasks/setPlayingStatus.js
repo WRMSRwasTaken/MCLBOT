@@ -1,9 +1,15 @@
+const nconf = require('nconf');
+
 let foo = false;
 
 module.exports = {
   interval: 60,
   noSelfbot: true,
   fn: (main) => {
+    if (nconf.get('bot:stealth') && nconf.get('bot:stealth') !== 'false') {
+      return;
+    }
+
     if (foo) {
       main.api.user.setPresence({ activity: { type: 'WATCHING', name: `on ${main.api.guilds.size} servers` } });
     } else {

@@ -7,6 +7,7 @@ Every category folder can contain a file called `category.json` for defining par
 ### file parameters
 
 - `description` the description of the (sub-) command
+- `disabled` boolean value whether to disable this event or not (mostly for debugging / developing without having to delete / move the file)
 - `hide` boolean value: whether the command should be hidden from the help page and related search or not
 - `alias` string or array of strings for the (sub-) command alias(es)
 - `owner` boolean value to make the (sub-) command bot-admin only

@@ -6,6 +6,7 @@ There is also the possibility to create a folder with the event name and placing
 
 ### file parameters
 
+- `disabled` boolean value whether to disable this event or not (mostly for debugging / developing without having to delete / move the file)
 - `fn()` the actual function that will be called if this websocket event is fired, the following arguments will be passed:
   * `main` the main bot object
   * additional parameters: refer to the [discord.js documentation](https://discord.js.org/#/docs/main/master/class/Client) what parameters will be passed for each websocket event
