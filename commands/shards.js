@@ -95,10 +95,19 @@ module.exports = {
       'Mem usage',
     ]);
 
-    const shardPings = await ctx.main.api.shard.fetchClientValues('ws.ping');
-    const shardGuilds = await ctx.main.api.shard.fetchClientValues('guilds.size');
-    const shardUsers = await ctx.main.api.shard.fetchClientValues('users.size');
-    const shardMemUsages = await ctx.main.api.shard.broadcastEval('process.memoryUsage().heapTotal');
+    let shardPings;
+    let shardGuilds;
+    let shardUsers;
+    let shardMemUsages;
+
+    try {
+      shardPings = await ctx.main.api.shard.fetchClientValues('ws.ping');
+      shardGuilds = await ctx.main.api.shard.fetchClientValues('guilds.size');
+      shardUsers = await ctx.main.api.shard.fetchClientValues('users.size');
+      shardMemUsages = await ctx.main.api.shard.broadcastEval('process.memoryUsage().heapTotal');
+    } catch (ex) {
+      return 'I am still starting up, this command will be unavailable until all my shards have been started.';
+    }
 
     for (let shardID = 0; shardID < ctx.main.api.shard.count; shardID++) {
       if (shardGuilds[shardID] > 0) {
