@@ -1,5 +1,5 @@
 module.exports = {
-  description: 'Shutdown the bot', // TODO: make this shard-aware
+  description: 'Shutdown the bot',
   alias: ['exit', 'quit', 'die'],
   fn: async (ctx) => {
     const msg = await ctx.reply('Confirm bot shutdown:');
@@ -17,7 +17,11 @@ module.exports = {
     confirm.on('true', async () => {
       await msg.edit('Goodbye!');
 
-      ctx.main.shutdown();
+      if (ctx.main.api.shard) {
+        ctx.main.api.shard.send({ message: 'shutdown' });
+      } else {
+        ctx.main.shutdown();
+      }
     });
 
     return true;
