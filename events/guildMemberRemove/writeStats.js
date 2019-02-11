@@ -5,16 +5,16 @@ module.exports = {
     }
 
     main.prometheusMetrics.influxWrites.inc();
-    main.influx.writePoints([
-      {
-        measurement: 'member_leave',
-        tags: {
-          guild_id: member.guild.id,
-        },
-        fields: {
-          user_id: member.id,
-        },
-      },
-    ]);
+    // main.influx.writePoints([
+    //   {
+    //     measurement: 'member_leave',
+    //     tags: {
+    //       guild_id: member.guild.id,
+    //     },
+    //     fields: {
+    //       user_id: member.id,
+    //     },
+    //   },
+    // ]);
   },
 };

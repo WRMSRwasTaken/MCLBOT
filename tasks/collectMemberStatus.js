@@ -27,21 +27,21 @@ module.exports = {
       });
 
       main.prometheusMetrics.influxWrites.inc();
-      await main.influx.writePoints([
-        {
-          measurement: 'member_status',
-          tags: {
-            guild_id: guild.id,
-          },
-          fields: {
-            online,
-            idle,
-            dnd,
-            offline,
-            total: guild.memberCount,
-          },
-        },
-      ]);
+      // await main.influx.writePoints([
+      //   {
+      //     measurement: 'member_status',
+      //     tags: {
+      //       guild_id: guild.id,
+      //     },
+      //     fields: {
+      //       online,
+      //       idle,
+      //       dnd,
+      //       offline,
+      //       total: guild.memberCount,
+      //     },
+      //   },
+      // ]);
     });
   },
 };

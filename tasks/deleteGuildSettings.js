@@ -34,11 +34,11 @@ module.exports = {
 
       main.prefixHelper.deleteGuildPrefix(guild.guild_id);
 
-      main.prometheusMetrics.influxWrites.inc(4);
-      main.influx.query(`delete from member_message where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
-      main.influx.query(`delete from member_status where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
-      main.influx.query(`delete from member_join where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
-      main.influx.query(`delete from member_leave where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
+      // main.prometheusMetrics.influxWrites.inc(4);
+      // main.influx.query(`delete from member_message where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
+      // main.influx.query(`delete from member_status where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
+      // main.influx.query(`delete from member_join where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
+      // main.influx.query(`delete from member_leave where guild_id = ${main.Influx.escape.stringLit(guild.guild_id)}`);
 
       main.prometheusMetrics.sqlWrites.inc();
 
