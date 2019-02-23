@@ -18,7 +18,7 @@ RUN yarn install --production
 
 EXPOSE 3000 9400
 
-RUN adduser mclbot
+RUN adduser -S mclbot
 RUN chown mclbot /mclbot
 USER mclbot
 
