@@ -18,8 +18,8 @@ RUN yarn install --production
 
 EXPOSE 3000 9400
 
-RUN useradd mclbot -u 1337
-RUN chown -R 1337 /mclbot
+RUN adduser mclbot
+RUN chown mclbot /mclbot
 USER mclbot
 
 CMD [ "/usr/bin/node", "/mclbot/bot.js" ]
