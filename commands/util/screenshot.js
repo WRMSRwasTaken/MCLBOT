@@ -40,12 +40,12 @@ module.exports = {
     const renderUrl = `https://render-tron.appspot.com/screenshot/${url}?width=${width}&height=${height}`;
 
     try {
-      const screenshot = await ctx.main.imageHelper.downloadImage(renderUrl);
+      const returnedData = await ctx.main.imageHelper.downloadImage(renderUrl);
 
       return ctx.reply({
         files: [{
-          attachment: screenshot,
-          name: 'screenshot.jpeg',
+          attachment: returnedData.imageData,
+          name: `screenshot.${returnedData.fileType}`,
         }],
       });
     } catch (ex) {
@@ -53,4 +53,3 @@ module.exports = {
     }
   },
 };
-
