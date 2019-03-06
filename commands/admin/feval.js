@@ -37,7 +37,7 @@ module.exports = {
           'User-Agent': 'MCLBOT',
           Authorization: `Bearer ${nconf.get('fapi:token')}`,
         },
-        timeout: 1000,
+        timeout: 30000,
         data: {
           args: {
             text: code,
