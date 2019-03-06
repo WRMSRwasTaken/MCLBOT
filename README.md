@@ -8,12 +8,16 @@ To invite this bot to your Discord server, [click this link.](https://discordapp
 
 ## Installation / Selfhosting
 
-The bot's default configuration is in the [settings.js](lib/settings.js) file, however it is not recommended to change settings there, as they might get overwritten on the next git pull. To change settings, create a file named `.env` in the bot's root directory and place the overwritten parameters there, as seen in [the Twelve-Factor App](https://12factor.net/config) methodology.
+The easiest way to get this bot up and running is to deploy it via Docker (a [Dockerfile](Dockerfile) is provided). However, it still needs an external [PostgreSQL](https://postgresql.org) (with installed [TimescaleDB](https://github.com/timescale/timescaledb) addon) and [Redis](https://redis.io) instance. The bot has no problems with [pgbouncer](https://pgbouncer.github.io) in `transaction` pooling mode (if used). Although the bot uses the [Sequelize ORM](https://github.com/sequelize/sequelize), because of the TimescaleDB dependency it is practically unable to run with another RDBMS vendor (for example MariaDB).
 
-For example: To store your bot token, insert `bot.token=<token>` in that file. Or if you want to add a database password, add `database.password=<password>`.
+[Redis Sentinel](https://redis.io/topics/sentinel) (for Redis HA) is supported via `redis.sentinel.addresses` (comma separated servers) and `redis.sentinel.name` setting key.
 
-If your config is done, you need to initialize the databases: 
-ToDo: document how to initialize the main SQL database with the Sequelize CLI & the InfluxDB with manual commands
+The bot's default configuration is in the [settings.js](lib/settings.js) file, however it is not recommended to change settings there, as they might get overwritten on the next git pull. To change settings, either use environment variables (best suited for Docker installations) or create a file named `.env` in the bot's root directory and place the overwritten parameters there, as seen in [the Twelve-Factor App](https://12factor.net/config) methodology.
+
+For example: To store your bot token, either pass the environment variable `bot.token` containing the bot's token or insert `bot.token=<token>` in the `.env` file. The same goes for another example with the database password defined as `database.password`.
+
+If your config is done, you need to initialize the database: 
+ToDo: document how to initialize the PostgreSQL database
 
 ## Documentation
 
