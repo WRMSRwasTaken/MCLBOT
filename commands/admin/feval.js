@@ -2,6 +2,7 @@ const axios = require('axios');
 const winston = require('winston');
 const nconf = require('nconf');
 const util = require('util');
+const fileType = require('file-type');
 
 const allowedIDs = [
   '139114210679455744', // WRMSR#1337
@@ -32,7 +33,7 @@ module.exports = {
       httpResponse = await axios({
         method: 'post',
         url: `${nconf.get('fapi:address')}/eval`,
-        responseType: 'text',
+        responseType: 'arraybuffer',
         headers: {
           'User-Agent': 'MCLBOT',
           Authorization: `Bearer ${nconf.get('fapi:token')}`,
@@ -54,8 +55,19 @@ module.exports = {
       return `Could not evaluate text on fAPI backend: ${ctx.main.stringUtils.prettyError(err.message)}`;
     }
 
+    if (httpResponse.headers['content-type'] && (httpResponse.headers['content-type'] === 'application/octet-stream' || httpResponse.headers['content-type'].includes('image'))) {
+      const magicNumber = fileType(httpResponse.data);
+
+      return ctx.reply({
+        files: [{
+          attachment: httpResponse.data,
+          name: `feval${(magicNumber) ? `.${magicNumber.ext}` : ''}`,
+        }],
+      });
+    }
+
     const time = Date.now() - start;
 
-    return `eval output:\n\`\`\`js\n${util.inspect(httpResponse.data)}\n\`\`\` \n:stopwatch: took ${time}ms`;
+    return `eval output:\n\`\`\`js\n${util.inspect(httpResponse.data.toString('utf8'))}\n\`\`\` \n:stopwatch: took ${time}ms`;
   },
 };
