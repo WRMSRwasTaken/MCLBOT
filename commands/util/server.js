@@ -23,7 +23,7 @@ module.exports = {
 
     let guild;
 
-    if (!guildID || ctx.main.api.guilds.get(guildID)) { // use local RPC helper to retrieve guild information
+    if (!guildID || ctx.main.api.guilds.get(guildID)) { // use local RPC helper to retrieve guild information, since we're already on this shard
       guild = ctx.main.rpcHelper.getGuildInformation(guildID || ctx.guild.id);
     } else if (ctx.main.api.shard) {
       const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.rpcHelper.getGuildInformation('${guildID}')`);
