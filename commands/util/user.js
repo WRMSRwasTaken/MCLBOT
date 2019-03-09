@@ -99,7 +99,16 @@ module.exports = {
     }
 
     if (user.id !== ctx.main.api.user.id) {
-      const commonGuilds = ctx.main.userHelper.getGuildsInCommon(user);
+      let commonGuilds;
+
+      if (ctx.main.api.shard) {
+        const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.userHelper.getGuildsInCommon('${user.id}')`);
+
+        commonGuilds = rpcGuilds.flat();
+      } else {
+        commonGuilds = ctx.main.userHelper.getGuildsInCommon(user.id);
+      }
+
       let commonGuildsField = '';
       let commonGuildsShown = 0;
 
@@ -108,8 +117,8 @@ module.exports = {
           commonGuildsField += ', ';
         }
 
-        if (commonGuildsField.length + commonGuild.name.length + 4 <= 1024) {
-          commonGuildsField += `\`${commonGuild.name}\``;
+        if (commonGuildsField.length + commonGuild.length + 4 <= 1024) {
+          commonGuildsField += `\`${commonGuild}\``;
           commonGuildsShown += 1;
         }
       }

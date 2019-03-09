@@ -15,7 +15,15 @@ module.exports = {
       return 'no';
     }
 
-    const commonGuilds = ctx.main.userHelper.getGuildsInCommon(user);
+    let commonGuilds;
+
+    if (ctx.main.api.shard) {
+      const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.userHelper.getGuildsInCommon('${user.id}')`);
+
+      commonGuilds = rpcGuilds.flat();
+    } else {
+      commonGuilds = ctx.main.userHelper.getGuildsInCommon(user.id);
+    }
 
     if (commonGuilds.length === 0) {
       return 'I don\'t have any servers in common with that user.';

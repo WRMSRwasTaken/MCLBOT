@@ -7,7 +7,7 @@ module.exports = {
     }
 
     if (oldUser.username !== newUser.username && oldUser.discriminator !== newUser.discriminator) {
-      winston.debug(`User ${oldUser.tag} changed tag to ${newUser.tag}`);
+      winston.debug(`User ${oldUser.tag} changed tag to ${newUser.tag}`); // TODO: debounce (this gets called for every server in common
 
       main.prometheusMetrics.sqlWrites.inc(1);
 

@@ -67,7 +67,7 @@ module.exports = {
       + `Memory usage: **${prettyBytes(memUsage)}**\n`
       + `Uptime: **${prettyMs(Date.now() - ctx.main.startTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `Online time: **${prettyMs(Date.now() - ctx.main.connectTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
-      + `Websocket latency: **${prettyMs(wsLatency)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n` // TODO: count average for all shards, add "for more details, see shard command"
+      + `Websocket latency: **${prettyMs(wsLatency)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `${(ctx.main.api.shard) ? '(for per-shard statistics see the `shards` command)\n' : ''}\n`
       + `Node.js version: **${process.version}**\n`
       + `discord.js version: **${ctx.main.Discord.version}**\n`

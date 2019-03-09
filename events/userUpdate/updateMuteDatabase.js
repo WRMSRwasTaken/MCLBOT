@@ -6,7 +6,7 @@ module.exports = {
       return;
     }
 
-    winston.debug(`User ${oldUser.tag} changed tag to ${newUser.tag}, checking if the user has entries in the mute database...`);
+    winston.debug(`User ${oldUser.tag} changed tag to ${newUser.tag}, checking if the user has entries in the mute database...`); // TODO: debounce (this gets called for every server in common
 
     main.prometheusMetrics.sqlReads.inc();
 
