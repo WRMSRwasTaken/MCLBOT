@@ -16,12 +16,6 @@ module.exports = {
       optional: true,
     },
   ],
-  flags: {
-    stats: {
-      label: 'statistics',
-      short: 's',
-    },
-  },
   fn: async (ctx, user) => {
     let guildMember;
 
