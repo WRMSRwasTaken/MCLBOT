@@ -128,8 +128,6 @@ module.exports = {
         list += `\nOldest recorded name: \`${firstRecordedName.before}\``;
       }
 
-      paginatedEmbed.emit('updatePageCount', pageCount);
-
       paginatedEmbed.emit('updateContent', {
         pageContent: list,
         pageCount,
