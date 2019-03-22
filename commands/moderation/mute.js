@@ -23,59 +23,26 @@ module.exports = {
       description: 'List all muted users on this server',
       middleware: false,
       fn: async (ctx) => {
-        const resultsPerPage = 10;
+        ctx.main.prometheusMetrics.sqlReads.inc(1);
 
-        ctx.main.prometheusMetrics.sqlReads.inc(2);
-
-        const results = await ctx.main.db.muted_members.findAndCountAll({
+        const entryCount = await ctx.main.db.muted_members.count({
           where: {
             guild_id: ctx.guild.id,
           },
-          limit: resultsPerPage,
         });
 
-        if (results.count === 0) {
+        if (entryCount === 0) {
           return 'There are currently no muted users on this server.';
         }
 
-        let list = '';
+        const resultsPerPage = 10;
 
-        for (const row of results.rows) {
-          if (list !== '') {
-            list += '\n';
-          }
+        const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
-          list += `• \`${row.target_tag}\` (ID: ${row.target_id})${(row.expires_at) ? ` ${ctx.main.stringUtils.formatUnixTimestamp(row.expires_at.getTime())}` : ''}`;
-        }
-
-        const embed = new ctx.main.Discord.MessageEmbed();
-
-        embed.addField('Muted users', list);
-
-        const mutedList = await ctx.reply({
-          embed,
-        });
-
-        if (results.count <= resultsPerPage) {
-          return false;
-        }
-
-        let maxPages = Math.floor(results.count / resultsPerPage);
-
-        if (results.count % resultsPerPage !== 0) {
-          maxPages += 1;
-        }
-
-        const paginationHelper = ctx.main.paginationHelper.initPagination(ctx, maxPages);
-
-        if (!paginationHelper) {
-          return false;
-        }
-
-        paginationHelper.on('paginate', async (pageNumber) => {
+        paginatedEmbed.on('paginate', async (pageNumber) => {
           ctx.main.prometheusMetrics.sqlReads.inc(2);
 
-          const paginatedResults = await ctx.main.db.muted_members.findAndCountAll({
+          const results = await ctx.main.db.muted_members.findAndCountAll({
             where: {
               guild_id: ctx.guild.id,
             },
@@ -83,26 +50,31 @@ module.exports = {
             offset: (pageNumber - 1) * resultsPerPage,
           });
 
-          // mutedList.pagination.pageCount = paginatedResults.count;
+          let list = '';
 
-          let paginatedList = '';
-
-          for (const row of paginatedResults.rows) {
-            if (paginatedList !== '') {
-              paginatedList += '\n';
+          for (const row of results.rows) {
+            if (list !== '') {
+              list += '\n';
             }
 
-            paginatedList += `• \`${row.target_tag}\` (ID: ${row.target_id})${(row.expires_at) ? ` ${ctx.main.stringUtils.formatUnixTimestamp(row.expires_at.getTime())}` : ''}`;
+            list += `• \`${row.target_tag}\` (ID: ${row.target_id})${(row.expires_at) ? ` ${ctx.main.stringUtils.formatUnixTimestamp(row.expires_at.getTime())}` : ''}`;
           }
 
-          const paginatedEmbed = new ctx.main.Discord.MessageEmbed();
+          let pageCount = Math.floor(results.count / resultsPerPage);
 
-          paginatedEmbed.addField('Muted users', paginatedList);
+          if (entryCount % resultsPerPage !== 0) {
+            pageCount += 1;
+          }
 
-          mutedList.edit({
-            paginatedEmbed,
+          paginatedEmbed.emit('updateContent', {
+            pageContent: list,
+            pageCount,
+            entryCount: results.count,
+            title: 'Muted users',
           });
         });
+
+        paginatedEmbed.emit('paginate', 1);
 
         return true;
       },

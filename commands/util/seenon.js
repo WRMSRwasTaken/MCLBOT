@@ -35,30 +35,31 @@ module.exports = {
       pageCount += 1;
     }
 
-    const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx, `Servers in common for user ${user.tag}`, pageCount);
-
-    if (!paginatedEmbed) {
-      return false;
-    }
+    const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
     paginatedEmbed.on('paginate', async (pageNumber) => {
       const offset = resultsPerPage * (pageNumber - 1);
 
-      let resultCount;
+      let results;
 
       if (commonGuilds.length > offset + resultsPerPage) {
-        resultCount = offset + resultsPerPage - 1;
+        results = offset + resultsPerPage - 1;
       } else {
-        resultCount = commonGuilds.length - 1;
+        results = commonGuilds.length - 1;
       }
 
-      let pageText = '';
+      let list = '';
 
-      for (let i = offset; i <= resultCount; i += 1) {
-        pageText += `• ${commonGuilds[i]}\n`;
+      for (let i = offset; i <= results; i += 1) {
+        list += `• ${commonGuilds[i]}\n`;
       }
 
-      paginatedEmbed.emit('updateContent', pageText, commonGuilds.length);
+      paginatedEmbed.emit('updateContent', {
+        pageContent: list,
+        pageCount,
+        entryCount: commonGuilds.length,
+        title: `Servers in common for user ${user.tag}`,
+      });
     });
 
     paginatedEmbed.emit('paginate', 1);

@@ -87,22 +87,12 @@ module.exports = {
 
         const resultsPerPage = 10;
 
-        let pageCount = Math.floor(reminderCount / resultsPerPage);
-
-        if (reminderCount % resultsPerPage !== 0) {
-          pageCount += 1;
-        }
-
-        const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx, 'Reminders', pageCount);
-
-        if (!paginatedEmbed) {
-          return false;
-        }
+        const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
         paginatedEmbed.on('paginate', async (pageNumber) => {
           ctx.main.prometheusMetrics.sqlReads.inc(2);
 
-          const paginatedResults = await ctx.main.db.reminders.findAndCountAll({
+          const results = await ctx.main.db.reminders.findAndCountAll({
             where: {
               user_id: ctx.author.id,
             },
@@ -111,23 +101,28 @@ module.exports = {
             offset: (pageNumber - 1) * resultsPerPage,
           });
 
-          let paginatedList = '';
+          let list = '';
 
-          for (const row of paginatedResults.rows) {
-            if (paginatedList !== '') {
-              paginatedList += '\n';
+          for (const row of results.rows) {
+            if (list !== '') {
+              list += '\n';
             }
 
-            paginatedList += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date.getTime(), 2)}\n**${row.text}**`;
+            list += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date.getTime(), 2)}\n**${row.text}**`;
           }
 
-          let newPageCount = Math.floor(reminderCount / resultsPerPage);
+          let pageCount = Math.floor(results.count / resultsPerPage);
 
-          if (reminderCount % resultsPerPage !== 0) {
-            newPageCount += 1;
+          if (results.count % resultsPerPage !== 0) {
+            pageCount += 1;
           }
 
-          paginatedEmbed.emit('update', paginatedList, newPageCount, paginatedResults.count);
+          paginatedEmbed.emit('updateContent', {
+            pageContent: list,
+            pageCount,
+            entryCount: results.count,
+            title: 'Reminders',
+          });
         });
 
         paginatedEmbed.emit('paginate', 1);

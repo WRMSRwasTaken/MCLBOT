@@ -39,66 +39,69 @@ module.exports = {
       };
     }
 
-    const logCount = await ctx.main.db.name_logs.count({
+    let entryCount = await ctx.main.db.name_logs.count({
       where: query,
     });
 
-    if (logCount === 0) {
+    if (entryCount === 0) {
       return `\`${queryUser.tag}\` does not have any name changes recorded.`;
     }
 
+    ctx.main.prometheusMetrics.sqlReads.inc(1);
+
+    const firstRecordedName = await ctx.main.db.name_logs.findOne({
+      where: {
+        user_id: queryUser.id,
+        [Op.or]: [
+          { type: 1 },
+          { type: 3 },
+        ],
+      },
+      order: [['created_at', 'ASC']],
+    });
+
     const resultsPerPage = 10;
 
-    let pageCount = Math.floor(logCount / resultsPerPage);
-
-    if (logCount % resultsPerPage !== 0) {
-      pageCount += 1;
-    }
-
-    const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx, `Name logs for user ${queryUser.tag}`, pageCount);
-
-    if (!paginatedEmbed) {
-      return false;
-    }
+    const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
     paginatedEmbed.on('paginate', async (pageNumber) => {
       ctx.main.prometheusMetrics.sqlReads.inc(2);
 
-      const paginatedResults = await ctx.main.db.name_logs.findAndCountAll({
+      const results = await ctx.main.db.name_logs.findAndCountAll({
         where: query,
         limit: resultsPerPage,
         order: [['created_at', 'DESC']],
         offset: (pageNumber - 1) * resultsPerPage,
       });
 
-      let paginatedList = '';
+      let list = '';
 
-      for (const row of paginatedResults.rows) {
-        if (paginatedList !== '') {
-          paginatedList += '\n';
+      for (const row of results.rows) {
+        if (list !== '') {
+          list += '\n';
         }
 
-        paginatedList += '• ';
+        list += '• ';
 
         switch (row.type) {
           case 1:
-            paginatedList += `\`${row.after}\``;
+            list += `\`${row.after}\``;
             break;
           case 2:
-            paginatedList += `[Discrim] \`#${row.before}\` => #\`${row.after}\``;
+            list += `[Discrim] \`#${row.before}\` => #\`${row.after}\``;
             break;
           case 3:
-            paginatedList += `[Tag] \`${row.after}\``;
+            list += `[Tag] \`${row.after}\``;
             break;
           case 4:
-            paginatedList += '[Nick] ';
+            list += '[Nick] ';
 
             if (row.type === 4 && !row.before) {
-              paginatedList += `\`${row.after}\``;
+              list += `\`${row.after}\``;
             } else if (row.type === 4 && !row.after) {
-              paginatedList += '<removed nick>';
+              list += '<removed nick>';
             } else {
-              paginatedList += `\`${row.after}\``;
+              list += `\`${row.after}\``;
             }
 
             break;
@@ -106,16 +109,33 @@ module.exports = {
             break;
         }
 
-        paginatedList += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.created_at, 1)}`;
+        list += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.created_at, 1)}`;
       }
 
-      let newPageCount = Math.floor(logCount / resultsPerPage);
+      entryCount = results.count;
 
-      if (logCount % resultsPerPage !== 0) {
-        newPageCount += 1;
+      if (firstRecordedName) {
+        entryCount += 1; // we want to show the oldest recorded nickname as the last entry
       }
 
-      paginatedEmbed.emit('update', paginatedList, newPageCount, paginatedResults.count);
+      let pageCount = Math.floor(entryCount / resultsPerPage);
+
+      if (entryCount % resultsPerPage !== 0) {
+        pageCount += 1;
+      }
+
+      if (firstRecordedName && pageNumber >= pageCount) {
+        list += `\nOldest recorded name: \`${firstRecordedName.before}\``;
+      }
+
+      paginatedEmbed.emit('updatePageCount', pageCount);
+
+      paginatedEmbed.emit('updateContent', {
+        pageContent: list,
+        pageCount,
+        entryCount,
+        title: `Name logs for user ${queryUser.tag}`,
+      });
     });
 
     paginatedEmbed.emit('paginate', 1);

@@ -91,19 +91,19 @@ module.exports = {
         pageCount += pagesForThisCategory;
       }
 
-      const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx, 'MCLBOT help', pageCount);
+      const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
       if (!paginatedEmbed) {
         return false;
       }
 
       paginatedEmbed.on('paginate', async (pageNumber) => {
-        let pageText;
+        let pageContent;
 
         if (pageNumber === 1) {
-          pageText = `Category overview:\n${categoryOverviewText}`;
+          pageContent = `Category overview:\n${categoryOverviewText}`;
         } else {
-          pageText = `Commands in category \`${pageMaps[pageNumber].category}\`${(pageMaps[pageNumber].last > pageMaps[pageNumber].first) ? ` (${pageNumber - pageMaps[pageNumber].first + 1} / ${pageMaps[pageNumber].last - pageMaps[pageNumber].first + 1})` : ''}:\n\n`;
+          pageContent = `Commands in category \`${pageMaps[pageNumber].category}\`${(pageMaps[pageNumber].last > pageMaps[pageNumber].first) ? ` (${pageNumber - pageMaps[pageNumber].first + 1} / ${pageMaps[pageNumber].last - pageMaps[pageNumber].first + 1})` : ''}:\n\n`;
 
           const offset = resultsPerPage * (pageNumber - pageMaps[pageNumber].first);
 
@@ -121,13 +121,17 @@ module.exports = {
           for (let i = offset; i <= resultCount; i += 1) {
             const iteratedCommand = categoryCommands[i];
 
-            pageText += `• **${iteratedCommand}**: ${ctx.main.commands[iteratedCommand].description}\n`;
+            pageContent += `• **${iteratedCommand}**: ${ctx.main.commands[iteratedCommand].description}\n`;
           }
 
-          pageText += '\nFor help with a specific command type `help <command>`';
+          pageContent += '\nFor help with a specific command type `help <command>`';
         }
 
-        paginatedEmbed.emit('update', pageText);
+        paginatedEmbed.emit('updateContent', {
+          pageContent,
+          pageCount,
+          title: 'MCLBOT help',
+        });
       });
 
       paginatedEmbed.emit('paginate', 1);
