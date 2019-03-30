@@ -8,7 +8,8 @@ python2 \
 yarn \
 git \
 make \
-g++
+g++ \
+curl
 
 WORKDIR /mclbot
 
