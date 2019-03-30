@@ -22,6 +22,10 @@ module.exports = {
 
     const user = await main.userHelper.getUser(false, jobInformation.user_id);
 
-    return user.send(`Reminder: \`${jobInformation.text}\``);
+    if (jobInformation.text) {
+      return user.send(`Reminder: \`${jobInformation.text}\``);
+    }
+
+    return user.send(`Reminder: \`...\`\n\n<https://discordapp.com/channels/${(jobInformation.guild_id) ? jobInformation.guild_id : '@me'}/${jobInformation.channel_id}/${jobInformation.message_id}>`);
   },
 };

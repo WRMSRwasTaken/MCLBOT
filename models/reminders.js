@@ -15,8 +15,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
     },
     text: {
-      allowNull: false,
       type: DataTypes.STRING(2000),
+    },
+    message_id: {
+      type: DataTypes.BIGINT,
+    },
+    channel_id: {
+      type: DataTypes.BIGINT,
+    },
+    guild_id: {
+      type: DataTypes.BIGINT,
     },
     queue_id: {
       type: DataTypes.STRING,

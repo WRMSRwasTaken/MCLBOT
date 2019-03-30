@@ -16,6 +16,7 @@ module.exports = {
           max: 365 * 24 * 60 * 60 * 2,
         },
         {
+          optional: true,
           label: 'text',
           type: 'string',
           infinite: true,
@@ -63,6 +64,9 @@ module.exports = {
           fake_id: newFakeID,
           notify_date: timestamp,
           text,
+          message_id: (text) ? null : ctx.message.id,
+          channel_id: (text) ? null : ctx.channel.id,
+          guild_id: (!text && ctx.guild) ? ctx.guild.id : null,
           queue_id: (job) ? job.id : null,
         });
 
@@ -108,7 +112,7 @@ module.exports = {
               list += '\n';
             }
 
-            list += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date.getTime(), 2)}\n**${row.text}**`;
+            list += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date.getTime(), 2)}\n${(row.text) ? `**${row.text}**` : '<no text set>'}`;
           }
 
           let pageCount = Math.floor(results.count / resultsPerPage);
