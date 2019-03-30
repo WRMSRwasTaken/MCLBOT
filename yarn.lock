@@ -637,17 +637,17 @@ diagnostics@^1.1.1:
     enabled "1.0.x"
     kuler "1.0.x"
 
-"discord.js@https://github.com/discordjs/discord.js":
+"discord.js@https://github.com/discordjs/discord.js#ae7269088b99dfff614ea66ba9c67baeb1bd9169":
   version "12.0.0-dev"
-  resolved "https://github.com/discordjs/discord.js#04fa56d0c07b66c77d0fdd6cb4419efb890043eb"
+  resolved "https://github.com/discordjs/discord.js#ae7269088b99dfff614ea66ba9c67baeb1bd9169"
   dependencies:
-    form-data "^2.3.3"
-    node-fetch "^2.3.0"
-    pako "^1.0.8"
-    prism-media "^1.0.0"
+    form-data "^2.3.2"
+    node-fetch "^2.1.2"
+    pako "^1.0.0"
+    prism-media amishshah/prism-media
     setimmediate "^1.0.5"
-    tweetnacl "^1.0.1"
-    ws "^6.1.3"
+    tweetnacl "^1.0.0"
+    ws "^6.0.0"
 
 doctrine@1.5.0:
   version "1.5.0"
@@ -1147,7 +1147,7 @@ follow-redirects@^1.3.0:
   dependencies:
     debug "^3.1.0"
 
-form-data@^2.3.3:
+form-data@^2.3.2:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/form-data/-/form-data-2.3.3.tgz#dcce52c05f644f298c6a7ab936bd724ceffbf3a6"
   integrity sha512-1lLKB2Mu3aGP1Q/2eCOx0fNbRMe7XdwktwOruhfqqd0rIJWwN4Dh+E3hrPSlDCXnSR7UtZ1N38rVXm+6+MEhJQ==
@@ -1863,7 +1863,7 @@ nice-try@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.4.tgz#d93962f6c52f2c1558c0fbda6d512819f1efe1c4"
 
-node-fetch@^2.3.0:
+node-fetch@^2.1.2:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.3.0.tgz#1a1d940bbfb916a1d3e0219f037e89e71f8c5fa5"
   integrity sha512-MOd8pV3fxENbryESLgVIeaGKrdl+uaYhCSSVkjeOb/31/njTpcis5aWfdqgNlHIrKOLRbMnfPINPOML2CIFeXA==
@@ -2131,7 +2131,7 @@ packet-reader@1.0.0:
   resolved "https://registry.yarnpkg.com/packet-reader/-/packet-reader-1.0.0.tgz#9238e5480dedabacfe1fe3f2771063f164157d74"
   integrity sha512-HAKu/fG3HpHFO0AA8WE8q2g+gBJaZ9MG7fcKk+IJPLTGAD6Psw4443l+9DGRbOIh3/aXr7Phy0TjilYivJo5XQ==
 
-pako@^1.0.8:
+pako@^1.0.0:
   version "1.0.10"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.10.tgz#4328badb5086a426aa90f541977d4955da5c9732"
   integrity sha512-0DTvPVU3ed8+HNXOu5Bs+o//Mbdj9VNQMUOe9oKCwh8l0GNwpTDMKCWbRjgtD291AWnkAgkqA/LOnQS8AmS1tw==
@@ -2285,10 +2285,9 @@ pretty-ms@4.0.0:
   dependencies:
     parse-ms "^2.0.0"
 
-prism-media@^1.0.0:
+prism-media@amishshah/prism-media:
   version "1.0.1"
-  resolved "https://registry.yarnpkg.com/prism-media/-/prism-media-1.0.1.tgz#3d033c214f9d79ca157bae7985938be65f521c02"
-  integrity sha512-Unmeibfk7b8wiiQFPlCC0GgCRaAejSpe2ElgfDkMi9ZmsqzeTbUnmiLNjyqONeKK+HMYINYHOgJFox5l7FU7YA==
+  resolved "https://codeload.github.com/amishshah/prism-media/tar.gz/9f7970f3497b12a26fb00a9d98fb3fc0a412a9ee"
 
 process-nextick-args@~1.0.6:
   version "1.0.7"
@@ -2959,7 +2958,7 @@ tslib@^1.9.0:
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.9.3.tgz#d7e4dd79245d85428c4d7e4822a79917954ca286"
 
-tweetnacl@^1.0.1:
+tweetnacl@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-1.0.1.tgz#2594d42da73cd036bd0d2a54683dd35a6b55ca17"
   integrity sha512-kcoMoKTPYnoeS50tzoqjPY3Uv9axeuuFAZY9M/9zFnhoVvRfxz9K29IMPD7jGmt2c8SW7i3gT9WqDl2+nV7p4A==
@@ -3126,10 +3125,10 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@^6.1.3:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.0.tgz#13806d9913b2a5f3cbb9ba47b563c002cbc7c526"
-  integrity sha512-deZYUNlt2O4buFCa3t5bKLf8A7FPP/TVjwOeVNpw818Ma5nk4MLXls2eoEGS39o8119QIYxTrTDoPQ5B/gTD6w==
+ws@^6.0.0:
+  version "6.2.1"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-6.2.1.tgz#442fdf0a47ed64f59b6a5d8ff130f4748ed524fb"
+  integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
 
