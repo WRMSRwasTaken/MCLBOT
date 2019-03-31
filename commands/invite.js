@@ -11,10 +11,6 @@ module.exports = {
     },
   ],
   fn: async (ctx, token) => {
-    // const msg = await ctx.reply('no u');
-    //
-    // await Bluebird.delay(2000);
-
     if (!token) {
       if (os.type() === 'Windows_NT') { // yea, this is my cheap ass dev detection if the bot is running on my IDE or not. I know that there are better ways to do this, but I'm too lazy for this.
         return 'This is my dev instance. You don\'t want this on your server, believe me. This one\'s not even online 24/7, lol';
