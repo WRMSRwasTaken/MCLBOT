@@ -3,7 +3,7 @@ const nconf = require('nconf');
 module.exports = {
   fn: (main, message) => {
     if (message.guild) {
-      main.prometheusMetrics.influxWrites.inc();
+      // main.prometheusMetrics.influxWrites.inc();
 
       // main.influx.writePoints([
       //   {
@@ -23,9 +23,14 @@ module.exports = {
       //   },
       // ]);
 
-      main.prometheusMetrics.redisWrites.inc();
+      main.prometheusMetrics.sqlWrites.inc();
 
-      main.redis.set(`member_last_message:${message.guild.id}:${message.author.id}`, message.createdTimestamp, 'EX', nconf.get('bot:redisStoreTTL'));
+      main.db.member_last_message.upsert({
+        user_id: message.author.id,
+        guild_id: message.guild.id,
+        channel_id: message.channel.id,
+        timestamp: message.createdTimestamp,
+      });
     }
   },
 };

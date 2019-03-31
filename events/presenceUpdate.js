@@ -1,5 +1,3 @@
-const nconf = require('nconf');
-
 /*
 
 This event gets triggered multiple times per user (to be exact: for every guild in common with the presence changing user),
@@ -14,9 +12,12 @@ module.exports = {
     if (newMember.presence.status === 'offline') {
       if (!pendingUpdates[newMember.user.id]) {
         setTimeout(() => {
-          main.prometheusMetrics.redisWrites.inc();
+          main.prometheusMetrics.sqlWrites.inc();
 
-          main.redis.set(`user_last_seen:${newMember.user.id}`, pendingUpdates[newMember.user.id], 'EX', nconf.get('bot:redisStoreTTL'));
+          main.db.user_last_seen.upsert({
+            user_id: newMember.user.id,
+            last_seen: pendingUpdates[newMember.user.id],
+          });
 
           delete pendingUpdates[newMember.user.id];
         }, 5000);
