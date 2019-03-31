@@ -1,5 +1,4 @@
 const axios = require('axios');
-const Bluebird = require('bluebird');
 const os = require('os');
 
 module.exports = {
@@ -66,7 +65,7 @@ module.exports = {
       if (ctx.guild && ctx.guild.members.get(apiResponse.data.inviter.id)) {
         embed.addField('Invited by', `<@${apiResponse.data.inviter.id}>`);
       } else {
-        embed.addField('Invited by', `${apiResponse.data.inviter.username}#${apiResponse.data.inviter.discriminator}`);
+        embed.addField('Invited by', `${apiResponse.data.inviter.username}#${apiResponse.data.inviter.discriminator} (ID: ${apiResponse.data.inviter.id})`);
       }
     }
 
