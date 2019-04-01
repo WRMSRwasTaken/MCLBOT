@@ -1,3 +1,5 @@
+const nconf = require('nconf');
+
 module.exports = {
   description: 'Shows a list of servers a user and the bot have in common',
   arguments: [
@@ -11,7 +13,7 @@ module.exports = {
   fn: async (ctx, user) => {
     const resultsPerPage = 10;
 
-    if (user.id === ctx.main.api.user.id) {
+    if (!ctx.isBotAdmin && (user.id === ctx.main.api.user.id || user.id === nconf.get('bot:owner'))) {
       return 'no';
     }
 
