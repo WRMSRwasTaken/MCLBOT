@@ -109,7 +109,7 @@ module.exports = {
             break;
         }
 
-        list += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.created_at, 1)}`;
+        list += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.createdAt, 1)}`;
       }
 
       entryCount = results.count;

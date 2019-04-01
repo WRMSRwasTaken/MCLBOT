@@ -57,7 +57,7 @@ module.exports = {
               list += '\n';
             }
 
-            list += `• \`${row.target_tag}\` (ID: ${row.target_id})${(row.expires_at) ? ` ${ctx.main.stringUtils.formatUnixTimestamp(row.expires_at.getTime())}` : ''}`;
+            list += `• \`${row.target_tag}\` (ID: ${row.target_id})${(row.expires_at) ? ` ${ctx.main.stringUtils.formatUnixTimestamp(row.expires_at)}` : ''}`;
           }
 
           let pageCount = Math.floor(results.count / resultsPerPage);
