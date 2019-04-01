@@ -8,7 +8,7 @@ module.exports = {
   subcommands: {
     add: {
       description: 'Add / create a new reminder',
-      alias: ['create', 'set'],
+      alias: ['a', 'create', 'set', 'c'],
       arguments: [
         {
           label: 'duration',
@@ -20,6 +20,7 @@ module.exports = {
           label: 'text',
           type: 'string',
           infinite: true,
+          max: 1000,
         },
       ],
       fn: async (ctx, duration, text) => {
@@ -74,10 +75,36 @@ module.exports = {
       },
     },
     list: {
-      description: 'Shows all reminders for the current user',
-      alias: 'l',
-      fn: async (ctx) => {
+      description: 'Shows all reminders or a specific one for the given ID',
+      alias: ['l', 'show', 's', 'print', 'p'],
+      arguments: [
+        {
+          optional: true,
+          label: 'ID',
+          type: 'integer',
+          min: 1,
+          max: 100,
+        },
+      ],
+      fn: async (ctx, reminderID) => {
         ctx.main.prometheusMetrics.sqlReads.inc(1);
+
+        if (reminderID) {
+          const result = await ctx.main.db.reminders.findOne({
+            where: {
+              user_id: ctx.author.id,
+              fake_id: reminderID,
+            },
+          });
+
+          if (!result) {
+            return ctx.main.stringUtils.argumentError(ctx, 0, 'No reminder found with that ID');
+          }
+
+          const text = (result.text) ? result.text : `<https://discordapp.com/channels/${(result.guild_id) ? result.guild_id : '@me'}/${result.channel_id}/${result.message_id}>`;
+
+          return `Reminder information for ID: \`${reminderID}\` created at \`${ctx.main.stringUtils.formatUnixTimestamp(result.createdAt)}\` which is going to expire on \`${ctx.main.stringUtils.formatUnixTimestamp(result.notify_date)}\`:\n\n${text}`;
+        }
 
         const reminderCount = await ctx.main.db.reminders.count({
           where: {
@@ -90,6 +117,8 @@ module.exports = {
         }
 
         const resultsPerPage = 10;
+
+        const perEntryOverhead = 70;
 
         const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
@@ -106,14 +135,32 @@ module.exports = {
           });
 
           let list = '';
+          let listTextLength = 0;
 
           for (const row of results.rows) {
             if (list !== '') {
               list += '\n';
             }
 
-            list += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date.getTime(), 2)}\n${(row.text) ? `**${row.text}**` : '<no text set>'}`;
+            listTextLength += (row.text) ? row.text.length : 13;
+
+            list += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date, 2)}\n${(row.text) ? `**${row.text}**` : '<no text set>'}`;
           }
+
+          if (perEntryOverhead * results.rows.length + listTextLength > 1024) {
+            const maxTextLength = Math.floor((1024 - perEntryOverhead * results.rows.length) / results.rows.length);
+
+            list = '';
+
+            for (const row of results.rows) {
+              if (list !== '') {
+                list += '\n';
+              }
+
+              list += `__${row.fake_id}.__ ${ctx.main.stringUtils.formatUnixTimestamp(row.notify_date, 2)}\n${(row.text) ? `**${row.text.substring(0, maxTextLength)}**${(row.text.length > maxTextLength) ? '[...]' : ''}` : '<no text set>'}`;
+            }
+          }
+
 
           let pageCount = Math.floor(results.count / resultsPerPage);
 
@@ -135,41 +182,72 @@ module.exports = {
       },
     },
     delete: {
-      description: 'Deletes a user\'s reminder',
-      alias: ['remove'],
+      description: 'Deletes reminder(s)',
+      alias: ['d', 'remove', 'r'],
       arguments: [
         {
-          label: 'reminder id | all',
+          label: 'reminder id(s) | all',
           type: 'integer',
+          infinite: true,
           list: true,
+          listAll: true,
+          min: 1,
+          max: 100,
         },
       ],
-      fn: async (ctx, reminderID) => {
-        const result = await ctx.main.db.reminders.findOne({
+      fn: async (ctx, input) => {
+        ctx.main.prometheusMetrics.sqlReads.inc(1);
+
+        const reminderCount = await ctx.main.db.reminders.count({
           where: {
             user_id: ctx.author.id,
-            fake_id: reminderID,
           },
         });
 
-        if (!result) {
-          return ctx.main.stringUtils.argumentError(ctx, 0, 'No reminder found with that ID');
+        if (reminderCount === 0) {
+          return 'You don\'t have any reminders set.';
         }
 
-        if (result.queue_id) {
-          const job = await ctx.main.jobQueue.getJob(result.queue_id);
+        if (input === 'all') {
+          await ctx.main.db.reminders.destroy({
+            where: {
+              user_id: ctx.author.id,
+            },
+          });
 
-          await job.remove();
+          return 'All your reminders have been deleted.';
         }
 
-        await ctx.main.db.reminders.destroy({
-          where: {
-            user_id: ctx.author.id,
-            fake_id: reminderID,
-          },
-        });
+        // https://github.com/sequelize/sequelize/issues/4122
 
-        return `Reminder with ID ${reminderID} has been deleted.`;
+        let query = `DELETE FROM "reminders" WHERE user_id = '${ctx.author.id}' AND (`;
+        let first = true;
+
+        for (const fakeID of input) {
+          query = `${query}${(first) ? '' : ' OR '}fake_id = '${fakeID}'`;
+
+          first = false;
+        }
+
+        query = `${query}) RETURNING fake_id`;
+
+        const result = await ctx.main.db.sequelize.query(query);
+
+        if (result[0].length === 0) {
+          if (input.length === 1) {
+            return ctx.main.stringUtils.argumentError(ctx, 0, 'No reminder found with that ID');
+          }
+
+          return ctx.main.stringUtils.argumentError(ctx, 0, 'None of the given reminder IDs does exist');
+        }
+
+        let removedReminders = 'Removed reminder';
+
+        for (const fakeID of result[0]) {
+          removedReminders = `${removedReminders} #${fakeID.fake_id}`;
+        }
+
+        return removedReminders;
       },
     },
   },

@@ -28,7 +28,8 @@ Every category folder can contain a file called `category.json` for defining par
   - `max` maximum number for int and float, maximum length for strings
   - `infinite` the parameter takes infinite values (only for type `string`, arguments specified afterwards won't be set then, should be ideally the last argument)
   - `optional` make this argument optional (the parameter value is provided by the default function / value then if set)
-  - `skippable` if a passed argument does not validate against specified type, pass the current argument input to the next argument instead of cancelling the command and run the default function / value for this parameter input if set (works only if the command is optional)
+  - `list` (only for type `integer` so far) to accept ranges of numbers like `1-5`, `1,2,3` and `1,3,6-9` for example. Returns an array of numbers. Should best be set with `infinite` to accept space separated values aswell if not using `"` as argument delimiter.
+  - `listAll` (only if `list` is enabled) to enable `all` and `*` as valid input which will return `all` to the backend istead of the number array.
   - `default` function (which will be passed the context object) or value providing a default input for this parameter, this overrides the `default` function of an argument type (if both are blank, `undefined` will be passed instead)
 - `flags` object (key names are the flag names) consisting of objects describing each flag for the (sub-) command flag configuration:
   - `label` the flag label to display in help output (optional, if not set the type will be shown)

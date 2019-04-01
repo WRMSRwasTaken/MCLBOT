@@ -1,5 +1,21 @@
+const XRegExp = require('xregexp');
+
+const integerListRegex = XRegExp('[^0-9,-\\s]');
+
 module.exports = {
-  parse: (value, argument) => {
+  parse: (value, argument, context) => {
+    if (argument.list) {
+      if (argument.listAll && (value === '*' || value.toLowerCase() === 'all')) {
+        return 'all';
+      }
+
+      if (!XRegExp.exec(value, integerListRegex)) {
+        return context.main.stringUtils.parseIntegerList(value, argument.min, argument.max);
+      }
+
+      throw new Error('Invalid integer value or invalid list of integer values');
+    }
+
     const integer = parseInt(value, 10);
 
     if (Number.isNaN(integer)) {
