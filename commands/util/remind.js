@@ -76,7 +76,7 @@ module.exports = {
     },
     list: {
       description: 'Shows all reminders or a specific one for the given ID',
-      alias: ['l', 'show', 's', 'print', 'p'],
+      alias: ['l', 'show', 's', 'print', 'p', 'view', 'v'],
       arguments: [
         {
           optional: true,
