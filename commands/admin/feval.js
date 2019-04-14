@@ -1,7 +1,6 @@
 const axios = require('axios');
 const winston = require('winston');
 const nconf = require('nconf');
-const util = require('util');
 const fileType = require('file-type');
 
 const allowedIDs = [
@@ -47,19 +46,19 @@ module.exports = {
       });
     } catch (err) {
       if (err.response && err.response.data) {
-        winston.warn('Could not evaluate text on fAPI backend: %s', err.response.data);
-        return `Could not evaluate text on fAPI backend: ${err.response.data}`;
+        winston.warn('Could not evaluate text on fAPI: %s', err.response.data);
+        return `Could not evaluate text on fAPI: ${err.response.data}`;
       }
 
       winston.warn('Could not evaluate text on fAPI backend: %s', err.message);
-      return `Could not evaluate text on fAPI backend: ${ctx.main.stringUtils.prettyError(err.message)}`;
+      return `Could not evaluate text on fAPI: ${ctx.main.stringUtils.prettyError(err.message)}`;
     }
 
     const time = Date.now() - start;
 
     if (httpResponse.headers['content-type'] && (httpResponse.headers['content-type'] === 'application/octet-stream' || httpResponse.headers['content-type'].includes('image'))) {
       if (httpResponse.data.length === 0) {
-        return `eval did return nothing, :stopwatch: took ${time}ms`;
+        return `eval returned nothing, :stopwatch: took ${time}ms`;
       }
 
       const magicNumber = fileType(httpResponse.data);
@@ -72,6 +71,6 @@ module.exports = {
       });
     }
 
-    return `eval output:\n\`\`\`js\n${util.inspect(httpResponse.data.toString('utf8'))}\n\`\`\` \n:stopwatch: took ${time}ms`;
+    return `eval output:\n\`\`\`js\n${httpResponse.data.toString('utf8')}\n\`\`\` \n:stopwatch: took ${time}ms`;
   },
 };
