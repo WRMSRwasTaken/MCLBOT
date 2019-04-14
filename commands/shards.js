@@ -1,4 +1,5 @@
 const prettyBytes = require('pretty-bytes');
+const prettyMs = require('pretty-ms');
 
 module.exports = {
   description: 'Shows the bot\'s sharding status',
@@ -8,12 +9,13 @@ module.exports = {
     }
 
     const tableWidths = [
-      8,
-      9,
+      5,
+      6,
       6,
       7,
-      9,
-      8,
+      7,
+      3,
+      6,
     ];
 
     const drawTableHead = (tableCells, drawFooter = false) => {
@@ -89,12 +91,13 @@ module.exports = {
     };
 
     let list = drawTableHead([
-      'Shard ID',
-      'WS Ping',
+      'Shard',
+      'WS rtt',
       'Guilds',
       'Users',
-      'Mem usage',
-      'DB conns',
+      'RAM',
+      'DB',
+      'online',
     ]);
 
     let shardPings;
@@ -102,6 +105,7 @@ module.exports = {
     let shardUsers;
     let shardMemUsages;
     let dbConns;
+    let onlineTime;
 
     try {
       shardPings = await ctx.main.api.shard.fetchClientValues('ws.ping');
@@ -109,6 +113,7 @@ module.exports = {
       shardUsers = await ctx.main.api.shard.fetchClientValues('users.size');
       shardMemUsages = await ctx.main.api.shard.broadcastEval('process.memoryUsage().heapTotal');
       dbConns = await ctx.main.api.shard.broadcastEval('this.main.db.sequelize.connectionManager.pool._inUseObjects.length');
+      onlineTime = await ctx.main.api.shard.broadcastEval('this.main.connectTime');
     } catch (ex) {
       return 'I am still starting up, this command will be unavailable until all my shards have been started.';
     }
@@ -122,6 +127,7 @@ module.exports = {
           shardUsers[shardID],
           prettyBytes(shardMemUsages[shardID]),
           dbConns[shardID],
+          `${prettyMs(Date.now() - onlineTime[shardID], { compact: true })}`,
         ]);
       } else {
         list += drawTableRow([
@@ -131,6 +137,7 @@ module.exports = {
           'N/A',
           prettyBytes(shardMemUsages[shardID]),
           dbConns[shardID],
+          'N/A',
         ]);
       }
     }
@@ -148,6 +155,7 @@ module.exports = {
       totalUsers,
       prettyBytes(totalMemUsage),
       totalDBConns,
+      '',
     ], true);
 
     return ctx.reply(list, {

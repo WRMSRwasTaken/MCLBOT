@@ -41,7 +41,7 @@ module.exports = {
     embed.addField('Information', `Hello, I'm a Discord bot created by ${(mentionCreator) ? `<@${creatorID}>` : `**${creator.tag}**`}\n\`\`\`${asciiLogo}\`\`\``);
 
     embed.addField('Stats', `This bot is currently on **${await getCount('guilds')}** servers serving **${await getCount('users')}** users\n`
-      + `in **${await getCount('channels')}** channels running **${(ctx.main.api.shard) ? ctx.main.api.shard.count : 1}** shard(s) with **${await getCount('voiceConnections')}** voice connection(s)\n\n`
+      + `in **${await getCount('channels')}** channels running **${(ctx.main.api.shard) ? ctx.main.api.shard.count : 1}** shard(s)\n\n`
       + `My command count is **${Object.keys(ctx.main.commands).length}** split in **${Object.keys(ctx.main.categories).length}** categories`);
 
     embed.addField('Useful links', '~~Support guild invite~~ (none for now, might come in the future)\n'
@@ -51,6 +51,7 @@ module.exports = {
 
     let wsLatency;
     let memUsage;
+    const dbConns = ctx.main.db.sequelize.connectionManager.pool._inUseObjects.length; // eslint-disable-line no-underscore-dangle
 
     if (ctx.main.api.shard) {
       const shardPings = await ctx.main.api.shard.fetchClientValues('ws.ping');
@@ -68,6 +69,7 @@ module.exports = {
       + `Uptime: **${prettyMs(Date.now() - ctx.main.startTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `Online time: **${prettyMs(Date.now() - ctx.main.connectTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `Websocket latency: **${prettyMs(wsLatency)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
+      + `Open database connections: **${dbConns}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `${(ctx.main.api.shard) ? '(for per-shard statistics see the `shards` command)\n' : ''}\n`
       + `Node.js version: **${process.version}**\n`
       + `discord.js version: **${ctx.main.Discord.version}**\n`
