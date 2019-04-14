@@ -13,6 +13,7 @@ module.exports = {
       6,
       7,
       9,
+      8,
     ];
 
     const drawTableHead = (tableCells, drawFooter = false) => {
@@ -93,18 +94,21 @@ module.exports = {
       'Guilds',
       'Users',
       'Mem usage',
+      'DB conns',
     ]);
 
     let shardPings;
     let shardGuilds;
     let shardUsers;
     let shardMemUsages;
+    let dbConns;
 
     try {
       shardPings = await ctx.main.api.shard.fetchClientValues('ws.ping');
       shardGuilds = await ctx.main.api.shard.fetchClientValues('guilds.size');
       shardUsers = await ctx.main.api.shard.fetchClientValues('users.size');
       shardMemUsages = await ctx.main.api.shard.broadcastEval('process.memoryUsage().heapTotal');
+      dbConns = await ctx.main.api.shard.broadcastEval('this.main.db.sequelize.connectionManager.pool._inUseObjects.length');
     } catch (ex) {
       return 'I am still starting up, this command will be unavailable until all my shards have been started.';
     }
@@ -112,19 +116,21 @@ module.exports = {
     for (let shardID = 0; shardID < ctx.main.api.shard.count; shardID++) {
       if (shardGuilds[shardID] > 0) {
         list += drawTableRow([
-          `${shardID === ctx.main.api.shard.id ? '> ' : '  '}${shardID}`,
+          `${shardID === ctx.main.api.shard.ids[0] ? '> ' : '  '}${shardID}`,
           `${Math.round(shardPings[shardID])}ms`,
           shardGuilds[shardID],
           shardUsers[shardID],
           prettyBytes(shardMemUsages[shardID]),
+          dbConns[shardID],
         ]);
       } else {
         list += drawTableRow([
-          `${shardID === ctx.main.api.shard.id ? '> ' : '  '}${shardID}`,
+          `${shardID === ctx.main.api.shard.id[0] ? '> ' : '  '}${shardID}`,
           'N/A',
           'N/A',
           'N/A',
           prettyBytes(shardMemUsages[shardID]),
+          dbConns[shardID],
         ]);
       }
     }
@@ -133,6 +139,7 @@ module.exports = {
     const totalGuilds = shardGuilds.reduce((p, v) => p + v, 0);
     const totalUsers = shardUsers.reduce((p, v) => p + v, 0);
     const totalMemUsage = shardMemUsages.reduce((p, v) => p + v, 0);
+    const totalDBConns = dbConns.reduce((p, v) => p + v, 0);
 
     list += drawTableHead([
       'Total',
@@ -140,6 +147,7 @@ module.exports = {
       totalGuilds,
       totalUsers,
       prettyBytes(totalMemUsage),
+      totalDBConns,
     ], true);
 
     return ctx.reply(list, {
