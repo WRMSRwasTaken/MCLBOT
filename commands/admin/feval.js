@@ -55,7 +55,13 @@ module.exports = {
       return `Could not evaluate text on fAPI backend: ${ctx.main.stringUtils.prettyError(err.message)}`;
     }
 
+    const time = Date.now() - start;
+
     if (httpResponse.headers['content-type'] && (httpResponse.headers['content-type'] === 'application/octet-stream' || httpResponse.headers['content-type'].includes('image'))) {
+      if (httpResponse.data.length === 0) {
+        return `eval did return nothing, :stopwatch: took ${time}ms`;
+      }
+
       const magicNumber = fileType(httpResponse.data);
 
       return ctx.reply({
@@ -65,8 +71,6 @@ module.exports = {
         }],
       });
     }
-
-    const time = Date.now() - start;
 
     return `eval output:\n\`\`\`js\n${util.inspect(httpResponse.data.toString('utf8'))}\n\`\`\` \n:stopwatch: took ${time}ms`;
   },
