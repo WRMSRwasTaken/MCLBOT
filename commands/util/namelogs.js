@@ -6,15 +6,9 @@ module.exports = {
       label: 'user',
       type: 'user',
       optional: true,
+      infinite: true,
     },
   ],
-  flags: {
-    size: {
-      label: 'image size',
-      short: 's',
-      type: 'integer',
-    },
-  },
   fn: async (ctx, user) => {
     ctx.main.prometheusMetrics.sqlReads.inc(1);
 
