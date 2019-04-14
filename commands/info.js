@@ -51,7 +51,7 @@ module.exports = {
 
     let wsLatency;
     let memUsage;
-    const dbConns = ctx.main.db.sequelize.connectionManager.pool._inUseObjects.length; // eslint-disable-line no-underscore-dangle
+    const dbConns = ctx.main.db.sequelize.connectionManager.pool._count; // eslint-disable-line no-underscore-dangle
 
     if (ctx.main.api.shard) {
       const shardPings = await ctx.main.api.shard.fetchClientValues('ws.ping');

@@ -112,7 +112,7 @@ module.exports = {
       shardGuilds = await ctx.main.api.shard.fetchClientValues('guilds.size');
       shardUsers = await ctx.main.api.shard.fetchClientValues('users.size');
       shardMemUsages = await ctx.main.api.shard.broadcastEval('process.memoryUsage().heapTotal');
-      dbConns = await ctx.main.api.shard.broadcastEval('this.main.db.sequelize.connectionManager.pool._inUseObjects.length');
+      dbConns = await ctx.main.api.shard.broadcastEval('this.main.db.sequelize.connectionManager.pool._count');
       onlineTime = await ctx.main.api.shard.broadcastEval('this.main.connectTime');
     } catch (ex) {
       return 'I am still starting up, this command will be unavailable until all my shards have been started.';
