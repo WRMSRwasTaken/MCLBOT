@@ -6,7 +6,7 @@ const fileType = require('file-type');
 
 const allowedIDs = [
   '139114210679455744', // WRMSR#1337
-  '555744579752689667', // mat#1008
+  '431956009951428624', // matmen
 ];
 
 module.exports = {
