@@ -8,7 +8,7 @@ module.exports = {
       },
     });
 
-    if (!jobInformation) { // huh?
+    if (!jobInformation) { // the job has been deleted from the database, so we're just going to do nothing anymore
       return false;
     }
 
