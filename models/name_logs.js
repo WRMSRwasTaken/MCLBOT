@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     type: {
       allowNull: false,
-      type: DataTypes.INTEGER, // 1 = username, 2 = discriminator, 3 = tag, 4 = (per) guild nickname
+      type: DataTypes.ENUM('USERNAME', 'DISCRIMINATOR', 'TAG', 'NICKNAME'),
     },
     guild_id: {
       type: DataTypes.BIGINT,

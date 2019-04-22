@@ -13,7 +13,7 @@ module.exports = {
 
       await main.db.name_logs.create({
         user_id: newMember.user.id,
-        type: 4,
+        type: 'NICKNAME',
         guild_id: newMember.guild.id,
         before: oldMember.nickname,
         after: newMember.nickname,
@@ -25,7 +25,7 @@ module.exports = {
 
       await main.db.name_logs.create({
         user_id: newMember.user.id,
-        type: 4,
+        type: 'NICKNAME',
         guild_id: newMember.guild.id,
         before: null,
         after: newMember.nickname,
@@ -37,7 +37,7 @@ module.exports = {
 
       await main.db.name_logs.create({
         user_id: newMember.user.id,
-        type: 4,
+        type: 'NICKNAME',
         guild_id: newMember.guild.id,
         before: oldMember.nickname,
         after: null,

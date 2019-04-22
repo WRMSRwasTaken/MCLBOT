@@ -47,8 +47,8 @@ module.exports = {
       where: {
         user_id: queryUser.id,
         [Op.or]: [
-          { type: 1 },
-          { type: 3 },
+          { type: 'USERNAME' },
+          { type: 'TAG' },
         ],
       },
       order: [['created_at', 'ASC']],
@@ -78,16 +78,16 @@ module.exports = {
         list += '• ';
 
         switch (row.type) {
-          case 1:
+          case 'USERNAME':
             list += `\`${row.after}\``;
             break;
-          case 2:
+          case 'DISCRIMINATOR':
             list += `[Discrim] \`#${row.before}\` => #\`${row.after}\``;
             break;
-          case 3:
+          case 'TAG':
             list += `[Tag] \`${row.after}\``;
             break;
-          case 4:
+          case 'NICKNAME':
             list += '[Nick] ';
 
             if (row.type === 4 && !row.before) {

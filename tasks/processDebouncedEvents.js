@@ -61,7 +61,7 @@ module.exports = {
     });
 
     stream.on('end', () => {
-      winston.info('Processed %d queued events which took %s', deletedKeys, prettyMs(Date.now() - start));
+      winston.debug('Processed %d queued events which took %s', deletedKeys, prettyMs(Date.now() - start));
       running = false;
     });
   },

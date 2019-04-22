@@ -28,7 +28,7 @@ module.exports = {
 
       await main.db.name_logs.create({
         user_id: eventPayload.userID,
-        type: 3, // tag change
+        type: 'TAG', // tag change
         before: eventPayload.oldTag,
         after: eventPayload.newTag,
       });
@@ -37,7 +37,7 @@ module.exports = {
 
       await main.db.name_logs.create({
         user_id: eventPayload.userID,
-        type: 2, // discriminator change
+        type: 'DISCRIMINATOR', // discriminator change
         before: oldTag[1],
         after: newTag[1],
       });
@@ -46,7 +46,7 @@ module.exports = {
 
       await main.db.name_logs.create({
         user_id: eventPayload.userID,
-        type: 1, // username change
+        type: 'USERNAME', // username change
         before: oldTag[0],
         after: newTag[0],
       });
