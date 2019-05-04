@@ -66,8 +66,8 @@ module.exports = {
 
     embed.addField('Environment status', `System load: **${(os.loadavg()[0] / os.cpus().length).toPrecision(1)}%**\n`
       + `Memory usage: **${prettyBytes(memUsage)}**\n`
-      + `Uptime: **${prettyMs(Date.now() - ctx.main.startTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
-      + `Online time: **${prettyMs(Date.now() - ctx.main.connectTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
+      + `Uptime: **${prettyMs(Date.now() - ctx.main.processStartTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
+      + `Online time: **${prettyMs(Date.now() - ctx.main.onlineTime)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `Websocket latency: **${prettyMs(wsLatency)}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `Open database connections: **${dbConns}**${(ctx.main.api.shard) ? ' (this shard only)' : ''}\n`
       + `${(ctx.main.api.shard) ? '(for per-shard statistics see the `shards` command)\n' : ''}\n`
