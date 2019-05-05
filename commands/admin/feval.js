@@ -56,10 +56,11 @@ module.exports = {
 
     const time = Date.now() - start;
 
+    if (httpResponse.data.length === 0) {
+      return `eval returned nothing, :stopwatch: took ${time}ms`;
+    }
+
     if (httpResponse.headers['content-type'] && (httpResponse.headers['content-type'] === 'application/octet-stream' || httpResponse.headers['content-type'].includes('image'))) {
-      if (httpResponse.data.length === 0) {
-        return `eval returned nothing, :stopwatch: took ${time}ms`;
-      }
 
       const magicNumber = fileType(httpResponse.data);
 
