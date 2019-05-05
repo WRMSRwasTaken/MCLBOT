@@ -25,6 +25,12 @@ module.exports = {
 
     if (!guildID || ctx.main.api.guilds.get(guildID)) { // use local RPC helper to retrieve guild information, since we're already on this shard
       guild = ctx.main.rpcHelper.getGuildInformation(guildID || ctx.guild.id);
+
+      const guildIconFunc = guild.iconURL;
+
+      guild.iconURL = function iconURL() {
+        return guildIconFunc;
+      };
     } else if (ctx.main.api.shard) {
       const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.rpcHelper.getGuildInformation('${guildID}')`);
 
@@ -45,9 +51,9 @@ module.exports = {
 
     const embed = new ctx.main.Discord.MessageEmbed();
 
-    embed.setAuthor(guild.name, guild.iconURL);
+    embed.setAuthor(guild.name, guild.iconURL());
 
-    embed.setThumbnail(guild.iconURL);
+    embed.setThumbnail(guild.iconURL());
 
     embed.addField('ID', guild.id, true);
 
