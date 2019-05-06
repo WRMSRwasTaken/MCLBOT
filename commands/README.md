@@ -16,7 +16,7 @@ Every category folder can contain a file called `category.json` for defining par
 - `permission` string or array or strings of permissions for a user, needed to be able to run this  (sub-) command, e.g. `ADMINISTRATOR` (setting this will automatically set `guildOnly` to true), for all permissions, see the [discord.js documentation](https://discord.js.org/#/docs/main/stable/class/Permissions?scrollTo=s-FLAGS)
 - `selfPermission` string or array or strings of permissions needed for the bot member itself to run, e.g. `ATTACH_FILES` (ignored in DMs)
 - `middleware` string or array of strings of middleware names to run before running the actual command
-- `cooldown` either `false` to disable cooldown for this (sub-) command or an object with following properties:
+- `cooldown` either `false` to disable cooldown for this (sub-) command or an object with following properties (the cooldown system is implemented as a leaky bucket algorithm):
   - `actions` integer number for the maximum allowed calls to this (sub-) command in the timespan
   - `period` integer number for the actual timespan in seconds
 - `hideTyping` boolean value: whether to hide the typing indicator while this command is being processed or not
