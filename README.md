@@ -16,8 +16,7 @@ The bot's default configuration is in the [settings.js](lib/settings.js) file, h
 
 For example: To store your bot token, either pass the environment variable `bot.token` containing the bot's token or insert `bot.token=<token>` in the `.env` file. The same goes for another example with the database password defined as `database.password`.
 
-If your config is done, you need to initialize the database: 
-ToDo: document how to initialize the PostgreSQL database
+If your database installation and bot config is done, you need to initialize the database: Running `sequelize db:migrate` should do the trick (for Linux this would be `node_modules/.bin/sequelize db:migrate`). This should be run on bot updates too, to keep up with the latest required database schema.
 
 ## Documentation
 
