@@ -7,7 +7,7 @@ module.exports = {
     main.db.member_events.upsert({
       user_id: member.id,
       guild_id: member.guild.id,
-      type: 'JOIN',
+      type: 'LEAVE',
       timestamp: Date.now(),
     });
 
