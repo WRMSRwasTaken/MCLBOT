@@ -51,7 +51,7 @@ module.exports = {
           { type: 'TAG' },
         ],
       },
-      order: [['created_at', 'ASC']],
+      order: [['timestamp', 'ASC']],
     });
 
     const resultsPerPage = 10;
@@ -64,7 +64,7 @@ module.exports = {
       const results = await ctx.main.db.name_logs.findAndCountAll({
         where: query,
         limit: resultsPerPage,
-        order: [['created_at', 'DESC']],
+        order: [['timestamp', 'DESC']],
         offset: (pageNumber - 1) * resultsPerPage,
       });
 
@@ -103,7 +103,7 @@ module.exports = {
             break;
         }
 
-        list += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.createdAt, 1)}`;
+        list += ` at ${ctx.main.stringUtils.formatUnixTimestamp(row.timestamp, 1)}`;
       }
 
       entryCount = results.count;

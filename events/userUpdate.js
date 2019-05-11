@@ -31,6 +31,7 @@ module.exports = {
         type: 'TAG', // tag change
         before: eventPayload.oldTag,
         after: eventPayload.newTag,
+        timestamp: Date.now(),
       });
     } else if (oldTag[0] === newTag[0]) { // username did not change => discrim change
       winston.debug(`User ${eventPayload.oldTag} changed just the discriminator to ${eventPayload.newTag}`);
@@ -40,6 +41,7 @@ module.exports = {
         type: 'DISCRIMINATOR', // discriminator change
         before: oldTag[1],
         after: newTag[1],
+        timestamp: Date.now(),
       });
     } else { // leftover is username change
       winston.debug(`User ${eventPayload.oldTag} changed just the username to ${eventPayload.newTag}`);
@@ -49,6 +51,7 @@ module.exports = {
         type: 'USERNAME', // username change
         before: oldTag[0],
         after: newTag[0],
+        timestamp: Date.now(),
       });
     }
 

@@ -17,9 +17,14 @@ module.exports = (sequelize, DataTypes) => {
     after: {
       type: DataTypes.STRING(40),
     },
+    timestamp: {
+      allowNull: false,
+      type: DataTypes.DATE,
+    },
   }, {
     underscored: true,
     tableName: 'name_logs',
+    timestamps: false,
   });
   reminders.associate = (models) => {
     // associations can be defined here
