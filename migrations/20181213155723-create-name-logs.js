@@ -26,5 +26,8 @@ module.exports = {
       type: Sequelize.DATE,
     },
   }),
-  down: (queryInterface, Sequelize) => queryInterface.dropTable('name_logs'),
+  down: (queryInterface, Sequelize) => queryInterface.sequelize.transaction(async (t) => {
+    await queryInterface.dropTable('name_logs', { transaction: t });
+    await queryInterface.sequelize.query('drop type enum_name_logs_type', { transaction: t }); // yes this should be in the other migration file normally
+  }),
 };
