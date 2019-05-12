@@ -2,10 +2,12 @@ module.exports = (sequelize, DataTypes) => {
   const reminders = sequelize.define('name_logs', {
     user_id: {
       allowNull: false,
+      primaryKey: true,
       type: DataTypes.BIGINT,
     },
     type: {
       allowNull: false,
+      primaryKey: true,
       type: DataTypes.ENUM('USERNAME', 'DISCRIMINATOR', 'TAG', 'NICKNAME'),
     },
     guild_id: {
@@ -19,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     timestamp: {
       allowNull: false,
+      primaryKey: true,
       type: DataTypes.DATE,
     },
   }, {
@@ -29,6 +32,5 @@ module.exports = (sequelize, DataTypes) => {
   reminders.associate = (models) => {
     // associations can be defined here
   };
-  reminders.removeAttribute('id');
   return reminders;
 };
