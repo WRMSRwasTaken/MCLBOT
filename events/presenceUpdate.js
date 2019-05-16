@@ -1,11 +1,11 @@
 module.exports = {
   debounce: true,
-  fn: (main, oldMember, newMember) => {
-    if (newMember.presence.status === 'offline') {
+  fn: (main, oldPresence, newPresence) => {
+    if (newPresence.status === 'offline') {
       return {
-        key: newMember.user.id,
+        key: newPresence.user.id,
         payload: {
-          userID: newMember.user.id,
+          userID: newPresence.user.id,
           lastSeen: Date.now(),
         },
       };
