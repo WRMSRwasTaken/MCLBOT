@@ -90,9 +90,7 @@ module.exports = {
           case 'NICKNAME':
             list += '[Nick] ';
 
-            if (row.type === 4 && !row.before) {
-              list += `\`${row.after}\``;
-            } else if (row.type === 4 && !row.after) {
+            if (!row.after) {
               list += '<removed nick>';
             } else {
               list += `\`${row.after}\``;
