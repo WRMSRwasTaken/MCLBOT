@@ -1,0 +1,257 @@
+extends ../../layout.pug
+
+block body
+  .col-12
+    .card-deck.mb-4
+      .card.col-4.bg-primary
+        .card-body.smallstat
+          div
+            div
+              img(src=guild.iconURL, width='50px')
+            div
+              h6 Server name
+              h5 #{guild.name}
+      .card.col-4.bg-primary
+        .card-body.smallstat
+          div
+            div
+              img(src=owner.avatarURL, width='50px')
+            div
+              h6 Owner name
+              h5 #{owner.name}
+      .card.col-4.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-globe.fa-3x
+            div
+              h6 Region
+              h5 #{guild.region}
+
+    .card-deck.mb-4
+      .card.col-3.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-users.fa-3x
+            div
+              h6 Total members
+              h5 #{stats.total}
+      .card.col-3.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-user.fa-3x
+            div
+              h6 Members online
+              h5 #{stats.online}
+      .card.col-3.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-user-plus.fa-3x
+            div
+              h6 Members joined / left
+              h5 #{stats.joined} / #{stats.left}
+      .card.col-3.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-envelope.fa-3x
+            div
+              h6 Messages
+              h5 #{stats.messages}
+
+    .card.mb-4
+      .card-header
+        | Message graph
+      .card-body
+        div#messageGraph(style='height:200px')
+
+    .card.mb-4
+      .card-header
+        | Channel message distribution
+      .card-body
+        div#channelBars(style='height:200px')
+
+    .card.mb-4
+      .card-header
+        | Total member delta
+      .card-body
+        div#memberdeltaGraph(style='height:200px')
+
+    .card
+      .card-header
+        | Per-Member server statistics
+      .card-body
+        table.table#table
+          thead
+            tr
+              th Tag
+              th # Messages
+              th # Words
+              th # Characters
+              th # Mentioned users
+              th # Attachments
+
+          tbody
+            each row in userStats
+              tr
+                td
+                  - var link = "./member/";
+                  - link += row.id
+                  a(href=link)
+                    img(src=row.avatarURL, width='20px')
+                    | #{row.tag}
+                td= row.count
+                td= row.word_count
+                td= row.char_count
+                td= row.user_mention_count
+                td= row.attachment_count
+
+block scripts
+  script.
+    const messageGraph = !{messageGraph};
+
+    for (const row of messageGraph) {
+      row.y = parseInt(row.y);
+    }
+
+    Highcharts.chart('messageGraph', {
+      chart: {
+        type: 'areaspline'
+      },
+      series: [{
+        name: 'Messages',
+        data: messageGraph,
+      }],
+      title: {
+        text: ''
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          formatter: function () {
+            if(messageGraph[this.value]) {
+              return messageGraph[this.value].name;
+            }
+          }
+        },
+      },
+      yAxis: {
+        title: false,
+      },
+      plotOptions: {
+        areaspline: {
+          marker: {
+            enabled: false,
+          }
+        }
+      }
+    });
+
+    const channelMessageCount = !{channelMessageCount};
+
+    for (const row of channelMessageCount) {
+      row.y = parseInt(row.y);
+    }
+
+    Highcharts.chart('channelBars', {
+        chart: {
+            type: 'column'
+        },
+        series: [{
+            name: 'Messages',
+            data: channelMessageCount,
+        }],
+        title: {
+          text: ''
+        },
+        credits: {
+          enabled: false
+        },
+        legend: {
+          enabled: false
+        },
+        xAxis: {
+          labels: {
+            formatter: function () {
+              return channelMessageCount[this.value].name;
+            }
+          },
+        },
+        yAxis: {
+          title: false,
+        }
+    });
+
+    const memberJoinLeaveDeltaGraph = !{memberJoinLeaveDeltaGraph};
+
+    for (const row of memberJoinLeaveDeltaGraph) {
+      row.y = parseInt(row.y);
+    }
+
+    Highcharts.chart('memberdeltaGraph', {
+      chart: {
+        type: 'areaspline'
+      },
+      series: [{
+        name: 'delta',
+        data: memberJoinLeaveDeltaGraph,
+        zoneAxis: 'y',
+        zones: [{
+          value: -0.1,
+          color: '#ff0000'
+        }, {
+          value: 0.1,
+          color: '#7cb5ec',
+        }, {
+          color: '#00ff00',
+        }]
+      }],
+      title: {
+        text: ''
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          formatter: function () {
+            if (messageGraph[this.value]) {
+              return messageGraph[this.value].name;
+            }
+          }
+        },
+      },
+      yAxis: {
+        title: false,
+      },
+      plotOptions: {
+        areaspline: {
+          marker: {
+            enabled: false,
+          }
+        }
+      }
+    });
+
+    $(document).ready(function () {
+      $('#table').DataTable({
+        pageLength: 100,
+        aaSorting: [[1, 'desc']],
+        bPaginate: false,
+        bFilter: false,
+        bInfo: false,
+      });
+    });

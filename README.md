@@ -8,7 +8,7 @@ To invite this bot to your Discord server, [click this link.](https://discordapp
 
 ## Installation / Selfhosting
 
-The easiest way to get this bot up and running is to deploy it via Docker (a [Dockerfile](Dockerfile) is provided). However, it still needs an external [PostgreSQL](https://postgresql.org) (with installed [TimescaleDB](https://github.com/timescale/timescaledb) addon) and [Redis](https://redis.io) instance. The bot has no problems with [pgbouncer](https://pgbouncer.github.io) in `transaction` pooling mode (if used). Although the bot uses the [Sequelize ORM](https://github.com/sequelize/sequelize), because of the TimescaleDB dependency it is practically unable to run with another RDBMS vendor (for example MariaDB).
+The easiest way to get this bot up and running is to deploy it via Docker (a [Dockerfile](Dockerfile) is provided). However, it still needs an external [PostgreSQL](https://postgresql.org) (with installed [TimescaleDB](https://github.com/timescale/timescaledb) addon - you need at least version `1.3.0`) and [Redis](https://redis.io) instance. The bot has no problems with [pgbouncer](https://pgbouncer.github.io) in `transaction` pooling mode (if used). Although the bot uses the [Sequelize ORM](https://github.com/sequelize/sequelize), because of the TimescaleDB dependency it is practically unable to run with another RDBMS vendor (for example MariaDB).
 
 [Redis Sentinel](https://redis.io/topics/sentinel) (for Redis HA) is supported via `redis.sentinel.addresses` (comma separated servers) and `redis.sentinel.name` setting key.
 

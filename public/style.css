@@ -1,0 +1,55 @@
+body {
+  min-height: 75rem;
+  padding-top: 4.5rem;
+}
+
+img {
+  border-radius: 50%;
+}
+
+.smallstat > h5, h6 {
+  margin-bottom: 0;
+}
+
+.smallstat > div > div > .fas {
+  margin-right: 10px;
+}
+
+.smallstat > div > div > img {
+  margin-right: 10px;
+}
+
+.smallstat > div {
+  display: table;
+  width: 100%;
+}
+
+.smallstat > div > div:first-child {
+  width: 1%;
+  display: table-cell;
+  vertical-align: top;
+}
+
+.smallstat > div > div {
+  width: 100%;
+  display: table-cell;
+  vertical-align: top;
+}
+
+.navbar-nav > nav > .breadcrumb {
+  background-color: unset;
+  padding: unset;
+  margin-bottom: unset;
+}
+
+.navbar-brand {
+  margin-top: -6px;
+}
+
+.breadcrumb-item > a > img {
+  margin-right: 5px;
+}
+
+.breadcrumb-item > img {
+  margin-right: 5px;
+}

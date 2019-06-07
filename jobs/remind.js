@@ -26,6 +26,8 @@ module.exports = {
       return user.send(`Reminder: \`${jobInformation.text}\``);
     }
 
+    // TODO: this fails(?) if the user has DM messages disabled. we need to handle this
+
     return user.send(`Reminder: \`...\`\n\n<https://discordapp.com/channels/${(jobInformation.guild_id) ? jobInformation.guild_id : '@me'}/${jobInformation.channel_id}/${jobInformation.message_id}>`);
   },
 };

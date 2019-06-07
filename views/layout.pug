@@ -1,0 +1,61 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='MCLBOT')
+    meta(name='author', content='WRMSR')
+    link(rel='icon', href='favicon.ico')
+    title MCLBOT
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css', integrity='sha256-YLGeXaapI0/5IgZopewRJcFXomhRMlYYjugPLSyNjTY=', crossorigin='anonymous')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/css/dataTables.bootstrap4.min.css', integrity='sha256-F+DaKAClQut87heMIC6oThARMuWne8+WzxIDT7jXuPA=', crossorigin='anonymous')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css', integrity='sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=', crossorigin='anonymous')
+    link(rel='stylesheet', href='https://use.fontawesome.com/releases/v5.8.2/css/all.css', integrity='sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay', crossorigin='anonymous')
+
+
+    link(rel='stylesheet', href='/static/style.css')
+
+
+  body
+    nav.navbar.navbar-expand-md.navbar-dark.fixed-top.bg-dark
+      a.navbar-brand(href='/') MCLBOT
+      button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarCollapse', aria-controls='navbarCollapse', aria-expanded='false', aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarCollapse.collapse.navbar-collapse
+
+        if pages
+          ul.navbar-nav.mr-auto
+            nav(aria-label='breadcrumb')
+              ol.breadcrumb
+                li.breadcrumb-item
+                  each page in pages
+                    li.breadcrumb-item
+                      if page.link
+                        a(href=page.link)
+                          if page.icon
+                            img(src=page.icon, width='25px')
+                          | #{page.text}
+                      else
+                        if page.icon
+                          img(src=page.icon, width='25px')
+                        | #{page.text}
+
+        form.form-inline
+          .form-group
+            span Select timerange:
+            select.form-control
+              option 1 day
+              option 7 days
+              option 31 days
+              option 365 days
+
+
+    main.container-fluid
+      block body
+
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js', integrity='sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=', crossorigin='anonymous')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/jquery.dataTables.min.js', integrity='sha256-t5ZQTZsbQi8NxszC10CseKjJ5QeMw5NINtOXQrESGSU=', crossorigin='anonymous')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.19/js/dataTables.bootstrap4.min.js', integrity='sha256-hJ44ymhBmRPJKIaKRf3DSX5uiFEZ9xB/qx8cNbJvIMU=', crossorigin='anonymous')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js', integrity='sha256-4iQZ6BVL4qNKlQ27TExEhBN1HFPvAvAMbFavKKosSWQ=', crossorigin='anonymous')
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/highcharts/7.1.1/highcharts.js', integrity='sha256-O5kijMW4yuKUTmtSzMwUv8ziygKdBLRB8vUzoTau/AQ=', crossorigin='anonymous')
+  block scripts

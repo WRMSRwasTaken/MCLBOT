@@ -1,0 +1,187 @@
+// require('pg').defaults.parseInt8 = true; // https://github.com/sequelize/sequelize/issues/4550
+
+module.exports = (router, main) => {
+  router.get('/', async (req, res, next) => {
+    const Op = main.db.Sequelize.Op;
+
+    let messagesCount = main.db.member_messages.count({
+      where: {
+        guild_id: req.params.guildID,
+        timestamp: {
+          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+        },
+      },
+    });
+
+    let memberJoinLeaveCount = main.db.member_events.findAll({
+      where: {
+        guild_id: req.params.guildID,
+        timestamp: {
+          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+        },
+      },
+      attributes: [
+        'type',
+        main.db.sequelize.fn('count', main.db.sequelize.col('type')),
+      ],
+      group: ['type'],
+      limit: 100,
+      raw: true,
+    });
+
+    let messageGraph = main.db.member_messages.findAll({
+      where: {
+        guild_id: req.params.guildID,
+        timestamp: {
+          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.lte]: Date.now(), // time_bucket_gapfill needs this to make the last two args optional
+        },
+      },
+      attributes: [
+        [main.db.sequelize.fn('time_bucket_gapfill', '10 minutes', main.db.sequelize.col('timestamp')), 'name'],
+        [main.db.sequelize.fn('coalesce', main.db.sequelize.fn('count', main.db.sequelize.col('message_id')), 0), 'y'],
+      ],
+      group: ['name'],
+      order: [[main.db.sequelize.literal('name'), 'asc']],
+      raw: true,
+    });
+
+    let channelMessageCount = main.db.member_messages.findAll({
+      where: {
+        guild_id: req.params.guildID,
+        timestamp: {
+          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+        },
+      },
+      attributes: [
+        ['channel_id', 'name'],
+        [main.db.sequelize.fn('count', main.db.sequelize.col('message_id')), 'y'],
+      ],
+      group: ['channel_id'],
+      order: [[main.db.sequelize.literal('y'), 'desc']],
+      raw: true,
+    });
+
+    let memberJoinLeaveDeltaGraph = main.db.member_events.findAll({
+      where: {
+        guild_id: req.params.guildID,
+        timestamp: {
+          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.lte]: Date.now(), // time_bucket_gapfill needs this to make the last two args optional
+        },
+      },
+      attributes: [
+        [main.db.sequelize.fn('time_bucket_gapfill', '10 minutes', main.db.sequelize.col('timestamp')), 'name'],
+        [main.db.sequelize.literal('coalesce(count(1) filter (where type = \'JOIN\'), 0) - coalesce(count(1) filter (where type = \'LEAVE\'), 0)'), 'y'],
+      ],
+      group: ['name'],
+      order: [[main.db.sequelize.literal('name'), 'asc']],
+      raw: true,
+    });
+
+    let userStats = main.db.member_messages.findAll({
+      where: {
+        guild_id: req.params.guildID,
+        timestamp: {
+          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+        },
+      },
+      attributes: [
+        'user_id',
+        [main.db.sequelize.fn('sum', main.db.sequelize.col('char_count')), 'char_count'],
+        [main.db.sequelize.fn('sum', main.db.sequelize.col('word_count')), 'word_count'],
+        [main.db.sequelize.fn('sum', main.db.sequelize.col('user_mention_count')), 'user_mention_count'],
+        [main.db.sequelize.fn('sum', main.db.sequelize.col('attachment_count')), 'attachment_count'],
+        main.db.sequelize.fn('count', main.db.sequelize.col('message_id')),
+      ],
+      group: ['user_id'],
+      order: [['count', 'desc']],
+      limit: 100,
+      raw: true,
+    });
+
+    [
+      messagesCount,
+      memberJoinLeaveCount,
+      messageGraph,
+      channelMessageCount,
+      memberJoinLeaveDeltaGraph,
+      userStats,
+    ] = await Promise.all([
+      messagesCount,
+      memberJoinLeaveCount,
+      messageGraph,
+      channelMessageCount,
+      memberJoinLeaveDeltaGraph,
+      userStats,
+    ]);
+
+    for (const row of userStats) {
+      const user = await main.api.users.fetch(row.user_id);
+
+      row.avatarURL = user.displayAvatarURL();
+      row.tag = user.tag;
+      row.id = user.id;
+    }
+
+    let joined = 0;
+    let left = 0;
+
+    if (memberJoinLeaveCount[0]) {
+      if (memberJoinLeaveCount[0].type === 'JOIN') {
+        joined = memberJoinLeaveCount[0].count;
+      } else {
+        left = memberJoinLeaveCount[0].count;
+      }
+    }
+
+    if (memberJoinLeaveCount[1]) {
+      if (memberJoinLeaveCount[1].type === 'JOIN') {
+        joined = memberJoinLeaveCount[1].count;
+      } else {
+        left = memberJoinLeaveCount[1].count;
+      }
+    }
+
+    const guild = main.api.guilds.get(req.params.guildID);
+
+    for (const row of channelMessageCount) {
+      row.name = guild.channels.get(row.name).name;
+    }
+
+    return res.render('stats/guild/guild', {
+      guild: {
+        name: guild.name,
+        iconURL: guild.iconURL(),
+        region: guild.region,
+      },
+      owner: {
+        name: guild.owner.user.username,
+        avatarURL: guild.owner.user.displayAvatarURL(),
+      },
+      stats: {
+        online: guild.members.filter(c => c.presence && c.presence.status !== 'offline').size,
+        total: guild.memberCount,
+        messages: messagesCount,
+        joined,
+        left,
+      },
+      messageGraph: JSON.stringify(messageGraph),
+      channelMessageCount: JSON.stringify(channelMessageCount),
+      memberJoinLeaveDeltaGraph: JSON.stringify(memberJoinLeaveDeltaGraph),
+      userStats,
+      pages: [
+        {
+          text: 'Stats',
+          link: '../..',
+        },
+        {
+          text: main.api.guilds.get(req.params.guildID).name,
+          icon: main.api.guilds.get(req.params.guildID).iconURL(),
+        },
+      ],
+    });
+  });
+
+  return router;
+};

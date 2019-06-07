@@ -1,0 +1,135 @@
+extends ../../layout.pug
+
+block body
+  .col-12
+    .card.mb-4
+      .card-header
+        | Message graph
+      .card-body
+        div#messageGraph(style='height:200px')
+
+    .card.mb-4
+      .card-header
+        | Channel message distribution
+      .card-body
+        div#channelBars(style='height:200px')
+
+    .card
+      .card-header
+        | Per-Channel statistics
+      .card-body
+        table.table#table
+          thead
+            tr
+              th Channel
+              th # Messages
+              th # Words
+              th # Characters
+              th # Mentioned users
+              th # Attachments
+
+          tbody
+            each row in channelStats
+              tr
+                td
+                  - var link = "../channel/";
+                  - link += row.channel_id
+                  a(href=link)
+                    | #{row.name}
+                td= row.count
+                td= row.word_count
+                td= row.char_count
+                td= row.user_mention_count
+                td= row.attachment_count
+
+block scripts
+  script.
+    const messageGraph = !{messageGraph};
+
+    for (const row of messageGraph) {
+      row.y = parseInt(row.y);
+    }
+
+    Highcharts.chart('messageGraph', {
+      chart: {
+        type: 'areaspline'
+      },
+      series: [{
+        name: 'Messages',
+        data: messageGraph,
+      }],
+      title: {
+        text: ''
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          formatter: function () {
+            if(messageGraph[this.value]) {
+              return messageGraph[this.value].name;
+            }
+          }
+        },
+      },
+      yAxis: {
+        title: false,
+      },
+      plotOptions: {
+        areaspline: {
+          marker: {
+            enabled: false,
+          }
+        }
+      }
+    });
+
+    const channelMessageCount = !{channelMessageCount};
+
+    for (const row of channelMessageCount) {
+      row.y = parseInt(row.y);
+    }
+
+    Highcharts.chart('channelBars', {
+      chart: {
+        type: 'column'
+      },
+      series: [{
+        name: 'Messages',
+        data: channelMessageCount,
+      }],
+      title: {
+        text: ''
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+        labels: {
+          formatter: function () {
+            return channelMessageCount[this.value].name;
+          }
+        },
+      },
+      yAxis: {
+        title: false,
+      }
+    });
+
+    $(document).ready(function () {
+      $('#table').DataTable({
+        pageLength: 100,
+        aaSorting: [[1, 'desc']],
+        bPaginate: false,
+        bFilter: false,
+        bInfo: false,
+      });
+    });
