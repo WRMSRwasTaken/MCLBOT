@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const reminders = sequelize.define('user_last_seen', {
+  const user_last_seen = sequelize.define('user_last_seen', {
     user_id: {
       allowNull: false,
       primaryKey: true,
@@ -14,8 +14,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'user_last_seen',
     timestamps: false,
   });
-  reminders.associate = (models) => {
+  user_last_seen.associate = (models) => {
     // associations can be defined here
   };
-  return reminders;
+  return user_last_seen;
 };

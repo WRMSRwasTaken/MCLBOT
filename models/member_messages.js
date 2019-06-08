@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-  const reminders = sequelize.define('member_messages', {
+  const member_messages = sequelize.define('member_messages', {
     user_id: {
       allowNull: false,
       primaryKey: true,
@@ -46,8 +46,8 @@ module.exports = (sequelize, DataTypes) => {
     tableName: 'member_messages',
     timestamps: false,
   });
-  reminders.associate = (models) => {
+  member_messages.associate = (models) => {
     // associations can be defined here
   };
-  return reminders;
+  return member_messages;
 };
