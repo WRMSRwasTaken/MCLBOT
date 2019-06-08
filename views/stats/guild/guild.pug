@@ -7,18 +7,18 @@ block body
         .card-body.smallstat
           div
             div
-              img(src=guild.iconURL, width='50px')
+              img(src=cards.guild.iconURL, width='50px')
             div
               h6 Server name
-              h5 #{guild.name}
+              h5 #{cards.guild.name}
       .card.col-4.bg-primary
         .card-body.smallstat
           div
             div
-              img(src=owner.avatarURL, width='50px')
+              img(src=cards.owner.avatarURL, width='50px')
             div
               h6 Owner name
-              h5 #{owner.name}
+              h5 #{cards.owner.name}
       .card.col-4.bg-primary
         .card-body.smallstat
           div
@@ -26,7 +26,7 @@ block body
               i.fas.fa-globe.fa-3x
             div
               h6 Region
-              h5 #{guild.region}
+              h5 #{cards.guild.region}
 
     .card-deck.mb-4
       .card.col-3.bg-primary
@@ -36,7 +36,7 @@ block body
               i.fas.fa-users.fa-3x
             div
               h6 Total members
-              h5 #{stats.total}
+              h5 #{cards.totalMembers}
       .card.col-3.bg-primary
         .card-body.smallstat
           div
@@ -44,7 +44,7 @@ block body
               i.fas.fa-user.fa-3x
             div
               h6 Members online
-              h5 #{stats.online}
+              h5 #{cards.onlineMembers}
       .card.col-3.bg-primary
         .card-body.smallstat
           div
@@ -52,37 +52,37 @@ block body
               i.fas.fa-user-plus.fa-3x
             div
               h6 Members joined / left
-              h5 #{stats.joined} / #{stats.left}
+              h5 #{cards.membersJoined} / #{cards.membersLeft}
       .card.col-3.bg-primary
         .card-body.smallstat
           div
             div
               i.fas.fa-envelope.fa-3x
             div
-              h6 Messages
-              h5 #{stats.messages}
+              h6 New messages
+              h5 #{cards.totalMessages}
 
     .card.mb-4
       .card-header
-        | Message graph
+        | Messages over time
       .card-body
         div#messageGraph(style='height:200px')
 
     .card.mb-4
       .card-header
-        | Channel message distribution
+        | Channel message count distribution
       .card-body
         div#channelBars(style='height:200px')
 
     .card.mb-4
       .card-header
-        | Total member delta
+        | Member delta over time
       .card-body
         div#memberdeltaGraph(style='height:200px')
 
-    .card
+    .card.mb-4
       .card-header
-        | Per-Member server statistics
+        | Per-member server statistics (max 100)
       .card-body
         table.table#table
           thead
@@ -93,9 +93,10 @@ block body
               th # Characters
               th # Mentioned users
               th # Attachments
+              th Last message
 
           tbody
-            each row in userStats
+            each row in userStatsTable
               tr
                 td
                   - var link = "./member/";
@@ -108,10 +109,11 @@ block body
                 td= row.char_count
                 td= row.user_mention_count
                 td= row.attachment_count
+                td(data-sort=row.last_message)= row.last_message_formatted
 
 block scripts
   script.
-    const messageGraph = !{messageGraph};
+    const messageGraph = !{diagrams.messageGraph};
 
     for (const row of messageGraph) {
       row.y = parseInt(row.y);
@@ -119,11 +121,13 @@ block scripts
 
     Highcharts.chart('messageGraph', {
       chart: {
-        type: 'areaspline'
+        type: 'areaspline',
+        backgroundColor: 'rgba(255, 255, 255, 0.0)'
       },
       series: [{
         name: 'Messages',
         data: messageGraph,
+        fillColor: '#183d61'
       }],
       title: {
         text: ''
@@ -138,14 +142,22 @@ block scripts
         type: 'datetime',
         labels: {
           formatter: function () {
-            if(messageGraph[this.value]) {
+            if (messageGraph[this.value]) {
               return messageGraph[this.value].name;
             }
+          },
+          style: {
+            color: '#c3bfb6',
           }
         },
       },
       yAxis: {
         title: false,
+        labels: {
+          style: {
+            color: '#c3bfb6',
+          }
+        }
       },
       plotOptions: {
         areaspline: {
@@ -156,63 +168,79 @@ block scripts
       }
     });
 
-    const channelMessageCount = !{channelMessageCount};
+    const channelMessageBars = !{diagrams.channelMessageBars};
 
-    for (const row of channelMessageCount) {
+    for (const row of channelMessageBars) {
       row.y = parseInt(row.y);
     }
 
     Highcharts.chart('channelBars', {
-        chart: {
-            type: 'column'
-        },
-        series: [{
-            name: 'Messages',
-            data: channelMessageCount,
-        }],
-        title: {
-          text: ''
-        },
-        credits: {
-          enabled: false
-        },
-        legend: {
-          enabled: false
-        },
-        xAxis: {
-          labels: {
-            formatter: function () {
-              return channelMessageCount[this.value].name;
-            }
+      chart: {
+        type: 'column',
+        backgroundColor: 'rgba(255, 255, 255, 0.0)'
+      },
+      series: [{
+        name: 'Messages',
+        data: channelMessageBars,
+        color: '#104271'
+      }],
+      title: {
+        text: ''
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+        labels: {
+          formatter: function () {
+            return channelMessageBars[this.value].name;
           },
+          style: {
+            color: '#c3bfb6',
+          }
         },
-        yAxis: {
-          title: false,
+        style: {
+          color: '#c3bfb6',
         }
+      },
+      yAxis: {
+        title: false,
+        labels: {
+          style: {
+            color: '#c3bfb6',
+          }
+        }
+      },
     });
 
-    const memberJoinLeaveDeltaGraph = !{memberJoinLeaveDeltaGraph};
+    const memberDeltaGraph = !{diagrams.memberDeltaGraph};
 
-    for (const row of memberJoinLeaveDeltaGraph) {
+    for (const row of memberDeltaGraph) {
       row.y = parseInt(row.y);
     }
 
     Highcharts.chart('memberdeltaGraph', {
       chart: {
-        type: 'areaspline'
+        type: 'areaspline',
+        backgroundColor: 'rgba(255, 255, 255, 0.0)'
       },
       series: [{
         name: 'delta',
-        data: memberJoinLeaveDeltaGraph,
+        data: memberDeltaGraph,
         zoneAxis: 'y',
         zones: [{
           value: -0.1,
-          color: '#ff0000'
+          color: '#ff3333',
+          fillColor: '#a40c0d'
         }, {
           value: 0.1,
           color: '#7cb5ec',
         }, {
-          color: '#00ff00',
+          color: '#33ff33',
+          fillColor: '#0ca50d',
         }]
       }],
       title: {
@@ -231,11 +259,19 @@ block scripts
             if (messageGraph[this.value]) {
               return messageGraph[this.value].name;
             }
+          },
+          style: {
+            color: '#c3bfb6',
           }
         },
       },
       yAxis: {
         title: false,
+        labels: {
+          style: {
+            color: '#c3bfb6',
+          }
+        }
       },
       plotOptions: {
         areaspline: {

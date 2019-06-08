@@ -7,7 +7,7 @@ module.exports = (router, main) => {
 
     const Op = main.db.Sequelize.Op;
 
-    let messagesCount = main.db.member_messages.count({
+    let totalMessages = main.db.member_messages.count({
       where: {
         guild_id: req.params.guildID,
         user_id: req.params.memberID,
@@ -35,7 +35,7 @@ module.exports = (router, main) => {
       raw: true,
     });
 
-    let channelMessageCount = main.db.member_messages.findAll({
+    let channelMessageBars = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         user_id: req.params.memberID,
@@ -52,7 +52,7 @@ module.exports = (router, main) => {
       raw: true,
     });
 
-    let channelStats = main.db.member_messages.findAll({
+    let userStatsTable = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         user_id: req.params.memberID,
@@ -62,6 +62,7 @@ module.exports = (router, main) => {
       },
       attributes: [
         'channel_id',
+        [main.db.sequelize.fn('max', main.db.sequelize.col('timestamp')), 'last_message'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('char_count')), 'char_count'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('word_count')), 'word_count'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('user_mention_count')), 'user_mention_count'],
@@ -75,31 +76,40 @@ module.exports = (router, main) => {
     });
 
     [
-      messagesCount,
+      totalMessages,
       messageGraph,
-      channelMessageCount,
-      channelStats,
+      channelMessageBars,
+      userStatsTable,
     ] = await Promise.all([
-      messagesCount,
+      totalMessages,
       messageGraph,
-      channelMessageCount,
-      channelStats,
+      channelMessageBars,
+      userStatsTable,
     ]);
 
     const guild = main.api.guilds.get(req.params.guildID);
 
-    for (const row of channelMessageCount) {
+    for (const row of channelMessageBars) {
       row.name = guild.channels.get(row.name).name;
     }
 
-    for (const row of channelStats) {
+    for (const row of userStatsTable) {
       row.name = guild.channels.get(row.channel_id).name;
+
+      row.last_message_formatted = main.stringUtils.formatUnixTimestamp(row.last_message, 2, false);
     }
 
     return res.render('stats/guild/member', {
-      messageGraph: JSON.stringify(messageGraph),
-      channelMessageCount: JSON.stringify(channelMessageCount),
-      channelStats,
+      cards: {
+        totalMessages,
+        joinedTimestamp: main.stringUtils.formatUnixTimestamp(main.api.guilds.get(req.params.guildID).members.get(req.params.memberID).joinedTimestamp, 2, false),
+        highestRole: main.api.guilds.get(req.params.guildID).members.get(req.params.memberID).roles.highest.name,
+      },
+      diagrams: {
+        messageGraph: JSON.stringify(messageGraph),
+        channelMessageBars: JSON.stringify(channelMessageBars),
+      },
+      userStatsTable,
       pages: [
         {
           text: 'Stats',

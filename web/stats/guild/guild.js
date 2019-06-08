@@ -4,7 +4,7 @@ module.exports = (router, main) => {
   router.get('/', async (req, res, next) => {
     const Op = main.db.Sequelize.Op;
 
-    let messagesCount = main.db.member_messages.count({
+    let totalMessages = main.db.member_messages.count({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -46,7 +46,7 @@ module.exports = (router, main) => {
       raw: true,
     });
 
-    let channelMessageCount = main.db.member_messages.findAll({
+    let channelMessageBars = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -62,7 +62,7 @@ module.exports = (router, main) => {
       raw: true,
     });
 
-    let memberJoinLeaveDeltaGraph = main.db.member_events.findAll({
+    let memberDeltaGraph = main.db.member_events.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -79,7 +79,7 @@ module.exports = (router, main) => {
       raw: true,
     });
 
-    let userStats = main.db.member_messages.findAll({
+    let userStatsTable = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -88,6 +88,7 @@ module.exports = (router, main) => {
       },
       attributes: [
         'user_id',
+        [main.db.sequelize.fn('max', main.db.sequelize.col('timestamp')), 'last_message'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('char_count')), 'char_count'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('word_count')), 'word_count'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('user_mention_count')), 'user_mention_count'],
@@ -101,75 +102,79 @@ module.exports = (router, main) => {
     });
 
     [
-      messagesCount,
+      totalMessages,
       memberJoinLeaveCount,
       messageGraph,
-      channelMessageCount,
-      memberJoinLeaveDeltaGraph,
-      userStats,
+      channelMessageBars,
+      memberDeltaGraph,
+      userStatsTable,
     ] = await Promise.all([
-      messagesCount,
+      totalMessages,
       memberJoinLeaveCount,
       messageGraph,
-      channelMessageCount,
-      memberJoinLeaveDeltaGraph,
-      userStats,
+      channelMessageBars,
+      memberDeltaGraph,
+      userStatsTable,
     ]);
 
-    for (const row of userStats) {
+    for (const row of userStatsTable) {
       const user = await main.api.users.fetch(row.user_id);
 
       row.avatarURL = user.displayAvatarURL();
       row.tag = user.tag;
       row.id = user.id;
+
+      row.last_message_formatted = main.stringUtils.formatUnixTimestamp(row.last_message, 2, false);
     }
 
-    let joined = 0;
-    let left = 0;
+    let membersJoined = 0;
+    let membersLeft = 0;
 
     if (memberJoinLeaveCount[0]) {
       if (memberJoinLeaveCount[0].type === 'JOIN') {
-        joined = memberJoinLeaveCount[0].count;
+        membersJoined = memberJoinLeaveCount[0].count;
       } else {
-        left = memberJoinLeaveCount[0].count;
+        membersLeft = memberJoinLeaveCount[0].count;
       }
     }
 
     if (memberJoinLeaveCount[1]) {
       if (memberJoinLeaveCount[1].type === 'JOIN') {
-        joined = memberJoinLeaveCount[1].count;
+        membersJoined = memberJoinLeaveCount[1].count;
       } else {
-        left = memberJoinLeaveCount[1].count;
+        membersLeft = memberJoinLeaveCount[1].count;
       }
     }
 
     const guild = main.api.guilds.get(req.params.guildID);
 
-    for (const row of channelMessageCount) {
+    for (const row of channelMessageBars) {
       row.name = guild.channels.get(row.name).name;
     }
 
     return res.render('stats/guild/guild', {
-      guild: {
-        name: guild.name,
-        iconURL: guild.iconURL(),
-        region: guild.region,
+      cards: {
+        guild: {
+          name: guild.name,
+          iconURL: guild.iconURL(),
+          region: guild.region,
+        },
+        owner: {
+          name: guild.owner.user.username, // TODO: why does this error sometimes??
+          avatarURL: guild.owner.user.displayAvatarURL(),
+        },
+        onlineMembers: guild.members.filter(c => c.presence && c.presence.status !== 'offline').size,
+        totalMembers: guild.memberCount,
+        membersJoined,
+        membersLeft,
+        totalMessages,
       },
-      owner: {
-        name: guild.owner.user.username,
-        avatarURL: guild.owner.user.displayAvatarURL(),
+      diagrams: {
+        messageGraph: JSON.stringify(messageGraph),
+        channelMessageBars: JSON.stringify(channelMessageBars),
+        memberDeltaGraph: JSON.stringify(memberDeltaGraph),
       },
-      stats: {
-        online: guild.members.filter(c => c.presence && c.presence.status !== 'offline').size,
-        total: guild.memberCount,
-        messages: messagesCount,
-        joined,
-        left,
-      },
-      messageGraph: JSON.stringify(messageGraph),
-      channelMessageCount: JSON.stringify(channelMessageCount),
-      memberJoinLeaveDeltaGraph: JSON.stringify(memberJoinLeaveDeltaGraph),
-      userStats,
+      userStatsTable,
       pages: [
         {
           text: 'Stats',

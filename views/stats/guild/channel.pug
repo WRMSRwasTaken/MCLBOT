@@ -7,36 +7,36 @@ block body
         .card-body.smallstat
           div
             div
-              i.fas.fa-envelope.fa-3x
+              i.fas.fa-users.fa-3x
             div
-              h6 New messages last 24h
-              h5 #{messagesCount}
+              h6 Total members
+              h5 #{cards.totalMembers}
       .card.col-4.bg-primary
         .card-body.smallstat
           div
             div
               i.fas.fa-user.fa-3x
             div
-              h6 Members online:
-              h5 #{membersOnline}
+              h6 Members online
+              h5 #{cards.onlineMembers}
       .card.col-4.bg-primary
         .card-body.smallstat
           div
             div
-              i.fas.fa-users.fa-3x
+              i.fas.fa-envelope.fa-3x
             div
-              h6 Total members:
-              h5 #{totalMembers}
+              h6 New messages
+              h5 #{cards.totalMessages}
 
     .card.mb-4
       .card-header
-        | Message graph
+        | Messages over time
       .card-body
         div#messageGraph(style='height:200px')
 
-    .card
+    .card.mb-4
       .card-header
-        | Per-Member channel statistics
+        | Per-member channel statistics (max 100)
       .card-body
         table.table#table
           thead
@@ -47,9 +47,10 @@ block body
               th # Characters
               th # Mentioned users
               th # Attachments
+              th Last message
 
           tbody
-            each row in userStats
+            each row in userStatsTable
               tr
                 td
                   - var link = "../member/";
@@ -62,6 +63,7 @@ block body
                 td= row.char_count
                 td= row.user_mention_count
                 td= row.attachment_count
+                td(data-sort=row.last_message)= row.last_message_formatted
 
 block scripts
   script.
@@ -75,7 +77,7 @@ block scripts
       });
     });
 
-    const messageGraph = !{messageGraph};
+    const messageGraph = !{diagrams.messageGraph};
 
     for (const row of messageGraph) {
       row.y = parseInt(row.y);
@@ -83,11 +85,13 @@ block scripts
 
     Highcharts.chart('messageGraph', {
       chart: {
-        type: 'areaspline'
+        type: 'areaspline',
+        backgroundColor: 'rgba(255, 255, 255, 0.0)'
       },
       series: [{
         name: 'Messages',
         data: messageGraph,
+        fillColor: '#183d61'
       }],
       title: {
         text: ''
@@ -102,14 +106,22 @@ block scripts
         type: 'datetime',
         labels: {
           formatter: function () {
-            if(messageGraph[this.value]) {
+            if (messageGraph[this.value]) {
               return messageGraph[this.value].name;
             }
+          },
+          style: {
+            color: '#c3bfb6',
           }
         },
       },
       yAxis: {
         title: false,
+        labels: {
+          style: {
+            color: '#c3bfb6',
+          }
+        }
       },
       plotOptions: {
         areaspline: {

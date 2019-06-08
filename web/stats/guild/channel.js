@@ -7,7 +7,7 @@ module.exports = (router, main) => {
 
     const Op = main.db.Sequelize.Op;
 
-    let messagesCount = main.db.member_messages.count({
+    let totalMessages = main.db.member_messages.count({
       where: {
         guild_id: req.params.guildID,
         channel_id: req.params.channelID,
@@ -17,7 +17,7 @@ module.exports = (router, main) => {
       },
     });
 
-    let userStats = main.db.member_messages.findAll({
+    let userStatsTable = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         channel_id: req.params.channelID,
@@ -27,6 +27,7 @@ module.exports = (router, main) => {
       },
       attributes: [
         'user_id',
+        [main.db.sequelize.fn('max', main.db.sequelize.col('timestamp')), 'last_message'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('char_count')), 'char_count'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('word_count')), 'word_count'],
         [main.db.sequelize.fn('sum', main.db.sequelize.col('user_mention_count')), 'user_mention_count'],
@@ -58,31 +59,37 @@ module.exports = (router, main) => {
     });
 
     [
-      messagesCount,
-      userStats,
+      totalMessages,
+      userStatsTable,
       messageGraph,
     ] = await Promise.all([
-      messagesCount,
-      userStats,
+      totalMessages,
+      userStatsTable,
       messageGraph,
     ]);
 
-    for (const row of userStats) {
+    for (const row of userStatsTable) {
       const user = await main.api.users.fetch(row.user_id);
 
       row.avatarURL = user.displayAvatarURL();
       row.tag = user.tag;
       row.id = user.id;
+
+      row.last_message_formatted = main.stringUtils.formatUnixTimestamp(row.last_message, 2, false);
     }
 
     const channelMembers = main.api.channels.get(req.params.channelID).members;
 
     return res.render('stats/guild/channel', {
-      userStats,
-      messageGraph: JSON.stringify(messageGraph),
-      messagesCount,
-      membersOnline: channelMembers.filter(c => c.presence && c.presence.status !== 'offline').size,
-      totalMembers: channelMembers.size,
+      cards: {
+        totalMessages,
+        onlineMembers: channelMembers.filter(c => c.presence && c.presence.status !== 'offline').size,
+        totalMembers: channelMembers.size,
+      },
+      diagrams: {
+        messageGraph: JSON.stringify(messageGraph),
+      },
+      userStatsTable,
       pages: [
         {
           text: 'Stats',

@@ -2,21 +2,47 @@ extends ../../layout.pug
 
 block body
   .col-12
+    .card-deck.mb-4
+      .card.col-4.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-envelope.fa-3x
+            div
+              h6 New messages
+              h5 #{cards.totalMessages}
+      .card.col-4.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-user-clock.fa-3x
+            div
+              h6 Joined
+              h5 #{cards.joinedTimestamp}
+      .card.col-4.bg-primary
+        .card-body.smallstat
+          div
+            div
+              i.fas.fa-user-tag.fa-3x
+            div
+              h6 Highest role
+              h5 #{cards.highestRole}
+
     .card.mb-4
       .card-header
-        | Message graph
+        | Messages over time
       .card-body
         div#messageGraph(style='height:200px')
 
     .card.mb-4
       .card-header
-        | Channel message distribution
+        | Channel message count distribution
       .card-body
         div#channelBars(style='height:200px')
 
-    .card
+    .card.mb-4
       .card-header
-        | Per-Channel statistics
+        | Per-channel message statistics (max 100)
       .card-body
         table.table#table
           thead
@@ -27,9 +53,10 @@ block body
               th # Characters
               th # Mentioned users
               th # Attachments
+              th Last message
 
           tbody
-            each row in channelStats
+            each row in userStatsTable
               tr
                 td
                   - var link = "../channel/";
@@ -41,10 +68,11 @@ block body
                 td= row.char_count
                 td= row.user_mention_count
                 td= row.attachment_count
+                td(data-sort=row.last_message)= row.last_message_formatted
 
 block scripts
   script.
-    const messageGraph = !{messageGraph};
+    const messageGraph = !{diagrams.messageGraph};
 
     for (const row of messageGraph) {
       row.y = parseInt(row.y);
@@ -52,11 +80,13 @@ block scripts
 
     Highcharts.chart('messageGraph', {
       chart: {
-        type: 'areaspline'
+        type: 'areaspline',
+        backgroundColor: 'rgba(255, 255, 255, 0.0)'
       },
       series: [{
         name: 'Messages',
         data: messageGraph,
+        fillColor: '#183d61'
       }],
       title: {
         text: ''
@@ -74,11 +104,19 @@ block scripts
             if(messageGraph[this.value]) {
               return messageGraph[this.value].name;
             }
+          },
+          style: {
+            color: '#c3bfb6',
           }
         },
       },
       yAxis: {
         title: false,
+        labels: {
+          style: {
+            color: '#c3bfb6',
+          }
+        }
       },
       plotOptions: {
         areaspline: {
@@ -89,19 +127,21 @@ block scripts
       }
     });
 
-    const channelMessageCount = !{channelMessageCount};
+    const channelMessageBars = !{diagrams.channelMessageBars};
 
-    for (const row of channelMessageCount) {
+    for (const row of channelMessageBars) {
       row.y = parseInt(row.y);
     }
 
     Highcharts.chart('channelBars', {
       chart: {
-        type: 'column'
+        type: 'column',
+        backgroundColor: 'rgba(255, 255, 255, 0.0)'
       },
       series: [{
         name: 'Messages',
-        data: channelMessageCount,
+        data: channelMessageBars,
+        color: '#104271'
       }],
       title: {
         text: ''
@@ -115,13 +155,21 @@ block scripts
       xAxis: {
         labels: {
           formatter: function () {
-            return channelMessageCount[this.value].name;
+            return channelMessageBars[this.value].name;
+          },
+          style: {
+            color: '#c3bfb6',
           }
         },
       },
       yAxis: {
         title: false,
-      }
+        labels: {
+          style: {
+            color: '#c3bfb6',
+          }
+        }
+      },
     });
 
     $(document).ready(function () {
