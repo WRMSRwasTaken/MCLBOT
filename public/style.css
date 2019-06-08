@@ -28,13 +28,13 @@ nav a:hover {
 }
 
 a {
-  color: rgb(91, 255, 213);
+  color: #fff;
   text-decoration-color: currentcolor;
   background-color: transparent;
 }
 
 a:hover {
-  color: rgb(91, 255, 213);
+  color: #fff;
   text-decoration-color: currentcolor;
 }
 
@@ -85,6 +85,10 @@ td > a > img {
 }
 
 .smallstat > div > div > img {
+  margin-right: 10px;
+}
+
+.smallstat > div > div > a > img {
   margin-right: 10px;
 }
 

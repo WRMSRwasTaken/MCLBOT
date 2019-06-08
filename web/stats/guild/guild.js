@@ -160,7 +160,8 @@ module.exports = (router, main) => {
           region: guild.region,
         },
         owner: {
-          name: guild.owner.user.username, // TODO: why does this error sometimes??
+          name: guild.owner.user.username, // TODO: this errors when the guild owner has been deleted
+          id: guild.owner.user.id,
           avatarURL: guild.owner.user.displayAvatarURL(),
         },
         onlineMembers: guild.members.filter(c => c.presence && c.presence.status !== 'offline').size,

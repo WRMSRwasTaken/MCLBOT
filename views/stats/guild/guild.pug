@@ -14,11 +14,15 @@ block body
       .card.col-4.bg-primary
         .card-body.smallstat
           div
+            - var link = "member/";
+            - link += cards.owner.id
             div
-              img(src=cards.owner.avatarURL, width='50px')
+              a(href=link)
+                img(src=cards.owner.avatarURL, width='50px')
             div
               h6 Owner name
-              h5 #{cards.owner.name}
+              a(href=link)
+                h5 #{cards.owner.name}
       .card.col-4.bg-primary
         .card-body.smallstat
           div
