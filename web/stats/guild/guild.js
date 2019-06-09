@@ -180,9 +180,9 @@ module.exports = (router, main) => {
           region: guild.region,
         },
         owner: {
-          name: guild.owner.user.username, // TODO: this errors when the guild owner has been deleted
-          id: guild.owner.user.id,
-          avatarURL: guild.owner.user.displayAvatarURL(),
+          name: (guild.owner) ? guild.owner.user.username : 'N/A (deleted user)',
+          id: (guild.owner) ? guild.owner.user.id : false,
+          avatarURL: (guild.owner) ? guild.owner.user.displayAvatarURL() : 'https://cdn.discordapp.com/embed/avatars/0.png',
         },
         onlineMembers: guild.members.filter(c => c.presence && c.presence.status !== 'offline').size,
         totalMembers: guild.memberCount,

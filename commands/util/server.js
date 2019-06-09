@@ -59,7 +59,11 @@ module.exports = {
 
     embed.addField('Region', guild.region, true);
 
-    embed.addField('Owner', (isLocal) ? `<@${guild.owner.id}>` : `${guild.owner.tag} (ID: ${guild.owner.id})`, true);
+    if (guild.owner) {
+      embed.addField('Owner', (isLocal) ? `<@${guild.owner.id}>` : `${guild.owner.tag} (ID: ${guild.owner.id})`, true);
+    } else {
+      embed.addField('Owner', 'N/A (deleted user)', true);
+    }
 
     const verificationLevels = ['none', 'low', 'medium', 'tableflip', 'double-tableflip'];
 
