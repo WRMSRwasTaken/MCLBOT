@@ -82,6 +82,14 @@ module.exports = {
 
       main.prometheusMetrics.sqlWrites.inc();
 
+      main.db.guild_member_counts.destroy({
+        where: {
+          guild_id: guild.guild_id,
+        },
+      });
+
+      main.prometheusMetrics.sqlWrites.inc();
+
       main.db.muted_members.destroy({
         where: {
           guild_id: guild.guild_id,
