@@ -1,7 +1,7 @@
 module.exports = {
   fn: (main, message) => {
     if (message.guild) {
-      main.db.member_messages.upsert({
+      main.db.member_messages.upsert({ // TODO: use create here instead of upsert (and probably in other locations too)
         user_id: message.author.id,
         guild_id: message.guild.id,
         channel_id: message.channel.id,

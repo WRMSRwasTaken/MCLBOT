@@ -62,6 +62,24 @@ module.exports = (router, main) => {
       raw: true,
     });
 
+    let memberCountGraph = main.db.guild_member_counts.findAll({
+      where: {
+        guild_id: req.params.guildID,
+        timestamp: {
+          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.lte]: Date.now(), // time_bucket_gapfill needs this to make the last two args optional
+        },
+      },
+      attributes: [
+        [main.db.sequelize.fn('time_bucket_gapfill', '10 minutes', main.db.sequelize.col('timestamp')), 'name'],
+        [main.db.sequelize.fn('coalesce', main.db.sequelize.fn('avg', main.db.sequelize.col('members_online')), 0), 'members_online'],
+        [main.db.sequelize.fn('coalesce', main.db.sequelize.fn('avg', main.db.sequelize.col('members_total')), 0), 'members_total'],
+      ],
+      group: ['name'],
+      order: [[main.db.sequelize.literal('name'), 'asc']],
+      raw: true,
+    });
+
     let memberDeltaGraph = main.db.member_events.findAll({
       where: {
         guild_id: req.params.guildID,
@@ -107,6 +125,7 @@ module.exports = (router, main) => {
       messageGraph,
       channelMessageBars,
       memberDeltaGraph,
+      memberCountGraph,
       userStatsTable,
     ] = await Promise.all([
       totalMessages,
@@ -114,6 +133,7 @@ module.exports = (router, main) => {
       messageGraph,
       channelMessageBars,
       memberDeltaGraph,
+      memberCountGraph,
       userStatsTable,
     ]);
 
@@ -174,6 +194,7 @@ module.exports = (router, main) => {
         messageGraph: JSON.stringify(messageGraph),
         channelMessageBars: JSON.stringify(channelMessageBars),
         memberDeltaGraph: JSON.stringify(memberDeltaGraph),
+        memberCountGraph: JSON.stringify(memberCountGraph),
       },
       userStatsTable,
       pages: [

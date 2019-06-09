@@ -86,6 +86,12 @@ block body
 
     .card.mb-4
       .card-header
+        | Member count
+      .card-body
+        div#memberCountGraph(style='height:200px')
+
+    .card.mb-4
+      .card-header
         | Per-member server statistics (max 100)
       .card-body
         table.table#table
@@ -262,6 +268,77 @@ block scripts
           formatter: function () {
             if (messageGraph[this.value]) {
               return messageGraph[this.value].name;
+            }
+          },
+          style: {
+            color: '#c3bfb6',
+          }
+        },
+      },
+      yAxis: {
+        title: false,
+        labels: {
+          style: {
+            color: '#c3bfb6',
+          }
+        }
+      },
+      plotOptions: {
+        areaspline: {
+          marker: {
+            enabled: false,
+          }
+        }
+      }
+    });
+
+    const memberCountGraph = !{diagrams.memberCountGraph};
+
+    const onlineMemberSeries = [];
+    const totalMemberSeries = [];
+
+    for (const row of memberCountGraph) {
+      onlineMemberSeries.push({
+        y: parseInt(row.members_online),
+        name: row.name,
+      });
+
+      totalMemberSeries.push({
+        y: parseInt(row.members_total),
+        name: row.name,
+      });
+    }
+
+    Highcharts.chart('memberCountGraph', {
+      chart: {
+        type: 'areaspline',
+        backgroundColor: 'rgba(255, 255, 255, 0.0)'
+      },
+      series: [{
+        name: 'Total members',
+        data: totalMemberSeries,
+        fillColor: '#183d61'
+      }, {
+        name: 'Online members',
+        data: onlineMemberSeries,
+        color: '#cfcbc4',
+        fillColor: '#34404b'
+      }],
+      title: {
+        text: ''
+      },
+      credits: {
+        enabled: false
+      },
+      legend: {
+        enabled: false
+      },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          formatter: function () {
+            if (onlineMemberSeries[this.value]) {
+              return onlineMemberSeries[this.value].name;
             }
           },
           style: {
