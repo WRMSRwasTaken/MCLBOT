@@ -2,93 +2,103 @@ extends ../../layout.pug
 
 block body
   .col-12
-    .card-deck.mb-4
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
+    .row
+      .mb-4.col-12.col-xl-6
+        .card.bg-primary
+          .card-body.smallstat
             div
-              img(src=cards.guild.iconURL, width='50px')
+              div
+                img(src=cards.guild.iconURL, width='50px')
+              div
+                h6 Server name
+                h5 #{cards.guild.name}
+      .mb-4.col-12.col-md-6.col-xl-3
+        .card.bg-primary
+          .card-body.smallstat
             div
-              h6 Server name
-              h5 #{cards.guild.name}
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
-            - var link = "member/";
-            - link += cards.owner.id
+              - var link = "member/";
+              - link += cards.owner.id
+              div
+                a(href=link)
+                  img(src=cards.owner.avatarURL, width='50px')
+              div
+                h6 Owner name
+                a(href=link)
+                  h5 #{cards.owner.name}
+      .mb-4.col-12.col-md-6.col-xl-3
+        .card.bg-primary
+          .card-body.smallstat
             div
-              a(href=link)
-                img(src=cards.owner.avatarURL, width='50px')
-            div
-              h6 Owner name
-              a(href=link)
-                h5 #{cards.owner.name}
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
-            div
-              i.fas.fa-globe.fa-3x
-            div
-              h6 Region
-              h5 #{cards.guild.region}
+              div
+                i.fas.fa-globe.fa-3x
+              div
+                h6 Region
+                h5 #{cards.guild.region}
 
-    .card-deck.mb-4
-      .card.col-3.bg-primary
-        .card-body.smallstat
-          div
+    .row
+      .mb-4.col-12.col-sm-6.col-xl-3
+        .card.bg-primary
+          .card-body.smallstat
             div
-              i.fas.fa-users.fa-3x
+              div
+                i.fas.fa-users.fa-3x
+              div
+                h6 Total members
+                h5 #{cards.totalMembers}
+      .mb-4.col-12.col-sm-6.col-xl-3
+        .card.bg-primary
+          .card-body.smallstat
             div
-              h6 Total members
-              h5 #{cards.totalMembers}
-      .card.col-3.bg-primary
-        .card-body.smallstat
-          div
+              div
+                i.fas.fa-user.fa-3x
+              div
+                h6 Members online
+                h5 #{cards.onlineMembers}
+      .mb-4.col-12.col-sm-6.col-xl-3
+        .card.bg-primary
+          .card-body.smallstat
             div
-              i.fas.fa-user.fa-3x
+              div
+                i.fas.fa-user-plus.fa-3x
+              div
+                h6 Members joined / left
+                h5 #{cards.membersJoined} / #{cards.membersLeft}
+      .mb-4.col-12.col-sm-6.col-xl-3
+        .card.bg-primary
+          .card-body.smallstat
             div
-              h6 Members online
-              h5 #{cards.onlineMembers}
-      .card.col-3.bg-primary
-        .card-body.smallstat
-          div
-            div
-              i.fas.fa-user-plus.fa-3x
-            div
-              h6 Members joined / left
-              h5 #{cards.membersJoined} / #{cards.membersLeft}
-      .card.col-3.bg-primary
-        .card-body.smallstat
-          div
-            div
-              i.fas.fa-envelope.fa-3x
-            div
-              h6 New messages
-              h5 #{cards.totalMessages}
+              div
+                i.fas.fa-envelope.fa-3x
+              div
+                h6 New messages
+                h5 #{cards.totalMessages}
+    .row
+      .mb-4.col-12.col-xl-6
+        .card
+          .card-header
+            | Messages over time
+          .card-body
+            div#messageGraph(style='height:200px')
+      .mb-4.col-12.col-xl-6
+        .card
+          .card-header
+            | Channel message count distribution
+          .card-body
+            div#channelBars(style='height:200px')
 
-    .card.mb-4
-      .card-header
-        | Messages over time
-      .card-body
-        div#messageGraph(style='height:200px')
-
-    .card.mb-4
-      .card-header
-        | Channel message count distribution
-      .card-body
-        div#channelBars(style='height:200px')
-
-    .card.mb-4
-      .card-header
-        | Member delta over time
-      .card-body
-        div#memberdeltaGraph(style='height:200px')
-
-    .card.mb-4
-      .card-header
-        | Member count
-      .card-body
-        div#memberCountGraph(style='height:200px')
+    .row
+      .mb-4.col-12.col-xl-6
+        .card
+          .card-header
+            | Member count
+          .card-body
+            div#memberCountGraph(style='height:200px')
+      .mb-4.col-12.col-xl-6
+        .card
+          .card-header
+            | Member delta over time
+          .card-body
+            div#memberdeltaGraph(style='height:200px')
 
     .card.mb-4
       .card-header

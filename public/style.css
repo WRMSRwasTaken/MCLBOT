@@ -76,6 +76,10 @@ td > a > img {
   margin-right: 5px;
 }
 
+.smallstat {
+  overflow: hidden;
+}
+
 .smallstat > h5, h6 {
   margin-bottom: 0;
 }
