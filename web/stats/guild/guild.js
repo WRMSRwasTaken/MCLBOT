@@ -67,7 +67,7 @@ module.exports = (router, main) => {
         guild_id: req.params.guildID,
         timestamp: {
           [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
-          [Op.lte]: Date.now(), // time_bucket_gapfill needs this to make the last two args optional
+          [Op.lte]: (main.lastGuildMemberStatsRunTimestamp) ? main.lastGuildMemberStatsRunTimestamp : Date.now(), // avoid displaying zero online and total members if the last run is some time in the past already
         },
       },
       attributes: [
