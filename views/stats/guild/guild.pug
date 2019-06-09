@@ -16,14 +16,12 @@ block body
         .card.bg-primary
           .card-body.smallstat
             div
-              - var link = "member/";
-              - link += cards.owner.id
               div
-                a(href=link)
+                a(href=`member/${cards.owner.id}`)
                   img(src=cards.owner.avatarURL, width='50px')
               div
                 h6 Owner name
-                a(href=link)
+                a(href=`member/${cards.owner.id}`)
                   h5 #{cards.owner.name}
       .mb-4.col-12.col-md-6.col-xl-3
         .card.bg-primary
@@ -119,9 +117,7 @@ block body
             each row in userStatsTable
               tr
                 td
-                  - var link = "member/";
-                  - link += row.id
-                  a(href=link)
+                  a(href=`member/${row.id}`)
                     img(src=row.avatarURL, width='20px')
                     | #{row.tag}
                 td= row.count

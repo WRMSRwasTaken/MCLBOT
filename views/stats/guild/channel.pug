@@ -53,9 +53,7 @@ block body
             each row in userStatsTable
               tr
                 td
-                  - var link = "../member/";
-                  - link += row.id
-                  a(href=link)
+                  a(href=`../member/${row.id}`)
                     img(src=row.avatarURL, width='20px')
                     |  #{row.tag}
                 td= row.count

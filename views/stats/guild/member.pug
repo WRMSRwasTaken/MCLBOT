@@ -59,9 +59,7 @@ block body
             each row in userStatsTable
               tr
                 td
-                  - var link = "../channel/";
-                  - link += row.channel_id
-                  a(href=link)
+                  a(href=`../channel/${row.channel_id}`)
                     | ##{row.name}
                 td= row.count
                 td= row.word_count
