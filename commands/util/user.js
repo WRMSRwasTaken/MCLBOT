@@ -73,8 +73,10 @@ module.exports = {
     }
 
     if (guildMember) {
+      let joinText;
+
       if (guildMember.joinedTimestamp) {
-        embed.addField('Server join date', ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp));
+        joinText = ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp);
       } else { // for some reason this is not set sometimes so just get it from the database
         const lastJoin = await ctx.main.db.member_events.findOne({
           where: {
@@ -86,7 +88,7 @@ module.exports = {
         });
 
         if (lastJoin) {
-          embed.addField('Server join date', ctx.main.stringUtils.formatUnixTimestamp(lastJoin.timestamp));
+          joinText = ctx.main.stringUtils.formatUnixTimestamp(lastJoin.timestamp);
         }
       }
 
@@ -100,7 +102,11 @@ module.exports = {
       });
 
       if (userJoins >= 2) {
-        embed.addField(`User rejoined this server ${userJoins - 1} time${(userJoins - 1 > 1) ? 's' : ''} already.`);
+        joinText = `${joinText}\n\nUser rejoined this server ${userJoins - 1} time${(userJoins - 1 > 1) ? 's' : ''} already.`;
+      }
+
+      if (joinText) {
+        embed.addField('Server join date', joinText);
       }
     } else {
       const leaveDate = await ctx.main.db.member_events.findOne({
