@@ -78,6 +78,7 @@ module.exports = {
       if (guildMember.joinedTimestamp) {
         joinText = ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp);
       } else { // for some reason this is not set sometimes so just get it from the database
+        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
         const lastJoin = await ctx.main.db.member_events.findOne({
           where: {
             guild_id: ctx.guild.id,
@@ -92,34 +93,50 @@ module.exports = {
         }
       }
 
-      const userJoins = await ctx.main.db.member_events.count({
+      ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
+      const joinCount = await ctx.main.db.member_events.count({
         where: {
           guild_id: ctx.guild.id,
           user_id: user.id,
           type: 'JOIN',
         },
-        order: [['timestamp', 'desc']],
       });
 
-      if (userJoins >= 2) {
-        joinText = `${joinText}\n\nUser rejoined this server ${userJoins - 1} time${(userJoins - 1 > 1) ? 's' : ''} already.`;
+      if (joinCount > 1) {
+        joinText = `${joinText}\n\nUser rejoined this server ${joinCount - 1} time${(joinCount - 1 > 1) ? 's' : ''} already.`;
       }
 
       if (joinText) {
         embed.addField('Server join date', joinText);
       }
     } else {
-      const leaveDate = await ctx.main.db.member_events.findOne({
+      ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
+      const leaveCount = await ctx.main.db.member_events.count({
         where: {
           guild_id: ctx.guild.id,
           user_id: user.id,
           type: 'LEAVE',
         },
-        order: [['timestamp', 'desc']],
       });
 
-      if (leaveDate) {
-        embed.addField('Server leave date', ctx.main.stringUtils.formatUnixTimestamp(leaveDate.timestamp));
+      if (leaveCount) {
+        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
+        const lastLeave = await ctx.main.db.member_events.findOne({
+          where: {
+            guild_id: ctx.guild.id,
+            user_id: user.id,
+            type: 'LEAVE',
+          },
+          order: [['timestamp', 'desc']],
+        });
+
+        let leaveText = ctx.main.stringUtils.formatUnixTimestamp(lastLeave.timestamp);
+
+        if (leaveCount > 1) {
+          leaveText = `${leaveText}\n\nUser left this server ${leaveCount} times already.`;
+        }
+
+        embed.addField('Server leave date', leaveText);
       }
     }
 
