@@ -101,7 +101,7 @@ module.exports = (router, main) => {
       if (guild.channels.get(row.name)) {
         row.name = guild.channels.get(row.name).name;
       } else {
-        winston.warn('No channel found for ID', row.name);
+        winston.warn('No channel found for ID: %s', row.name);
         row.name = '<deleted channel>';
       }
     }
@@ -110,7 +110,7 @@ module.exports = (router, main) => {
       if (guild.channels.get(row.channel_id)) {
         row.name = guild.channels.get(row.channel_id).name;
       } else {
-        winston.warn('No channel found for ID', row.channel_id);
+        winston.warn('No channel found for ID: %s', row.channel_id);
         row.name = '<deleted channel>';
       }
 
