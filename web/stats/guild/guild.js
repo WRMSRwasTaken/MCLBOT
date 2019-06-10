@@ -147,6 +147,10 @@ module.exports = (router, main) => {
       userStatsTable,
     ]);
 
+    if (memberCountGraph[0] && memberCountGraph[0].members_total === 0) {
+      memberCountGraph.shift(); // avoid displaying zero online and total members on the graph's first datapoint
+    }
+
     for (const row of userStatsTable) {
       const user = await main.api.users.fetch(row.user_id);
 
