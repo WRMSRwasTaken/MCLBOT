@@ -39,16 +39,82 @@ module.exports = {
     if (user.presence.status) embed.addField('Status', user.presence.status, true);
     if (user.presence.activity) embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
 
-    if (guildMember && guildMember.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
-      const timestamp = await ctx.main.userHelper.getLastMessageTimestamp(ctx, guildMember);
+    if (user.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
+      ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
+      const lastMessage = await ctx.main.db.member_messages.findOne({
+        where: {
+          guild_id: ctx.guild.id,
+          user_id: user.id,
+        },
+        order: [['timestamp', 'desc']],
+      });
 
-      if (timestamp) {
-        embed.addField('Last message', ctx.main.stringUtils.formatUnixTimestamp(timestamp));
+      if (lastMessage) {
+        if (lastMessage.channel_id === ctx.channel.id) {
+          embed.addField('Last message on this Server (and also this Channel)', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp));
+        } else {
+          ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
+          const lastChannelMessage = await ctx.main.db.member_messages.findOne({
+            where: {
+              guild_id: ctx.guild.id,
+              channel_id: ctx.channel.id,
+              user_id: user.id,
+            },
+            order: [['timestamp', 'desc']],
+          });
+
+          if (lastChannelMessage) {
+            embed.addField('Last message in this Channel', ctx.main.stringUtils.formatUnixTimestamp(lastChannelMessage.timestamp));
+          }
+
+          embed.addField('Last message on this Server', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp));
+        }
       }
     }
 
-    if (guildMember && guildMember.joinedTimestamp) {
-      embed.addField('Guild join date', ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp));
+    if (guildMember) {
+      if (guildMember.joinedTimestamp) {
+        embed.addField('Server join date', ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp));
+      } else { // for some reason this is not set sometimes so just get it from the database
+        const lastJoin = await ctx.main.db.member_events.findOne({
+          where: {
+            guild_id: ctx.guild.id,
+            user_id: user.id,
+            type: 'JOIN',
+          },
+          order: [['timestamp', 'desc']],
+        });
+
+        if (lastJoin) {
+          embed.addField('Server join date', ctx.main.stringUtils.formatUnixTimestamp(lastJoin.timestamp));
+        }
+      }
+
+      const userJoins = await ctx.main.db.member_events.count({
+        where: {
+          guild_id: ctx.guild.id,
+          user_id: user.id,
+          type: 'JOIN',
+        },
+        order: [['timestamp', 'desc']],
+      });
+
+      if (userJoins >= 2) {
+        embed.addField(`User rejoined this server ${userJoins - 1} time${(userJoins - 1 > 1) ? 's' : ''} already.`);
+      }
+    } else {
+      const leaveDate = await ctx.main.db.member_events.findOne({
+        where: {
+          guild_id: ctx.guild.id,
+          user_id: user.id,
+          type: 'LEAVE',
+        },
+        order: [['timestamp', 'desc']],
+      });
+
+      if (leaveDate) {
+        embed.addField('Server leave date', ctx.main.stringUtils.formatUnixTimestamp(leaveDate.timestamp));
+      }
     }
 
     embed.addField('Discord join date', ctx.main.stringUtils.formatUnixTimestamp(user.createdTimestamp));

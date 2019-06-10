@@ -182,7 +182,7 @@ module.exports = (router, main) => {
       if (guild.channels.get(row.name)) {
         row.name = guild.channels.get(row.name).name;
       } else {
-        winston.warn('No channel found for ID: %s', row.name);
+        winston.warn('No channel found for ID: %s', row.name); // TODO: we might insert this channel ID in a SQL table and let the bot periodically scan this table to automatically remove stale records
         row.name = '<deleted channel>';
       }
     }
