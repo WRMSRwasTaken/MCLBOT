@@ -1,3 +1,5 @@
+const winston = require('winston');
+
 module.exports = (router, main) => {
   router.get('/member/:memberID(\\d+)', async (req, res, next) => {
     if (!main.api.guilds.get(req.params.guildID).members.get(req.params.memberID)) {
@@ -96,11 +98,21 @@ module.exports = (router, main) => {
     const guild = main.api.guilds.get(req.params.guildID);
 
     for (const row of channelMessageBars) {
-      row.name = guild.channels.get(row.name).name;
+      if (guild.channels.get(row.name)) {
+        row.name = guild.channels.get(row.name).name;
+      } else {
+        winston.warn('No channel found for ID', row.name);
+        row.name = '<deleted channel>';
+      }
     }
 
     for (const row of userStatsTable) {
-      row.name = guild.channels.get(row.channel_id).name;
+      if (guild.channels.get(row.channel_id)) {
+        row.name = guild.channels.get(row.channel_id).name;
+      } else {
+        winston.warn('No channel found for ID', row.channel_id);
+        row.name = '<deleted channel>';
+      }
 
       row.last_message_formatted = main.stringUtils.formatUnixTimestamp(row.last_message, 2, false);
     }

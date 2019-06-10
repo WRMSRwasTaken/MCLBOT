@@ -1,4 +1,5 @@
 // require('pg').defaults.parseInt8 = true; // https://github.com/sequelize/sequelize/issues/4550
+const winston = require('winston');
 
 module.exports = (router, main) => {
   router.get('/', async (req, res, next) => {
@@ -178,7 +179,12 @@ module.exports = (router, main) => {
     const guild = main.api.guilds.get(req.params.guildID);
 
     for (const row of channelMessageBars) {
-      row.name = guild.channels.get(row.name).name;
+      if (guild.channels.get(row.name)) {
+        row.name = guild.channels.get(row.name).name;
+      } else {
+        winston.warn('No channel found for ID', row.name);
+        row.name = '<deleted channel>';
+      }
     }
 
     return res.render('stats/guild/guild', {
