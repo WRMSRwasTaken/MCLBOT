@@ -39,23 +39,6 @@ module.exports = {
     if (user.presence.status) embed.addField('Status', user.presence.status, true);
     if (user.presence.activity) embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
 
-    ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    const lastSeen = await ctx.main.db.user_last_seen.findOne({
-      where: {
-        user_id: user.id,
-      },
-    });
-
-    if (lastSeen) {
-      const time = ctx.main.stringUtils.formatUnixTimestamp(lastSeen.last_seen);
-
-      if (user.presence.status === 'offline' || !user.presence.status) {
-        embed.addField('Last time seen', time);
-      } else {
-        embed.addField('Last time offline', time);
-      }
-    }
-
     if (guildMember && guildMember.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
       const timestamp = await ctx.main.userHelper.getLastMessageTimestamp(ctx, guildMember);
 
