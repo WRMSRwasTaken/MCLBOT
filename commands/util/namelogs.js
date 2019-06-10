@@ -10,8 +10,6 @@ module.exports = {
     },
   ],
   fn: async (ctx, user) => {
-    ctx.main.prometheusMetrics.sqlReads.inc(1);
-
     const queryUser = user || ctx.author;
 
     const Op = ctx.main.db.Sequelize.Op;
@@ -33,6 +31,7 @@ module.exports = {
       };
     }
 
+    ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let entryCount = await ctx.main.db.name_logs.count({
       where: query,
     });
@@ -41,8 +40,7 @@ module.exports = {
       return `\`${queryUser.tag}\` does not have any name changes recorded.`;
     }
 
-    ctx.main.prometheusMetrics.sqlReads.inc(1);
-
+    ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const firstRecordedName = await ctx.main.db.name_logs.findOne({
       where: {
         user_id: queryUser.id,
@@ -59,8 +57,7 @@ module.exports = {
     const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
     paginatedEmbed.on('paginate', async (pageNumber) => {
-      ctx.main.prometheusMetrics.sqlReads.inc(2);
-
+      ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc(2); // findAndCountAll does 2 statements: count and actual select
       const results = await ctx.main.db.name_logs.findAndCountAll({
         where: query,
         limit: resultsPerPage,

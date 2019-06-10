@@ -3,8 +3,7 @@ module.exports = {
   fn: async (main) => {
     const Op = main.db.Sequelize.Op;
 
-    main.prometheusMetrics.sqlReads.inc(1);
-
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const reminders = await main.db.reminders.findAll({
       where: {
         notify_date: {
@@ -23,8 +22,7 @@ module.exports = {
 
       const job = await main.jobHelper.enqueue('remind', {}, delay);
 
-      main.prometheusMetrics.sqlWrites.inc(1);
-
+      main.prometheusMetrics.sqlCommands.labels('UPDATE').inc();
       await main.db.reminders.update({
         queue_id: job.id,
       }, {

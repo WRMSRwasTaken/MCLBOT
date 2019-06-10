@@ -23,8 +23,7 @@ module.exports = {
       description: 'List all muted users on this server',
       middleware: false,
       fn: async (ctx) => {
-        ctx.main.prometheusMetrics.sqlReads.inc(1);
-
+        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
         const entryCount = await ctx.main.db.muted_members.count({
           where: {
             guild_id: ctx.guild.id,
@@ -40,8 +39,7 @@ module.exports = {
         const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
         paginatedEmbed.on('paginate', async (pageNumber) => {
-          ctx.main.prometheusMetrics.sqlReads.inc(2);
-
+          ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc(2);
           const results = await ctx.main.db.muted_members.findAndCountAll({
             where: {
               guild_id: ctx.guild.id,

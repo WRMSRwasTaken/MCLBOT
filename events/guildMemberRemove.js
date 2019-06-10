@@ -4,13 +4,12 @@ module.exports = {
       return;
     }
 
-    main.db.member_events.upsert({
+    main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
+    main.db.member_events.create({
       user_id: member.id,
       guild_id: member.guild.id,
       type: 'LEAVE',
       timestamp: Date.now(),
     });
-
-    main.prometheusMetrics.sqlWrites.inc();
   },
 };

@@ -1,7 +1,6 @@
 module.exports = {
   run: async (main, job) => {
-    main.prometheusMetrics.sqlReads.inc(1);
-
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const jobInformation = await main.db.muted_members.findOne({
       where: {
         queue_id: job.id,

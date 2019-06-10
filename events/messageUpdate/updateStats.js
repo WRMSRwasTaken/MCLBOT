@@ -1,6 +1,7 @@
 module.exports = {
   fn: (main, oldMessage, newMessage) => {
     if (newMessage.guild) {
+      main.prometheusMetrics.sqlCommands.labels('UPDATE').inc();
       main.db.member_messages.upsert({
         user_id: newMessage.author.id,
         guild_id: newMessage.guild.id,
@@ -12,8 +13,6 @@ module.exports = {
         attachment_count: newMessage.attachments.size,
         timestamp: newMessage.createdTimestamp,
       });
-
-      main.prometheusMetrics.sqlWrites.inc();
     }
   },
 };

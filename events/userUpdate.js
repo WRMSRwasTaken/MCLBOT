@@ -21,8 +21,7 @@ module.exports = {
     const oldTag = eventPayload.oldTag.split('#');
     const newTag = eventPayload.newTag.split('#');
 
-    main.prometheusMetrics.sqlWrites.inc(1);
-
+    main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
     if (oldTag[0] !== newTag[0] && oldTag[1] !== newTag[1]) { // username & discrim changed => tag change
       winston.debug(`User ${eventPayload.oldTag} changed tag to ${eventPayload.newTag}`);
 
@@ -55,8 +54,7 @@ module.exports = {
       });
     }
 
-    main.prometheusMetrics.sqlReads.inc();
-
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const isMuted = await main.db.muted_members.findOne({
       where: {
         target_id: eventPayload.userID,
@@ -69,8 +67,7 @@ module.exports = {
 
     winston.debug(`User ${eventPayload.newTag} has entries in the mute database, updating information...`);
 
-    main.prometheusMetrics.sqlWrites.inc();
-
+    main.prometheusMetrics.sqlCommands.labels('UPDATE').inc();
     main.db.muted_members.update({
       target_tag: eventPayload.newTag,
     }, {

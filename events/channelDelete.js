@@ -4,8 +4,7 @@ module.exports = {
       return;
     }
 
-    main.prometheusMetrics.sqlWrites.inc();
-
+    main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
     main.db.member_messages.destroy({
       where: {
         guild_id: channel.guild.id,

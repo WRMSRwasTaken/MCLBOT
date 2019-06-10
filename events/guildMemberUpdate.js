@@ -6,10 +6,10 @@ module.exports = {
       return;
     }
 
+    main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
+
     if (oldMember.nickname && newMember.nickname) {
       winston.debug(`Nickname changed for user ${newMember.user.tag} on guild ${newMember.guild.name}: from ${oldMember.nickname} to ${newMember.nickname}`);
-
-      main.prometheusMetrics.sqlWrites.inc(1);
 
       await main.db.name_logs.create({
         user_id: newMember.user.id,
@@ -22,8 +22,6 @@ module.exports = {
     } else if (newMember.nickname) {
       winston.debug(`A nickname has been added for user ${newMember.user.tag} on guild ${newMember.guild.name}: ${newMember.nickname}`);
 
-      main.prometheusMetrics.sqlWrites.inc(1);
-
       await main.db.name_logs.create({
         user_id: newMember.user.id,
         type: 'NICKNAME',
@@ -34,8 +32,6 @@ module.exports = {
       });
     } else if (oldMember.nickname) {
       winston.debug(`The nickname has been deleted for user ${newMember.user.tag} on guild ${newMember.guild.name}`);
-
-      main.prometheusMetrics.sqlWrites.inc(1);
 
       await main.db.name_logs.create({
         user_id: newMember.user.id,

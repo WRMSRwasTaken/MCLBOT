@@ -4,8 +4,7 @@ module.exports = {
   fn: async (main, member) => {
     winston.debug(`User ${member.user.tag} joined guild ${member.guild.name}, checking DB if the user is muted on that guild...`);
 
-    main.prometheusMetrics.sqlReads.inc();
-
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const isMuted = await main.db.muted_members.findOne({
       where: {
         guild_id: member.guild.id,
@@ -20,8 +19,7 @@ module.exports = {
     if (isMuted.target_tag !== member.user.tag) {
       winston.debug(`Updating mute DB information for changed user id ${member.user.id}...`);
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('UPDATE').inc();
       main.db.muted_members.update({
         target_tag: member.user.tag,
       }, {

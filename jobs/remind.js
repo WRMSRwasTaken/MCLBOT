@@ -1,7 +1,6 @@
 module.exports = {
   run: async (main, job) => {
-    main.prometheusMetrics.sqlReads.inc(1);
-
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const jobInformation = await main.db.reminders.findOne({
       where: {
         queue_id: job.id,
@@ -12,8 +11,7 @@ module.exports = {
       return false;
     }
 
-    main.prometheusMetrics.sqlWrites.inc(1);
-
+    main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
     await main.db.reminders.destroy({
       where: {
         queue_id: job.id,
@@ -26,7 +24,7 @@ module.exports = {
       return user.send(`Reminder: \`${jobInformation.text}\``);
     }
 
-    // TODO: this fails(?) if the user has DM messages disabled. we need to handle this
+    // TODO: this fails(?) if the user has DM messages disabled. we need to handle this and don't delete SQL jobs
 
     return user.send(`Reminder: \`...\`\n\n<https://discordapp.com/channels/${(jobInformation.guild_id) ? jobInformation.guild_id : '@me'}/${jobInformation.channel_id}/${jobInformation.message_id}>`);
   },

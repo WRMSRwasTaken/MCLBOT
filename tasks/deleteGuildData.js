@@ -18,8 +18,7 @@ module.exports = {
   fn: async (main) => {
     const Op = main.db.Sequelize.Op;
 
-    main.prometheusMetrics.sqlReads.inc();
-
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const guilds = await main.db.delete_guild_settings_queue.findAll({
       where: {
         created_at: {
@@ -31,8 +30,7 @@ module.exports = {
     for (const guild of guilds) {
       winston.debug('Deleting settings for guild id %d', guild.guild_id);
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.blacklist.destroy({
         where: {
           [Op.or]: [
@@ -56,56 +54,49 @@ module.exports = {
         },
       });
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.guild_settings.destroy({
         where: {
           guild_id: guild.guild_id,
         },
       });
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.member_events.destroy({
         where: {
           guild_id: guild.guild_id,
         },
       });
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.member_messages.destroy({
         where: {
           guild_id: guild.guild_id,
         },
       });
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.guild_member_counts.destroy({
         where: {
           guild_id: guild.guild_id,
         },
       });
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.muted_members.destroy({
         where: {
           guild_id: guild.guild_id,
         },
       });
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.name_logs.destroy({
         where: {
           guild_id: guild.guild_id,
         },
       });
 
-      main.prometheusMetrics.sqlWrites.inc();
-
+      main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
       main.db.delete_guild_settings_queue.destroy({
         where: {
           guild_id: guild.guild_id,

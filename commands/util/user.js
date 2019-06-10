@@ -39,13 +39,12 @@ module.exports = {
     if (user.presence.status) embed.addField('Status', user.presence.status, true);
     if (user.presence.activity) embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
 
+    ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     const lastSeen = await ctx.main.db.user_last_seen.findOne({
       where: {
         user_id: user.id,
       },
     });
-
-    ctx.main.prometheusMetrics.sqlReads.inc();
 
     if (lastSeen) {
       const time = ctx.main.stringUtils.formatUnixTimestamp(lastSeen.last_seen);

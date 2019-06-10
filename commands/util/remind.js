@@ -26,8 +26,7 @@ module.exports = {
       fn: async (ctx, duration, text) => {
         const timestamp = Date.now() + duration * 1000;
 
-        ctx.main.prometheusMetrics.sqlReads.inc(1);
-
+        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
         const reminderCount = await ctx.main.db.reminders.count({
           where: {
             user_id: ctx.author.id,
@@ -38,8 +37,7 @@ module.exports = {
           return 'Maximum limit of 100 reminders reached. Please delete reminders with `remind delete` before adding new ones.';
         }
 
-        ctx.main.prometheusMetrics.sqlReads.inc(1);
-
+        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
         let newFakeID = await ctx.main.db.reminders.max('fake_id', {
           where: {
             user_id: ctx.author.id,
@@ -58,8 +56,7 @@ module.exports = {
           job = await ctx.main.jobHelper.enqueue('remind', {}, duration);
         }
 
-        ctx.main.prometheusMetrics.sqlWrites.inc(1);
-
+        ctx.main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
         await ctx.main.db.reminders.create({
           user_id: ctx.author.id,
           fake_id: newFakeID,
@@ -87,9 +84,8 @@ module.exports = {
         },
       ],
       fn: async (ctx, reminderID) => {
-        ctx.main.prometheusMetrics.sqlReads.inc(1);
-
         if (reminderID) {
+          ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
           const result = await ctx.main.db.reminders.findOne({
             where: {
               user_id: ctx.author.id,
@@ -123,8 +119,7 @@ module.exports = {
         const paginatedEmbed = await ctx.main.paginationHelper.createPaginatedEmbedList(ctx);
 
         paginatedEmbed.on('paginate', async (pageNumber) => {
-          ctx.main.prometheusMetrics.sqlReads.inc(2);
-
+          ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
           const results = await ctx.main.db.reminders.findAndCountAll({
             where: {
               user_id: ctx.author.id,
@@ -196,8 +191,7 @@ module.exports = {
         },
       ],
       fn: async (ctx, input) => {
-        ctx.main.prometheusMetrics.sqlReads.inc(1);
-
+        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
         const reminderCount = await ctx.main.db.reminders.count({
           where: {
             user_id: ctx.author.id,

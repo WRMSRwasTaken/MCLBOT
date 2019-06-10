@@ -1,7 +1,8 @@
 module.exports = {
   fn: (main, message) => {
     if (message.guild) {
-      main.db.member_messages.upsert({ // TODO: use create here instead of upsert (and probably in other locations too)
+      main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
+      main.db.member_messages.create({
         user_id: message.author.id,
         guild_id: message.guild.id,
         channel_id: message.channel.id,
@@ -12,8 +13,6 @@ module.exports = {
         attachment_count: message.attachments.size,
         timestamp: message.createdTimestamp,
       });
-
-      main.prometheusMetrics.sqlWrites.inc();
     }
   },
 };

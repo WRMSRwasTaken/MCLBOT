@@ -15,8 +15,7 @@ module.exports = {
   },
 
   debouncedFn: async (main, eventPayload) => {
-    main.prometheusMetrics.sqlWrites.inc();
-
+    main.prometheusMetrics.sqlCommands.labels('UPDATE').inc();
     main.db.user_last_seen.upsert({
       user_id: eventPayload.userID,
       last_seen: eventPayload.lastSeen,

@@ -2,22 +2,26 @@
 
 module.exports = (router, main) => {
   router.get('/', async (req, res, next) => {
+    const resolution = Math.floor(req.query.days * 24 * 60 / 200);
+
     const Op = main.db.Sequelize.Op;
 
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let totalMessages = main.db.member_messages.count({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
-          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.gte]: Date.now() - req.query.days * 24 * 60 * 60 * 1000,
         },
       },
     });
 
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let memberJoinLeaveCount = main.db.member_events.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
-          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.gte]: Date.now() - req.query.days * 24 * 60 * 60 * 1000,
         },
       },
       attributes: [
@@ -29,16 +33,17 @@ module.exports = (router, main) => {
       raw: true,
     });
 
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let messageGraph = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
-          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.gte]: Date.now() - req.query.days * 24 * 60 * 60 * 1000,
           [Op.lte]: Date.now(), // time_bucket_gapfill needs this to make the last two args optional
         },
       },
       attributes: [
-        [main.db.sequelize.fn('time_bucket_gapfill', '10 minutes', main.db.sequelize.col('timestamp')), 'name'],
+        [main.db.sequelize.fn('time_bucket_gapfill', `${resolution} minutes`, main.db.sequelize.col('timestamp')), 'name'],
         [main.db.sequelize.fn('coalesce', main.db.sequelize.fn('count', main.db.sequelize.col('message_id')), 0), 'y'],
       ],
       group: ['name'],
@@ -46,11 +51,12 @@ module.exports = (router, main) => {
       raw: true,
     });
 
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let channelMessageBars = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
-          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.gte]: Date.now() - req.query.days * 24 * 60 * 60 * 1000,
         },
       },
       attributes: [
@@ -62,16 +68,17 @@ module.exports = (router, main) => {
       raw: true,
     });
 
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let memberCountGraph = main.db.guild_member_counts.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
-          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.gte]: Date.now() - req.query.days * 24 * 60 * 60 * 1000,
           [Op.lte]: (main.lastGuildMemberStatsRunTimestamp) ? main.lastGuildMemberStatsRunTimestamp : Date.now(), // avoid displaying zero online and total members if the last run is some time in the past already
         },
       },
       attributes: [
-        [main.db.sequelize.fn('time_bucket_gapfill', '10 minutes', main.db.sequelize.col('timestamp')), 'name'],
+        [main.db.sequelize.fn('time_bucket_gapfill', `${resolution} minutes`, main.db.sequelize.col('timestamp')), 'name'],
         [main.db.sequelize.fn('coalesce', main.db.sequelize.fn('avg', main.db.sequelize.col('members_online')), 0), 'members_online'],
         [main.db.sequelize.fn('coalesce', main.db.sequelize.fn('avg', main.db.sequelize.col('members_total')), 0), 'members_total'],
       ],
@@ -80,16 +87,17 @@ module.exports = (router, main) => {
       raw: true,
     });
 
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let memberDeltaGraph = main.db.member_events.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
-          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.gte]: Date.now() - req.query.days * 24 * 60 * 60 * 1000,
           [Op.lte]: Date.now(), // time_bucket_gapfill needs this to make the last two args optional
         },
       },
       attributes: [
-        [main.db.sequelize.fn('time_bucket_gapfill', '10 minutes', main.db.sequelize.col('timestamp')), 'name'],
+        [main.db.sequelize.fn('time_bucket_gapfill', `${resolution} minutes`, main.db.sequelize.col('timestamp')), 'name'],
         [main.db.sequelize.literal('coalesce(count(1) filter (where type = \'JOIN\'), 0) - coalesce(count(1) filter (where type = \'LEAVE\'), 0)'), 'y'],
       ],
       group: ['name'],
@@ -97,11 +105,12 @@ module.exports = (router, main) => {
       raw: true,
     });
 
+    main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
     let userStatsTable = main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
-          [Op.gte]: Date.now() - 24 * 60 * 60 * 1000,
+          [Op.gte]: Date.now() - req.query.days * 24 * 60 * 60 * 1000,
         },
       },
       attributes: [
