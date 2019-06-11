@@ -12,7 +12,7 @@ module.exports = (router, main) => {
     const Op = main.db.Sequelize.Op;
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let totalMessages = main.db.member_messages.count({
+    const totalMessages = await main.db.member_messages.count({
       where: {
         guild_id: req.params.guildID,
         user_id: req.params.memberID,
@@ -23,7 +23,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let messageGraph = main.db.member_messages.findAll({
+    const messageGraph = await main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         user_id: req.params.memberID,
@@ -42,7 +42,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let channelMessageBars = main.db.member_messages.findAll({
+    const channelMessageBars = await main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         user_id: req.params.memberID,
@@ -60,7 +60,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let userStatsTable = main.db.member_messages.findAll({
+    const userStatsTable = await main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         user_id: req.params.memberID,
@@ -82,18 +82,6 @@ module.exports = (router, main) => {
       limit: 100,
       raw: true,
     });
-
-    [
-      totalMessages,
-      messageGraph,
-      channelMessageBars,
-      userStatsTable,
-    ] = await Promise.all([
-      totalMessages,
-      messageGraph,
-      channelMessageBars,
-      userStatsTable,
-    ]);
 
     const guild = main.api.guilds.get(req.params.guildID);
 

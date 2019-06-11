@@ -8,7 +8,7 @@ module.exports = (router, main) => {
     const Op = main.db.Sequelize.Op;
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let totalMessages = main.db.member_messages.count({
+    const totalMessages = await main.db.member_messages.count({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -18,7 +18,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let memberJoinLeaveCount = main.db.member_events.findAll({
+    const memberJoinLeaveCount = await main.db.member_events.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -35,7 +35,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let messageGraph = main.db.member_messages.findAll({
+    const messageGraph = await main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -53,7 +53,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let channelMessageBars = main.db.member_messages.findAll({
+    const channelMessageBars = await main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -70,7 +70,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let memberCountGraph = main.db.guild_member_counts.findAll({
+    const memberCountGraph = await main.db.guild_member_counts.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -89,7 +89,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let memberDeltaGraph = main.db.member_events.findAll({
+    const memberDeltaGraph = await main.db.member_events.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -107,7 +107,7 @@ module.exports = (router, main) => {
     });
 
     main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-    let userStatsTable = main.db.member_messages.findAll({
+    const userStatsTable = await main.db.member_messages.findAll({
       where: {
         guild_id: req.params.guildID,
         timestamp: {
@@ -128,24 +128,6 @@ module.exports = (router, main) => {
       limit: 100,
       raw: true,
     });
-
-    [
-      totalMessages,
-      memberJoinLeaveCount,
-      messageGraph,
-      channelMessageBars,
-      memberDeltaGraph,
-      memberCountGraph,
-      userStatsTable,
-    ] = await Promise.all([
-      totalMessages,
-      memberJoinLeaveCount,
-      messageGraph,
-      channelMessageBars,
-      memberDeltaGraph,
-      memberCountGraph,
-      userStatsTable,
-    ]);
 
     if (memberCountGraph[0] && memberCountGraph[0].members_total === 0) {
       memberCountGraph.shift(); // avoid displaying zero online and total members on the graph's first datapoint
