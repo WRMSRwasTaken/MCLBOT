@@ -2,43 +2,48 @@ extends ../../layout.pug
 
 block body
   .col-12
-    .card-deck.mb-4
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
+    .row
+      .mb-4.col-12.col-lg-4
+        .card.bg-primary
+          .card-body.smallstat
             div
-              i.fas.fa-envelope.fa-3x
+              div
+                i.fas.fa-envelope.fa-3x
+              div
+                h6 New messages
+                h5 #{cards.totalMessages}
+      .mb-4.col-12.col-lg-4
+        .card.bg-primary
+          .card-body.smallstat
             div
-              h6 New messages
-              h5 #{cards.totalMessages}
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
+              div
+                i.fas.fa-user-clock.fa-3x
+              div
+                h6 Joined
+                h5 #{cards.joinedTimestamp}
+      .mb-4.col-12.col-lg-4
+        .card.bg-primary
+          .card-body.smallstat
             div
-              i.fas.fa-user-clock.fa-3x
-            div
-              h6 Joined
-              h5 #{cards.joinedTimestamp}
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
-            div
-              i.fas.fa-user-tag.fa-3x
-            div
-              h6 Highest role
-              h5 #{cards.highestRole}
+              div
+                i.fas.fa-user-tag.fa-3x
+              div
+                h6 Highest role
+                h5 #{cards.highestRole}
 
-    .card.mb-4
-      .card-header
-        | Messages over time
-      .card-body
-        div#messageGraph(style='height:200px')
-
-    .card.mb-4
-      .card-header
-        | Channel message count distribution
-      .card-body
-        div#channelBars(style='height:200px')
+    .row
+      .mb-4.col-12.col-xl-6
+        .card
+          .card-header
+            | Messages over time
+          .card-body
+            div#messageGraph(style='height:200px')
+      .mb-4.col-12.col-xl-6
+        .card
+          .card-header
+            | Channel message count distribution
+          .card-body
+            div#channelBars(style='height:200px')
 
     .card.mb-4
       .card-header

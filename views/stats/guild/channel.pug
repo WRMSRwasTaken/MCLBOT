@@ -2,31 +2,34 @@ extends ../../layout.pug
 
 block body
   .col-12
-    .card-deck.mb-4
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
+    .row
+      .mb-4.col-12.col-xl-4
+        .card.bg-primary
+          .card-body.smallstat
             div
-              i.fas.fa-users.fa-3x
+              div
+                i.fas.fa-users.fa-3x
+              div
+                h6 Total members
+                h5 #{cards.totalMembers}
+      .mb-4.col-12.col-xl-4
+        .card.bg-primary
+          .card-body.smallstat
             div
-              h6 Total members
-              h5 #{cards.totalMembers}
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
+              div
+                i.fas.fa-user.fa-3x
+              div
+                h6 Members online
+                h5 #{cards.onlineMembers}
+      .mb-4.col-12.col-xl-4
+        .card.bg-primary
+          .card-body.smallstat
             div
-              i.fas.fa-user.fa-3x
-            div
-              h6 Members online
-              h5 #{cards.onlineMembers}
-      .card.col-4.bg-primary
-        .card-body.smallstat
-          div
-            div
-              i.fas.fa-envelope.fa-3x
-            div
-              h6 New messages
-              h5 #{cards.totalMessages}
+              div
+                i.fas.fa-envelope.fa-3x
+              div
+                h6 New messages
+                h5 #{cards.totalMessages}
 
     .card.mb-4
       .card-header
