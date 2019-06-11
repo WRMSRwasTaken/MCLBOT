@@ -129,7 +129,7 @@ module.exports = (router, main) => {
       raw: true,
     });
 
-    if (memberCountGraph[0] && memberCountGraph[0].members_total === 0) {
+    if (memberCountGraph[0] && memberCountGraph[0].members_total === '0') {
       memberCountGraph.shift(); // avoid displaying zero online and total members on the graph's first datapoint
     }
 
