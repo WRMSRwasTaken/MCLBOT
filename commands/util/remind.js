@@ -102,6 +102,7 @@ module.exports = {
           return `Reminder information for ID: \`${reminderID}\` created at \`${ctx.main.stringUtils.formatUnixTimestamp(result.createdAt)}\` which is going to expire on \`${ctx.main.stringUtils.formatUnixTimestamp(result.notify_date)}\`:\n\n${text}`;
         }
 
+        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
         const reminderCount = await ctx.main.db.reminders.count({
           where: {
             user_id: ctx.author.id,
@@ -203,6 +204,7 @@ module.exports = {
         }
 
         if (input === 'all') {
+          ctx.main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
           await ctx.main.db.reminders.destroy({
             where: {
               user_id: ctx.author.id,
@@ -225,6 +227,7 @@ module.exports = {
 
         query = `${query}) RETURNING fake_id`;
 
+        ctx.main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
         const result = await ctx.main.db.sequelize.query(query);
 
         if (result[0].length === 0) {
