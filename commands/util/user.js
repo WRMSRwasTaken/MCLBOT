@@ -39,7 +39,7 @@ module.exports = {
     if (user.presence.status) embed.addField('Status', user.presence.status, true);
     if (user.presence.activity) embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
 
-    if (user.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
+    if (ctx.guild && user.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
       ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
       const lastMessage = await ctx.main.db.member_messages.findOne({
         where: {
@@ -109,7 +109,7 @@ module.exports = {
       if (joinText) {
         embed.addField('Server join date', joinText);
       }
-    } else {
+    } else if (ctx.guild) {
       ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
       const leaveCount = await ctx.main.db.member_events.count({
         where: {
