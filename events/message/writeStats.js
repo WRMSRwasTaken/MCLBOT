@@ -1,6 +1,6 @@
 module.exports = {
   fn: (main, message) => {
-    if (message.guild) {
+    if (message.guild && message.content.length !== 0 && message.attachments.size !== 0) {
       main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
       main.db.member_messages.create({
         user_id: message.author.id,
