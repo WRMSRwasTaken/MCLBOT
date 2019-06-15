@@ -1,6 +1,10 @@
 module.exports = {
   fn: (main, oldMessage, newMessage) => {
-    if (newMessage.guild) {
+    if (newMessage.author.bot || newMessage.pinned || newMessage.system || !newMessage.guild) {
+      return;
+    }
+
+    if (newMessage.content.length !== 0 && newMessage.attachments.size !== 0) {
       main.prometheusMetrics.sqlCommands.labels('UPDATE').inc();
       main.db.member_messages.upsert({
         user_id: newMessage.author.id,
