@@ -13,7 +13,7 @@ module.exports = {
       await main.db.guild_member_counts.create({
         guild_id: guild.id,
         timestamp: Date.now(),
-        members_online: guild.members.filter(c => c.presence && c.presence.status !== 'offline').size,
+        members_online: guild.members.filter(c => c.presence.status !== 'offline').size,
         members_total: guild.memberCount,
       });
     }
