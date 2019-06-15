@@ -51,7 +51,7 @@ module.exports = {
 
       if (lastMessage) {
         if (lastMessage.channel_id === ctx.channel.id) {
-          embed.addField('Last message on this Server (and also this Channel)', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp));
+          embed.addField('Last message on this Server (and also this Channel)', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp, 0, true, true));
         } else {
           ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
           const lastChannelMessage = await ctx.main.db.member_messages.findOne({
@@ -64,10 +64,10 @@ module.exports = {
           });
 
           if (lastChannelMessage) {
-            embed.addField('Last message in this Channel', ctx.main.stringUtils.formatUnixTimestamp(lastChannelMessage.timestamp));
+            embed.addField('Last message in this Channel', ctx.main.stringUtils.formatUnixTimestamp(lastChannelMessage.timestamp, 0, true, true));
           }
 
-          embed.addField('Last message on this Server', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp));
+          embed.addField('Last message on this Server', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp, 0, true, true));
         }
       }
     }
@@ -76,7 +76,7 @@ module.exports = {
       let joinText;
 
       if (guildMember.joinedTimestamp) {
-        joinText = ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp);
+        joinText = ctx.main.stringUtils.formatUnixTimestamp(guildMember.joinedTimestamp, 0, true, true);
       } else { // for some reason this is not set sometimes so just get it from the database
         ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
         const lastJoin = await ctx.main.db.member_events.findOne({
@@ -89,7 +89,7 @@ module.exports = {
         });
 
         if (lastJoin) {
-          joinText = ctx.main.stringUtils.formatUnixTimestamp(lastJoin.timestamp);
+          joinText = ctx.main.stringUtils.formatUnixTimestamp(lastJoin.timestamp, 0, true, true);
         }
       }
 
@@ -130,7 +130,7 @@ module.exports = {
           order: [['timestamp', 'desc']],
         });
 
-        let leaveText = ctx.main.stringUtils.formatUnixTimestamp(lastLeave.timestamp);
+        let leaveText = ctx.main.stringUtils.formatUnixTimestamp(lastLeave.timestamp, 0, true, true);
 
         if (leaveCount > 1) {
           leaveText = `${leaveText}\n\nUser left this server ${leaveCount} times already.`;
@@ -140,7 +140,11 @@ module.exports = {
       }
     }
 
-    embed.addField('Discord join date', ctx.main.stringUtils.formatUnixTimestamp(user.createdTimestamp));
+    if (guildMember && guildMember.premiumSince) {
+      embed.addField('Nitro booster since', ctx.main.stringUtils.formatUnixTimestamp(guildMember.premiumSinceTimestamp, 0, true, true));
+    }
+
+    embed.addField('Discord join date', ctx.main.stringUtils.formatUnixTimestamp(user.createdTimestamp, 0, true, true));
 
     if (guildMember) {
       const roles = guildMember.roles.sort((r1, r2) => r1.position - r2.position);
