@@ -4,7 +4,7 @@ const guildIDRegex = XRegExp('^\\d{16,}$');
 
 module.exports = {
   description: 'Prints information about the corrent or a given Discord server / guild',
-  alias: ['serverinfo', 's', 'guild', 'g', 'guildinfo'],
+  alias: ['serverinfo', 's', 'sinfo', 'guild', 'g', 'guildinfo', 'ginfo'],
   arguments: [
     {
       label: 'guild id',
@@ -47,75 +47,44 @@ module.exports = {
       return ctx.main.stringUtils.argumentError(ctx, 0, 'Unknown server / guild ID (I have to be on that server to retrieve information about it)');
     }
 
-    const isLocal = (ctx.guild && ctx.guild.id === guildID) || (ctx.guild && !guildID);
+    const verificationLevels = ['Off', 'Low', 'Medium', 'High', 'Extreme'];
+
+    const explicitContentFilter = ['Off', 'No role', 'All members'];
 
     const embed = new ctx.main.Discord.MessageEmbed();
 
-    embed.setAuthor(guild.name, guild.iconURL());
+    embed.setAuthor('Server information');
 
     embed.setThumbnail(guild.iconURL());
+
+    embed.addField('Name', guild.name);
 
     embed.addField('ID', guild.id, true);
 
     embed.addField('Region', guild.region, true);
 
+    embed.addField('Members', `Humans: **${guild.members.humans.online} / ${guild.members.humans.total}** online\nBots: **${guild.members.bots.online} / ${guild.members.bots.total}** online\nTotal: **${guild.members.humans.online + guild.members.bots.online} / ${guild.members.humans.total + guild.members.bots.total}** online`);
+
+    embed.addField('Created', ctx.main.stringUtils.formatUnixTimestamp(guild.createdTimestamp, 0, true, true));
+
+    embed.addField('Channels', `Text: **${guild.channels.text}**\nVoice: **${guild.channels.voice}**\nCategories: **${guild.channels.category}**\nTotal: **${guild.channels.text + guild.channels.voice + guild.channels.category}**`, true);
+
+    if (guild.features.length) {
+      embed.addField('Features', guild.features.join('\n'), true);
+    }
+
+    embed.addField('Security', `2FA required: **${(guild.security.mfaRequired) ? 'Yes' : 'No'}**\nVerification level: **${verificationLevels[guild.security.verificationLevel]}**\nExplicit content filter: **${explicitContentFilter[guild.security.explicitContentFilter]}**`);
+
+    embed.addField('Emoji', `Regular: **${guild.emoji.regular}**\nAnimated: **${guild.emoji.animated}**\nTotal: **${guild.emoji.regular + guild.emoji.animated}**`, true);
+
+    embed.addField('Other stuff', `Roles: **${guild.other.roles}**\nDefault channel: ${(ctx.guild.channels.get(guild.other.defaultChannel.id)) ? `<#${guild.other.defaultChannel.id}>` : `**#${guild.other.defaultChannel.name}**`}${(guild.other.systemChannel) ? `\nSystem channel: ${(ctx.guild.channels.get(guild.other.systemChannel.id)) ? `<#${guild.other.systemChannel.id}>` : `**#${guild.other.systemChannel.name}**`}` : ''}`, true);
+
+    embed.addField('Nitro server boost', `Level: **${guild.nitro.level}**\nBoosters: **${guild.nitro.boosters}**`, true);
+
     if (guild.owner) {
-      embed.addField('Owner', (isLocal) ? `<@${guild.owner.id}>` : `${guild.owner.tag} (ID: ${guild.owner.id})`, true);
+      embed.addField('Owner', `${(ctx.guild.members.get(guild.owner.id)) ? `<@${guild.owner.id}>\n` : ''}${guild.owner.tag}\n${guild.owner.id}`, true);
     } else {
       embed.addField('Owner', 'N/A (deleted user)', true);
-    }
-
-    const verificationLevels = ['none', 'low', 'medium', 'tableflip', 'double-tableflip'];
-
-    embed.addField('Verfication level', verificationLevels[guild.verificationLevel], true);
-
-    embed.addField('Created', ctx.main.stringUtils.formatUnixTimestamp(guild.createdTimestamp));
-
-    embed.addField(`Members (${guild.members.total})`, `Online: ${guild.members.online}, Offline: ${guild.members.total - guild.members.online}`, true);
-
-    embed.addField(`Channels (${guild.channels.text + guild.channels.voice})`, `Text: ${guild.channels.text}, Voice: ${guild.channels.voice}`, true);
-
-    embed.addField('Default channel', (isLocal) ? `<#${guild.defaultChannel.id}>` : `#${guild.defaultChannel.name}`, true);
-
-    embed.addField('Roles', guild.roles, true);
-
-    let emojiRowContinued = false;
-    let animatedEmojiRowContinued = false;
-
-    if (guild.emojis.emojis.length > 0) {
-      let emojiRow = '';
-
-      for (const emoji of guild.emojis.emojis) {
-        if (emojiRow.length + emoji.length > 1024) {
-          embed.addField(`Emojis (${(emojiRowContinued) ? 'cont’d' : `Total: ${guild.emojis.emojis.length}`})`, emojiRow);
-
-          emojiRowContinued = true;
-
-          emojiRow = '';
-        }
-
-        emojiRow += emoji;
-      }
-
-      embed.addField(`Emojis (${(emojiRowContinued) ? 'cont’d' : `Total: ${guild.emojis.emojis.length}`})`, emojiRow);
-    }
-
-    if (guild.emojis.animated.length > 0) {
-      let emojiRow = '';
-
-      for (const emoji of guild.emojis.animated) {
-        if (emojiRow.length + emoji.length > 1024) {
-          embed.addField(`Animated emojis (${(animatedEmojiRowContinued) ? 'cont’d' : `Total: ${guild.emojis.animated.length}`})`, emojiRow);
-
-          animatedEmojiRowContinued = true;
-
-          emojiRow = '';
-        }
-
-        emojiRow += emoji;
-      }
-
-      embed.addField(`Animated emojis (${(animatedEmojiRowContinued) ? 'cont’d' : `Total: ${guild.emojis.animated.length}`})`, emojiRow);
     }
 
     return ctx.reply({
