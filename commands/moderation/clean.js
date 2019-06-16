@@ -47,7 +47,7 @@ async function clean(ctx, filter, limit) {
     searched += messages.size;
 
     if (messagesToDelete.size > 0) {
-      if (messagesToDelete.last().createdAt < Date.now() - 1209600000) {
+      if (messagesToDelete.last().createdAt < Date.now() - 1209600000) { // TODO: try to use bulk delete for as much messages as possible
         winston.debug('Last message is older than 2 weeks, falling back to manually deleting messages');
 
         deleted += await cleanSingle(ctx, messagesToDelete);
@@ -71,7 +71,7 @@ async function clean(ctx, filter, limit) {
 
   ctx.message.deleted = false;
 
-  return `Removed ${deleted} message${(deleted === 1) ? '' : 's'} out of ${searched} searched message${(searched === 1) ? '' : 's'}.`;
+  return `Removed ${deleted} message${(deleted === 1) ? '' : 's'} out of ${searched} searched message${(searched === 1) ? '' : 's'}.`; // TODO: don't delete the invoke message
 }
 
 module.exports = {
