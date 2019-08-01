@@ -18,12 +18,6 @@ module.exports = {
       type: 'integer',
       short: 'd',
     },
-    reason: {
-      label: 'reason',
-      type: 'string',
-      short: 'r',
-      infinite: true,
-    },
   },
   fn: async (ctx, userid, flags) => {
     let hackban = false;
