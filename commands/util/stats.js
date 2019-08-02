@@ -99,7 +99,7 @@ module.exports = {
 
     for (const row of userStats) {
       if (ctx.guild.members.get(row.user_id)) {
-        userRanks.push(`${userPlace}.: <@${row.user_id}>: ${row.count}`);
+        userRanks.push(`${userPlace}.: <@${row.user_id}>: ${row.count} messages`);
       } else {
         const user = await ctx.main.api.users.fetch(row.user_id);
 
@@ -164,7 +164,7 @@ module.exports = {
 
     for (const row of userChannelStats) {
       if (ctx.guild.members.get(row.user_id)) {
-        userChannelRanks.push(`${userChannelPlace}.: <@${row.user_id}>: ${row.count}`);
+        userChannelRanks.push(`${userChannelPlace}.: <@${row.user_id}>: ${row.count} messages`);
       } else {
         const user = await ctx.main.api.users.fetch(row.user_id);
 
