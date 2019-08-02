@@ -3,6 +3,7 @@ const prettyMs = require('pretty-ms');
 module.exports = {
   description: 'Prints member message statistics about this server',
   alias: ['top', 'serverstats', 'sstats', 'guildstats', 'gstats'],
+  guildOnly: true,
   flags: {
     timespan: {
       type: 'duration',
@@ -143,7 +144,7 @@ module.exports = {
     const userChannelStats = await ctx.main.db.member_messages.findAll({
       where: {
         guild_id: ctx.guild.id,
-        channel_id: ctx.channel.id,
+        channel_id: (flags.channel) ? flags.channel.id : ctx.channel.id,
         timestamp: {
           [Op.gte]: Date.now() - timespan * 1000,
         },
@@ -173,7 +174,7 @@ module.exports = {
       userChannelPlace += 1;
     }
 
-    embed.addField('Top 5 members (this channel)', userChannelRanks.join('\n'));
+    embed.addField(`Top 5 members (${(flags.channel) ? `for channel #${flags.channel.name}` : 'this channel'})`, userChannelRanks.join('\n'));
 
     embed.addField('\u200B', `[View more detailed statistics](https://bot.wrmsr.io/stats/guild/${ctx.guild.id}/)`);
 
