@@ -30,7 +30,6 @@ module.exports = (router, main) => {
         main.db.sequelize.fn('count', main.db.sequelize.col('type')),
       ],
       group: ['type'],
-      limit: 100,
       raw: true,
     });
 
