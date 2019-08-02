@@ -3,7 +3,7 @@ const XRegExp = require('xregexp');
 const guildIDRegex = XRegExp('^\\d{16,}$');
 
 module.exports = {
-  description: 'Prints information about the corrent or a given Discord server / guild',
+  description: 'Prints information about the current or a given Discord server / guild',
   alias: ['serverinfo', 's', 'sinfo', 'guild', 'g', 'guildinfo', 'ginfo'],
   arguments: [
     {
