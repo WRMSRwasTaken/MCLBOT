@@ -61,7 +61,6 @@ module.exports = {
     }
 
     if (httpResponse.headers['content-type'] && (httpResponse.headers['content-type'] === 'application/octet-stream' || httpResponse.headers['content-type'].includes('image'))) {
-
       const magicNumber = fileType(httpResponse.data);
 
       return ctx.reply({
