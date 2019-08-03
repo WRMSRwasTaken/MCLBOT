@@ -8,6 +8,7 @@ module.exports = {
     timespan: {
       type: 'duration',
       short: 'd',
+      max: 31536000,
     },
     channel: {
       type: 'channel',
