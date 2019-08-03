@@ -20,19 +20,19 @@
     "discord.js": "https://github.com/discordjs/discord.js",
     "dotenv": "8.0.0",
     "express": "4.17.1",
-    "file-type": "12.0.1",
+    "file-type": "12.1.0",
     "fs-extra": "8.1.0",
     "gm": "^1.23.1",
-    "ioredis": "4.11.2",
+    "ioredis": "4.14.0",
     "ip": "^1.1.5",
-    "lodash": "4.17.14",
+    "lodash": "4.17.15",
     "moment": "2.24.0",
     "morgan": "^1.9.1",
     "nconf": "^0.10.0",
     "node-opus": "0.3.2",
     "node-xwhois": "2.0.9",
-    "pg": "7.11.0",
-    "pretty-bytes": "5.2.0",
+    "pg": "7.12.0",
+    "pretty-bytes": "5.3.0",
     "pretty-ms": "5.0.0",
     "prom-client": "11.5.3",
     "prometheus-gc-stats": "0.6.2",
@@ -40,7 +40,7 @@
     "qs": "6.7.0",
     "raven": "2.6.4",
     "safe-regex": "2.0.2",
-    "sequelize": "5.10.1",
+    "sequelize": "5.12.2",
     "sequelize-cli": "5.5.0",
     "socks-proxy-agent": "4.0.2",
     "string": "^3.3.3",
@@ -50,8 +50,8 @@
     "xregexp": "4.2.4"
   },
   "devDependencies": {
-    "eslint": "6.0.1",
+    "eslint": "6.1.0",
     "eslint-config-airbnb-base": "^13.0.0",
-    "eslint-plugin-import": "2.18.0"
+    "eslint-plugin-import": "2.18.2"
   }
 }
