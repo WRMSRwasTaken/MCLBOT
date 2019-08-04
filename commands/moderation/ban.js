@@ -23,7 +23,7 @@ module.exports = {
     let hackban = false;
     let userToBan;
 
-    const guildMember = await ctx.main.userHelper.getGuildMember(ctx, userid);
+    const guildMember = ctx.main.userHelper.getGuildMember(ctx, userid);
 
     if (guildMember) {
       if (!await ctx.main.middleware.checkModerationTarget.run(ctx, guildMember)) { // we disabled the middleware for hackbanning support, but we need to check it for regular guild members

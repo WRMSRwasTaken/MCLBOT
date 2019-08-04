@@ -21,7 +21,7 @@ module.exports = {
   },
   fn: async (ctx, memberString, flags) => {
     if (flags.force) {
-      const member = await ctx.main.userHelper.getGuildMember(ctx, memberString);
+      const member = ctx.main.userHelper.getGuildMember(ctx, memberString);
 
       if (!member) {
         return ctx.main.stringUtils.argumentError(ctx, 0, 'Invalid user provided.');
