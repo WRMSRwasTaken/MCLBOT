@@ -77,12 +77,12 @@ module.exports = {
 
     embed.addField('Emoji', `Regular: **${guild.emoji.regular}**\nAnimated: **${guild.emoji.animated}**\nTotal: **${guild.emoji.regular + guild.emoji.animated}**`, true);
 
-    embed.addField('Other stuff', `Roles: **${guild.other.roles}**\nDefault channel: ${(ctx.guild.channels.get(guild.other.defaultChannel.id)) ? `<#${guild.other.defaultChannel.id}>` : `**#${guild.other.defaultChannel.name}**`}${(guild.other.systemChannel) ? `\nSystem channel: ${(ctx.guild.channels.get(guild.other.systemChannel.id)) ? `<#${guild.other.systemChannel.id}>` : `**#${guild.other.systemChannel.name}**`}` : ''}`, true);
+    embed.addField('Other stuff', `Roles: **${guild.other.roles}**\nDefault channel: ${(ctx.guild && ctx.guild.channels.get(guild.other.defaultChannel.id)) ? `<#${guild.other.defaultChannel.id}>` : `**#${guild.other.defaultChannel.name}**`}${(guild.other.systemChannel) ? `\nSystem channel: ${(ctx.guild && ctx.guild.channels.get(guild.other.systemChannel.id)) ? `<#${guild.other.systemChannel.id}>` : `**#${guild.other.systemChannel.name}**`}` : ''}`, true);
 
     embed.addField('Nitro server boost', `Level: **${guild.nitro.level}**\nBoosters: **${guild.nitro.boosters}**`, true);
 
     if (guild.owner) {
-      embed.addField('Owner', `${(ctx.guild.members.get(guild.owner.id)) ? `<@${guild.owner.id}>\n` : ''}${guild.owner.tag}\n${guild.owner.id}`, true);
+      embed.addField('Owner', `${(ctx.guild && ctx.guild.members.get(guild.owner.id)) ? `<@${guild.owner.id}>\n` : ''}${guild.owner.tag}\n${guild.owner.id}`, true);
     } else {
       embed.addField('Owner', 'N/A (deleted user)', true);
     }
