@@ -133,11 +133,18 @@ module.exports = (router, main) => {
     }
 
     for (const row of userStatsTable) {
-      const user = await main.api.users.fetch(row.user_id);
+      let user;
+      try {
+        user = await main.api.users.fetch(row.user_id);
 
-      row.avatarURL = user.displayAvatarURL();
-      row.tag = user.tag;
-      row.id = user.id;
+        row.avatarURL = user.displayAvatarURL();
+        row.tag = user.tag;
+        row.id = user.id;
+      } catch (ex) {
+        row.avatarURL = 'https://cdn.discordapp.com/embed/avatars/0.png';
+        row.tag = 'N/A (deleted user)';
+        row.id = row.user_id;
+      }
 
       row.last_message_formatted = main.stringUtils.formatUnixTimestamp(row.last_message, 2, false);
     }
