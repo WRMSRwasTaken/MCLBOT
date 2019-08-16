@@ -45,6 +45,7 @@
     "socks-proxy-agent": "4.0.2",
     "string": "^3.3.3",
     "timestring": "6.0.0",
+    "uuid": "^3.3.2",
     "validator": "11.1.0",
     "winston": "3.2.1",
     "xregexp": "4.2.4"

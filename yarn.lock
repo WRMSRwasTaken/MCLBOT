@@ -814,7 +814,7 @@ diagnostics@^1.1.1:
 
 "discord.js@https://github.com/discordjs/discord.js":
   version "12.0.0-dev"
-  resolved "https://github.com/discordjs/discord.js#651ff81bd522c03b5c9724a3a8c14eeb88dcd6b9"
+  resolved "https://github.com/discordjs/discord.js#2c4d14a71be11c36dfa661fd4dc013a381ef3988"
   dependencies:
     form-data "^2.3.3"
     node-fetch "^2.3.0"
@@ -3570,7 +3570,7 @@ utils-merge@1.0.1:
   resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
   integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
 
-uuid@3.3.2, uuid@^3.2.1:
+uuid@3.3.2, uuid@^3.2.1, uuid@^3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
