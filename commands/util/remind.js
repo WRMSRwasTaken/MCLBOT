@@ -1,5 +1,6 @@
 const prettyMs = require('pretty-ms');
 const moment = require('moment');
+const uuid = require('uuid');
 
 module.exports = {
   description: 'Reminds you of something after a certain amount of time',
@@ -13,6 +14,7 @@ module.exports = {
         {
           label: 'duration',
           type: 'duration',
+          min: 1,
           max: 365 * 24 * 60 * 60 * 2,
         },
         {
