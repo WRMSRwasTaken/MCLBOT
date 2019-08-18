@@ -6,6 +6,10 @@ module.exports = {
       return;
     }
 
+    if (newMember.user.bot) {
+      return;
+    }
+
     main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
 
     if (oldMember.nickname && newMember.nickname) {
