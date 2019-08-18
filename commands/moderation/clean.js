@@ -34,7 +34,13 @@ async function clean(ctx, filter, limit) {
 
     winston.debug('Fetching %d messages from the discord api...', amount);
 
-    const messages = await ctx.channel.messages.fetch({ limit: amount });
+    const messages = await ctx.channel.messages.fetch({ limit: amount }, false);
+
+    searched += messages.size;
+
+    if (messages.has(ctx.message.id)) {
+      messages.delete(ctx.message.id);
+    }
 
     let messagesToDelete;
 
@@ -43,8 +49,6 @@ async function clean(ctx, filter, limit) {
     } else {
       messagesToDelete = messages;
     }
-
-    searched += messages.size;
 
     if (messagesToDelete.size > 0) {
       if (messagesToDelete.last().createdAt < Date.now() - 1209600000) { // TODO: try to use bulk delete for as much messages as possible

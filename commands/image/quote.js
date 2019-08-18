@@ -67,7 +67,7 @@ module.exports = {
           let message;
 
           try {
-            message = await ctx.channel.messages.fetch(input); // first we try to fetch a message with the id directly
+            message = await ctx.channel.messages.fetch(input, false); // first we try to fetch a message with the id directly
           } catch (ex) {
             // do nothing on purpose
           }
@@ -97,7 +97,7 @@ module.exports = {
 
         const messages = await ctx.channel.messages.fetch({
           limit: nconf.get('bot:maxMessagesSearch'),
-        });
+        }, false);
 
         for (const message of messages.values()) {
           if (message.author.id === user.id && message.content) {
