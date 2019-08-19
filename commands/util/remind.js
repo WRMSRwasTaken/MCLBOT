@@ -218,19 +218,8 @@ module.exports = {
 
         // https://github.com/sequelize/sequelize/issues/4122
 
-        let query = `DELETE FROM "reminders" WHERE user_id = '${ctx.author.id}' AND (`;
-        let first = true;
-
-        for (const fakeID of input) {
-          query = `${query}${(first) ? '' : ' OR '}fake_id = '${fakeID}'`;
-
-          first = false;
-        }
-
-        query = `${query}) RETURNING fake_id`;
-
         ctx.main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
-        const result = await ctx.main.db.sequelize.query(query);
+        const result = await ctx.main.db.sequelize.query(`DELETE FROM "reminders" WHERE user_id = '${ctx.author.id}' AND (fake_id = '${input.join('\' OR fake_id = \'')}') RETURNING fake_id;`);
 
         if (result[0].length === 0) {
           if (input.length === 1) {
