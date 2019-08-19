@@ -1,5 +1,4 @@
 const XRegExp = require('xregexp');
-const safe = require('safe-regex');
 const winston = require('winston');
 
 const channelRegex = XRegExp('^(<#)?(?<channelID>\\d+)>?$');
@@ -25,20 +24,8 @@ module.exports = {
 
     winston.debug('Not a channel mention or channel id! Searching guild text channel list...');
 
-    let channelInputRegex;
-
-    try {
-      channelInputRegex = XRegExp(value, 'i');
-    } catch (ex) {
-      throw new Error('Invalid regular expression');
-    }
-
-    if (!safe(value)) {
-      throw new Error('Catastrophic backtracking detected');
-    }
-
     const channelMatches = context.guild.channels
-      .filter(channel => channel.type === 'text' && XRegExp.exec(channel.name, channelInputRegex));
+      .filter(channel => channel.type === 'text' && channel.name.toUpperCase().includes(value.toUpperCase()));
 
     winston.debug('Text channels found: %d', channelMatches.size);
 

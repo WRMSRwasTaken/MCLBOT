@@ -39,7 +39,6 @@
     "pug": "^2.0.4",
     "qs": "6.7.0",
     "raven": "2.6.4",
-    "safe-regex": "2.0.2",
     "sequelize": "5.12.2",
     "sequelize-cli": "5.5.0",
     "socks-proxy-agent": "4.0.2",
