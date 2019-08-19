@@ -69,7 +69,7 @@ module.exports = {
 
       for (const row of results.rows) {
         if (list !== '') {
-          list += '\n'; // TODO: replace with an array and join() it
+          list += '\n';
         }
 
         list += '• ';
