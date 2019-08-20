@@ -1,5 +1,12 @@
-module.exports = {
+const uuid = require('uuid');
+
+module.exports = { // TODO: if we're in sharded mode, run this job only on shard 0
   interval: 60,
+  load: async (main) => {
+    if (!main.remindTasks) {
+      main.remindTasks = {};
+    }
+  },
   fn: async (main) => {
     const Op = main.db.Sequelize.Op;
 

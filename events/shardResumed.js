@@ -1,0 +1,22 @@
+const winston = require('winston');
+const prettyMs = require('pretty-ms');
+
+module.exports = {
+  fn: async (main, replayed) => {
+    if (!this.firstReady) {
+      winston.error('Resumed event has been fired although there was no ready event before! Exiting...'); // yes this already happened when MCLBOT tried to log in while Discord had problems
+
+      return main.shutdown(1);
+    }
+
+    main.ready = true;
+    main.onlineTime = Date.now();
+
+    winston.info(`Resumed connection to Discord API after ${prettyMs(Date.now() - this.preConnectTime)}. Replayed ${replayed} event(s).`);
+
+    return main.channelLogHelper.sendLogMessage('resumed', {
+      replayed,
+      reconnectDuration: Date.now() - this.preConnectTime,
+    });
+  },
+};

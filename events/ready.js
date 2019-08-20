@@ -1,0 +1,51 @@
+const winston = require('winston');
+const nconf = require('nconf');
+const XRegExp = require('xregexp');
+const prettyMs = require('pretty-ms');
+
+module.exports = {
+  fn: async (main) => {
+    main.onlineTime = Date.now();
+    main.ready = true;
+
+    if (!main.firstReady) {
+      main.firstReady = true;
+
+      if (!main.api.user.bot && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) {
+        winston.error('The token provided is not a bot token and selfbot mode has not been enabled. Exiting.');
+
+        main.shutdown(1);
+
+        return;
+      }
+
+      if (main.api.user.bot && nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false') {
+        winston.error('The token provided is a bot token, but selfbot mode has been enabled. Exiting.');
+
+        main.shutdown(1);
+
+        return;
+      }
+
+      main.mentionRegex = XRegExp(`^<@!?${main.api.user.id}>`);
+
+      winston.debug('Starting job queue processing...');
+
+      await main.jobQueue.resume(true);
+
+      await main.channelLogHelper.checkLogChannel();
+
+      main.resourceLoader.startTasks();
+
+      winston.info(`Ready event has been fired after ${prettyMs(Date.now() - main.preConnectTime)}. Now live in ${main.api.channels.size} channels on ${main.api.guilds.size} servers.`);
+    } else {
+      winston.warn('It looks like the previous session was invalidated. This could mean that Discord is / was having an outage / problems again.');
+
+      winston.info(`Resumed connection to Discord API after ${prettyMs(Date.now() - main.preConnectTime)}. Could not replay events due to session invalidation.`);
+    }
+
+    main.channelLogHelper.sendLogMessage('ready', {
+      readyDuration: Date.now() - main.preConnectTime,
+    });
+  },
+};

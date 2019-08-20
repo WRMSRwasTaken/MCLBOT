@@ -43,3 +43,5 @@ Every category folder can contain a file called `category.json` for defining par
 - `fn()` command function, with the context object (see the [context documentation](../context.md)) as the first parameter and the configured command arguments as the following parameters, the last parameter will be always the flag object (or an empty object, if no flags have been passed or defined). This will be executed if a matching subcommand can't be found (if this isn't set in the root command, a valid subcommand will be required).
 Can be also a string, pointing to the subcommand name which will be run, if no subcommand is passed by the user (subcommand redirection).
 - `subcommands` object with the respective subcommand's name as object keys, that can be configured with all parameters above
+- `load()` function that will be executed after this command has been loaded, the following arguments will be passed:
+  * `main` the main bot object

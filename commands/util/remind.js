@@ -6,6 +6,11 @@ module.exports = {
   description: 'Reminds you of something after a certain amount of time',
   alias: ['timer', 'reminder'],
   fn: 'add',
+  load: async (main) => {
+    if (!main.remindTasks) {
+      main.remindTasks = {};
+    }
+  },
   subcommands: {
     add: {
       description: 'Add / create a new reminder',
@@ -39,19 +44,6 @@ module.exports = {
           return 'Maximum limit of 100 reminders reached. Please delete reminders with `remind delete` before adding new ones.';
         }
 
-        ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
-        let newFakeID = await ctx.main.db.reminders.max('fake_id', {
-          where: {
-            user_id: ctx.author.id,
-          },
-        });
-
-        if (!newFakeID) {
-          newFakeID = 1;
-        } else {
-          newFakeID += 1;
-        }
-
         let job;
 
         if (duration <= 60) {
@@ -61,7 +53,7 @@ module.exports = {
         ctx.main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
         await ctx.main.db.reminders.create({
           user_id: ctx.author.id,
-          fake_id: newFakeID,
+          fake_id: ctx.main.db.sequelize.literal(`(select coalesce(max(fake_id), 0) + 1 from reminders where user_id = '${ctx.author.id}')`),
           notify_date: timestamp,
           text,
           message_id: (text) ? null : ctx.message.id,

@@ -25,7 +25,7 @@ module.exports = {
         return `The current welcome message will be posted in channel <#${channelID}> and is:\n\n${currentMessage}`;
       },
     },
-    set: {
+    set: { // TODO: create a listener for channelDelete and delete the welcome & leave message setting, if the currently set channel got deleted
       description: 'Sets a new welcome message',
       permission: 'ADMINISTRATOR',
       arguments: [

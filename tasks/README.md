@@ -10,3 +10,5 @@ This folder contains the files for tasks that will be executed periodically.
 - `shardZeroOnly` bool value: skip execution of this task if it's not being run on shard 0 (ignored if bot is not running in sharded mode)
 - `fn()` the function that will be executed on the task run, with passed arguments
   * `main` the main bot object
+- `load()` function that will be executed after this task has been loaded, the following arguments will be passed:
+  * `main` the main bot object
