@@ -39,6 +39,8 @@ module.exports = {
     if (user.presence.status) embed.addField('Status', user.presence.status, true); // TODO: hide this, if we don't have any common guilds with this user, as the presence will be unknown then thus always displaying offline
     if (user.presence.activity) embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
 
+    embed.addField('Bot', (user.bot) ? 'Yes' : 'No', true);
+
     if (ctx.guild && user.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
       ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
       const lastMessage = await ctx.main.db.member_messages.findOne({
