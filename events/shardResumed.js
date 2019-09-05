@@ -12,7 +12,7 @@ module.exports = {
     main.ready = true;
     main.onlineTime = Date.now();
 
-    winston.info(`Resumed connection to Discord API after ${prettyMs(Date.now() - this.preConnectTime)}. Replayed ${replayed} event(s).`);
+    winston.info(`Websocket received RESUMED event after ${prettyMs(Date.now() - this.preConnectTime)}. Replayed ${replayed} event(s).`);
 
     return main.channelLogHelper.sendLogMessage('resumed', {
       replayed,
