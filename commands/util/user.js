@@ -37,8 +37,12 @@ module.exports = {
     embed.addField('Tag', user.tag, true);
     if (guildMember && guildMember.nickname) embed.addField('Nickname', guildMember.nickname, true);
     if (user.presence.status) embed.addField('Status', user.presence.status, true); // TODO: hide this, if we don't have any common guilds with this user, as the presence will be unknown then thus always displaying offline
-    if (user.presence.activity) embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
-
+    if (user.presence.activity) {
+      if (user.presence.activity.name === 'Custom Status')
+        embed.addField('Custom Status', user.presence.activity.state, true);
+      else
+        embed.addField(activities[user.presence.activity.type], user.presence.activity.name, true);
+    }
     embed.addField('Bot', (user.bot) ? 'Yes' : 'No', true);
 
     if (ctx.guild && user.id !== ctx.main.api.user.id && user.id !== ctx.author.id) {
