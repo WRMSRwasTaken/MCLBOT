@@ -3,7 +3,7 @@ const prettyMs = require('pretty-ms');
 
 module.exports = {
   fn: async (main, replayed) => {
-    if (!this.firstReady) {
+    if (!main.firstReady) {
       winston.error('Resumed event has been fired although there was no ready event before! Exiting...'); // yes this already happened when MCLBOT tried to log in while Discord had problems
 
       return main.shutdown(1);
