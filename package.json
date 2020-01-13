@@ -11,7 +11,7 @@
     "url": "https://github.com/WRMSRwasTaken/MCLBOT.git"
   },
   "dependencies": {
-    "axios": "0.19.0",
+    "axios": "0.19.1",
     "bluebird": "3.7.2",
     "bottleneck": "2.19.5",
     "bufferutil": "4.0.1",
@@ -20,7 +20,7 @@
     "discord.js": "https://github.com/discordjs/discord.js",
     "dotenv": "8.2.0",
     "express": "4.17.1",
-    "file-type": "12.4.0",
+    "file-type": "13.0.3",
     "fs-extra": "8.1.0",
     "gm": "^1.23.1",
     "ioredis": "4.14.1",
@@ -30,8 +30,8 @@
     "morgan": "^1.9.1",
     "nconf": "^0.10.0",
     "node-opus": "0.3.3",
-    "node-xwhois": "2.0.9",
-    "pg": "7.14.0",
+    "node-xwhois": "2.0.10",
+    "pg": "7.17.1",
     "pretty-bytes": "5.3.0",
     "pretty-ms": "5.1.0",
     "prom-client": "11.5.3",
@@ -50,8 +50,8 @@
     "xregexp": "4.2.4"
   },
   "devDependencies": {
-    "eslint": "6.7.2",
+    "eslint": "6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "2.19.1"
+    "eslint-plugin-import": "2.20.0"
   }
 }
