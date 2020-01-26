@@ -16,7 +16,7 @@ module.exports = {
 
     return main.channelLogHelper.sendLogMessage('resumed', {
       replayed,
-      reconnectDuration: Date.now() - this.main.preConnectTime,
+      reconnectDuration: Date.now() - main.preConnectTime,
     });
   },
 };
