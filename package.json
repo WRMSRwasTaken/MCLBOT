@@ -11,7 +11,7 @@
     "url": "https://github.com/WRMSRwasTaken/MCLBOT.git"
   },
   "dependencies": {
-    "axios": "0.19.1",
+    "axios": "0.19.2",
     "bluebird": "3.7.2",
     "bottleneck": "2.19.5",
     "bufferutil": "4.0.1",
@@ -20,7 +20,7 @@
     "discord.js": "https://github.com/discordjs/discord.js",
     "dotenv": "8.2.0",
     "express": "4.17.1",
-    "file-type": "13.0.3",
+    "file-type": "13.1.2",
     "fs-extra": "8.1.0",
     "gm": "^1.23.1",
     "ioredis": "4.14.1",
@@ -44,8 +44,8 @@
     "socks-proxy-agent": "4.0.2",
     "string": "^3.3.3",
     "timestring": "6.0.0",
-    "uuid": "^3.3.3",
-    "validator": "12.1.0",
+    "uuid": "^3.4.0",
+    "validator": "12.2.0",
     "winston": "3.2.1",
     "xregexp": "4.2.4"
   },
