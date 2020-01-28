@@ -354,8 +354,8 @@ class MCLBOT {
     try {
       winston.debug('Stopping tasks...');
 
-      for (const taskName of Object.keys(main.tasks)) {
-        clearInterval(main.tasks[taskName]);
+      for (const taskName of Object.keys(main.runningTasks)) {
+        clearInterval(main.runningTasks[taskName]);
       }
 
       if (main.ready) {

@@ -7,6 +7,10 @@ module.exports = {
     const startTime = Date.now();
 
     for (const guild of main.api.guilds.values()) {
+      if (!main.ready || main.isShuttingDown) {
+        return;
+      }
+
       winston.debug('Collecting stats for guild: %s...', guild.name);
 
       main.prometheusMetrics.sqlCommands.labels('INSERT').inc(); // TODO: I propably should move the metrics after actually calling the IO functions, to see any errors impacting the stats
