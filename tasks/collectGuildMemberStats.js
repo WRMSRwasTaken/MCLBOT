@@ -24,7 +24,7 @@ module.exports = {
         members_total: guild.memberCount,
       });
 
-      await Bluebird.delay(500); // With a shard maximum of 2500 guilds and waiting 500 ms after recording each guild, the task should finish in theory after 8.3 minutes
+      await Bluebird.delay(200); // With a shard maximum of 2500 guilds and waiting 200 ms after recording each guild, the task should finish in theory after 8.3 minutes
     }
 
     winston.debug('Collecting guild stats finished after %s', prettyMs(Date.now() - startTime));
