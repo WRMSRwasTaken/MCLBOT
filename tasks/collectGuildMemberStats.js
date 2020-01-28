@@ -1,9 +1,12 @@
 const winston = require('winston');
 const prettyMs = require('pretty-ms');
+const Bluebird = require('bluebird');
+
+const interval = 60 * 10; // 10 Minutes interval
 
 module.exports = {
-  interval: 60 * 5,
-  fn: async (main) => { // TODO: wait a few minutes after bot start / restart to have some more guild members cached for better accuracy?
+  interval,
+  fn: async (main) => {
     const startTime = Date.now();
 
     for (const guild of main.api.guilds.values()) {
@@ -20,6 +23,8 @@ module.exports = {
         members_online: guild.members.filter((c) => c.presence.status !== 'offline').size,
         members_total: guild.memberCount,
       });
+
+      await Bluebird.delay(500); // With a shard maximum of 2500 guilds and waiting 500 ms after recording each guild, the task should finish in theory after 8.3 minutes
     }
 
     winston.debug('Collecting guild stats finished after %s', prettyMs(Date.now() - startTime));
