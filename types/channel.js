@@ -25,20 +25,16 @@ module.exports = {
     winston.debug('Not a channel mention or channel id! Searching guild text channel list...');
 
     const channelMatches = context.guild.channels
-      .filter(channel => channel.type === 'text' && channel.name.toUpperCase().includes(value.toUpperCase()));
+      .filter((channel) => channel.type === 'text' && channel.name.toUpperCase().includes(value.toUpperCase()));
 
     winston.debug('Text channels found: %d', channelMatches.size);
-
-    if (channelMatches.size === 1) {
-      return channelMatches.first();
-    }
 
     if (channelMatches.size === 0) {
       throw new Error('No channels have been found');
     }
 
-    throw new Error('Multiple channels have been found, please be more specific');
+    return channelMatches.first();
   },
 
-  default: context => context.channel,
+  default: (context) => context.channel,
 };

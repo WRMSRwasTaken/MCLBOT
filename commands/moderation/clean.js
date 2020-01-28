@@ -99,7 +99,7 @@ module.exports = {
     invites: {
       description: 'Deletes messages containing an invite',
       fn: async (ctx, flags) => {
-        const filter = message => message.content.search(/(discord\.gg\/.+|discordapp\.com\/invite\/.+)/i);
+        const filter = (message) => message.content.search(/(discord\.gg\/.+|discordapp\.com\/invite\/.+)/i);
 
         return clean(ctx, filter, flags.max);
       },
@@ -114,7 +114,7 @@ module.exports = {
         },
       ],
       fn: async (ctx, user, flags) => {
-        const filter = message => message.author.id === user.id;
+        const filter = (message) => message.author.id === user.id;
 
         return clean(ctx, filter, flags.max);
       },
@@ -122,7 +122,7 @@ module.exports = {
     bots: {
       description: 'Deletes messages sent by bots',
       fn: async (ctx, flags) => {
-        const filter = message => message.author.bot;
+        const filter = (message) => message.author.bot;
 
         return clean(ctx, filter, flags.max);
       },
@@ -130,7 +130,7 @@ module.exports = {
     attachments: {
       description: 'Deletes messages containing an attachment',
       fn: async (ctx, flags) => {
-        const filter = message => message.attachments.size !== 0;
+        const filter = (message) => message.attachments.size !== 0;
 
         return clean(ctx, filter, flags.max);
       },
@@ -138,7 +138,7 @@ module.exports = {
     embeds: {
       description: 'Deletes messages containing an embed',
       fn: async (ctx, flags) => {
-        const filter = message => message.embeds.length !== 0;
+        const filter = (message) => message.embeds.length !== 0;
 
         return clean(ctx, filter, flags.max);
       },
@@ -146,7 +146,7 @@ module.exports = {
     links: {
       description: 'Deletes messages containing a link',
       fn: async (ctx, flags) => {
-        const filter = message => message.content.search(/https?:\/\/[^ \/\.]+\.[^ \/\.]+/) !== -1; // eslint-disable-line no-useless-escape
+        const filter = (message) => message.content.search(/https?:\/\/[^ \/\.]+\.[^ \/\.]+/) !== -1; // eslint-disable-line no-useless-escape
 
         return clean(ctx, filter, flags.max);
       },

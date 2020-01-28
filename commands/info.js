@@ -6,19 +6,7 @@ module.exports = {
   description: 'Display some information about this bot',
   alias: ['about', 'status'],
   fn: async (ctx) => {
-    const getCount = async (propertyName) => {
-      let count;
-
-      if (ctx.main.api.shard) {
-        count = await ctx.main.api.shard.fetchClientValues(`${propertyName}.size`);
-
-        count = count.reduce((prev, val) => prev + val, 0);
-      } else {
-        count = ctx.main.api[propertyName].size;
-      }
-
-      return count;
-    };
+    const getCount = async (propertyName) => ctx.main.api[propertyName].size;
 
     const asciiLogo = '  __  __  ___ _    ___  ___ _____ \n'
       + ' |  \\/  |/ __| |  | _ )/ _ \\_   _|\n'

@@ -29,10 +29,6 @@ module.exports = {
 
       main.mentionRegex = XRegExp(`^<@!?${main.api.user.id}>`);
 
-      winston.debug('Starting job queue processing...');
-
-      await main.jobQueue.resume(true);
-
       await main.channelLogHelper.checkLogChannel();
 
       main.resourceLoader.startTasks();

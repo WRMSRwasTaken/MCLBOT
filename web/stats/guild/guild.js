@@ -191,7 +191,7 @@ module.exports = (router, main) => {
           id: (guild.owner) ? guild.owner.user.id : false,
           avatarURL: (guild.owner) ? guild.owner.user.displayAvatarURL() : 'https://cdn.discordapp.com/embed/avatars/0.png',
         },
-        onlineMembers: guild.members.filter(c => c.presence.status !== 'offline').size,
+        onlineMembers: guild.members.filter((c) => c.presence.status !== 'offline').size,
         totalMembers: guild.memberCount,
         membersJoined,
         membersLeft,

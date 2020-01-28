@@ -1,5 +1,5 @@
 module.exports = {
-  up: (queryInterface, Sequelize) => queryInterface.sequelize.transaction(t => Promise.all([
+  up: (queryInterface, Sequelize) => queryInterface.sequelize.transaction((t) => Promise.all([
     queryInterface.addColumn('reminders', 'message_id', {
       type: Sequelize.BIGINT,
     }, { transaction: t }),
@@ -14,7 +14,7 @@ module.exports = {
       allowNull: true,
     }, { transaction: t }),
   ])),
-  down: (queryInterface, Sequelize) => queryInterface.sequelize.transaction(t => Promise.all([
+  down: (queryInterface, Sequelize) => queryInterface.sequelize.transaction((t) => Promise.all([
     queryInterface.removeColumn('reminders', 'message_id', { transaction: t }),
     queryInterface.removeColumn('reminders', 'guild_id', { transaction: t }),
     queryInterface.removeColumn('reminders', 'channel_id', { transaction: t }),

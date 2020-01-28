@@ -9,7 +9,7 @@ module.exports = {
       id: guild.id,
       iconURL: guild.iconURL(),
       memberCount: guild.memberCount,
-      botCount: guild.members.filter(u => u.user.bot).size,
+      botCount: guild.members.filter((u) => u.user.bot).size,
     });
   },
 };

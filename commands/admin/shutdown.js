@@ -17,11 +17,7 @@ module.exports = {
     confirm.on('true', async () => {
       await msg.edit('Goodbye!');
 
-      if (ctx.main.api.shard) {
-        ctx.main.api.shard.send({ message: 'shutdown' });
-      } else {
-        ctx.main.shutdown();
-      }
+      ctx.main.shutdown();
     });
 
     return true;

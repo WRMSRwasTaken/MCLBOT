@@ -9,5 +9,5 @@ module.exports = {
     throw new Error((context.isDM) ? 'Invalid user ID entered (needed for this command in DM)' : 'No matching users found');
   },
 
-  default: context => context.author,
+  default: (context) => context.author,
 };

@@ -9,5 +9,5 @@ module.exports = {
     throw new Error('No matching guild members found');
   },
 
-  default: context => context.member,
+  default: (context) => context.member,
 };

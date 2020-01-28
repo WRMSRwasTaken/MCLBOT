@@ -21,5 +21,5 @@ module.exports = {
     throw new Error('No matching users found');
   },
 
-  default: context => context.main.imageHelper.getLastImage(context),
+  default: (context) => context.main.imageHelper.getLastImage(context),
 };

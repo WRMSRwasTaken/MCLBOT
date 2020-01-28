@@ -78,7 +78,7 @@ module.exports = (router, main) => {
     return res.render('stats/guild/channel', {
       cards: {
         totalMessages,
-        onlineMembers: channelMembers.filter(c => c.presence.status !== 'offline').size,
+        onlineMembers: channelMembers.filter((c) => c.presence.status !== 'offline').size,
         totalMembers: channelMembers.size,
       },
       diagrams: {
