@@ -9,8 +9,8 @@ module.exports = {
   fn: async (main) => {
     const startTime = Date.now();
 
-    // dynamically adjust the sleep duration based on the current guild count and consider 2500 guilds the maximum which would result in 200 ms sleep time and 8.3 min job execution time (in theory)
-    const sleepDuration = 50 / main.api.guilds.size * 10000; // eslint-disable-line no-mixed-operators
+    // dynamically adjust the sleep duration based on the current guild count and consider 2500 guilds the maximum which would result in 216 ms sleep time and 9 min job execution time (in theory)
+    const sleepDuration = 54 / main.api.guilds.size * 10000; // eslint-disable-line no-mixed-operators
 
     for (const guild of main.api.guilds.values()) {
       if (!main.ready || main.isShuttingDown) {
