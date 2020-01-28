@@ -77,6 +77,8 @@ class MCLBOT {
     process.on('SIGTERM', this.shutdown);
     process.on('SIGINT', this.shutdown);
 
+    main.shutdown = this.shutdown;
+
     process.on('uncaughtException', (err) => {
       raven.captureException(err);
       winston.error('Uncaught exception: %s', err.message);
