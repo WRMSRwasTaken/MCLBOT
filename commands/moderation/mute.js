@@ -19,7 +19,7 @@ module.exports = {
     },
   },
   subcommands: {
-    list: {
+    list: { // TODO: this requires "MANAGE_CHANNELS" permission aswell, make it possible to override root command permissions (and other params) by setting this to null/undefined
       description: 'List all muted users on this server',
       middleware: false,
       fn: async (ctx) => {
