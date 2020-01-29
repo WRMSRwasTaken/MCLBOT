@@ -54,26 +54,35 @@ class MCLBOT {
     try {
       require(path.resolve(__dirname, 'settings.js'));
     } catch (ex) {
-      winston.error('There was an error loading the settings file: %s Exiting.', ex.message);
+      console.error('There was an error loading the settings file: %s Exiting.', ex.message); // eslint-disable-line no-console
       process.exit(1);
     }
 
     if (!nconf.get('bot:token')) {
-      winston.error('No token has been specified, this application can not function without it! Exiting.');
+      console.error('No token has been specified, this application can not function without it! Exiting.'); // eslint-disable-line no-console
       process.exit(1);
     }
 
     if (!nconf.get('bot:prefix')) {
-      winston.error('No bot prefix has been specified, refusing to start without a default prefix set! Exiting.');
+      console.error('No bot prefix has been specified, refusing to start without a default prefix set! Exiting.'); // eslint-disable-line no-console
       process.exit(1);
     }
 
     if (!nconf.get('bot:owner') && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) {
-      winston.warn('No bot owner has been specified! Admin commands will be unavailable!');
+      console.warn('No bot owner has been specified! Admin commands will be unavailable!'); // eslint-disable-line no-console
     }
   }
 
   initBase() {
+    winston.add(new winston.transports.Console({
+      level: nconf.get('log:level'),
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.splat(),
+        winston.format.simple(),
+      ),
+    }));
+
     process.on('SIGTERM', this.shutdown);
     process.on('SIGINT', this.shutdown);
 
@@ -137,15 +146,6 @@ class MCLBOT {
     // if (!main.api.shard && nconf.get('bot:shards') && nconf.get('bot:shards') !== 'false') {
     //   main.shardMaster = true;
     // }
-
-    winston.add(new winston.transports.Console({
-      level: nconf.get('log:level'),
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.splat(),
-        winston.format.simple(),
-      ),
-    }));
 
     if (nconf.get('sentrydsn')) {
       raven.config(nconf.get('sentrydsn'), {
