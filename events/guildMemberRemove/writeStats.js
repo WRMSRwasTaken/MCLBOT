@@ -1,13 +1,17 @@
 module.exports = {
-  fn: (main, member) => {
-    if (member.user.bot) {
+  fn: (main, GuildMemberRemove) => {
+    if (GuildMemberRemove.isDuplicate) {
+      return;
+    }
+
+    if (GuildMemberRemove.member.user.bot) {
       return;
     }
 
     main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
     main.db.member_events.create({
-      user_id: member.id,
-      guild_id: member.guild.id,
+      user_id: GuildMemberRemove.member.id,
+      guild_id: GuildMemberRemove.member.guild.id,
       type: 'LEAVE',
       timestamp: Date.now(),
     });

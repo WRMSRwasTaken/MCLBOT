@@ -12,7 +12,6 @@
 const nconf = require('nconf');
 const winston = require('winston');
 const raven = require('raven');
-const Discord = require('discord.js');
 const childProcess = require('child_process');
 const fs = require('fs-extra');
 const path = require('path');
@@ -20,6 +19,8 @@ const Redis = require('ioredis');
 const Sequelize = require('sequelize');
 const prettyMs = require('pretty-ms');
 const Bluebird = require('bluebird');
+
+const detritus = require('detritus-client');
 
 const main = {};
 
@@ -42,7 +43,7 @@ class MCLBOT {
     main.preConnectTime = Date.now();
 
     try {
-      await main.api.login(nconf.get('bot:token'));
+      await main.api.run();
     } catch (ex) {
       winston.error('Unable to connect to Discord API! %s. Exiting...', ex.message);
 
@@ -122,15 +123,8 @@ class MCLBOT {
       main.dirty = undefined;
     }
 
-    main.Discord = Discord;
-
-    main.api = new Discord.Client({
-      messageCacheLifetime: 15 * 60,
-      messageSweepInterval: 5 * 60,
-      fetchAllMembers: false,
-      disableEveryone: false,
-      shards: nconf.get('bot:shard') ? parseInt(nconf.get('bot:shard'), 10) : undefined,
-      shardCount: nconf.get('bot:shardcount') ? parseInt(nconf.get('bot:shardcount'), 10) : undefined,
+    main.api = new detritus.ShardClient(nconf.get('bot:token'), {
+      cache: true,
     });
 
     // main.api.main = main; // we need that circular reference in order to access the "main" object later
@@ -171,9 +165,6 @@ class MCLBOT {
 
     if (nconf.get('bot:selfbot') && nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false') {
       winston.info('Bot is starting in selfbot mode.');
-
-      winston.warn('discord.js removed selfbot support since v12, running this bot in selfbot mode might result in undesirable behaviour.');
-      winston.warn('As Discord officially banned selfbots this is never going to get fixed and is even intended by the discord.js devs.');
     }
   }
 
@@ -361,7 +352,7 @@ class MCLBOT {
       if (main.ready) {
         winston.debug('Disconnecting from Discord API...');
 
-        main.api.destroy();
+        main.api.kill();
 
         await Bluebird.delay(2000);
       }

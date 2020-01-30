@@ -1,3 +1,9 @@
 module.exports = {
-  fn: (main, oldMessage, newMessage) => main.commandHandler.handleMessageEvent(oldMessage, newMessage),
+  fn: (main, MessageUpdate) => {
+    if (MessageUpdate.isEmbedUpdate) {
+      return;
+    }
+
+    main.commandHandler.handleMessageEvent(MessageUpdate.message, true);
+  },
 };

@@ -91,36 +91,40 @@ async function handleQueue(main, userID) {
 }
 
 module.exports = { // TODO: this isn't shard aware, we're going to broadcast those events via rpc and let shard 0 handle them
-  fn: async (main, oldUser, newUser) => {
-    if (oldUser.tag === newUser.tag) {
+  fn: async (main, PresenceUpdate) => {
+    if (!PresenceUpdate.user || PresenceUpdate.user.bot) {
       return;
     }
 
-    if (newUser.bot) {
+    console.log(PresenceUpdate.differences);
+
+    if (!PresenceUpdate.differences.user) {
       return;
     }
 
-    if (!pendingUpdatesData[newUser.id]) {
-      pendingUpdatesData[newUser.id] = [];
+    return;
+
+    if (!pendingUpdatesData[PresenceUpdate.member.id]) {
+      pendingUpdatesData[PresenceUpdate.member.id] = [];
     }
 
-    winston.debug(`Queuing data for userUpdate event for user ID ${newUser.id}`);
+    winston.debug(`Queuing data for userUpdate event for user ID ${PresenceUpdate.member.id}`);
 
-    pendingUpdatesData[newUser.id].push({
-      userID: newUser.id,
+    pendingUpdatesData[PresenceUpdate.member.id].push({
+      userID: PresenceUpdate.member.id,
       oldTag: oldUser.tag,
       newTag: newUser.tag,
       timestamp: Date.now(),
     });
 
-    if (pendingUpdates[newUser.id]) {
-      winston.debug(`Deleting timer for userUpdate event for user ID ${newUser.id}`);
+    if (pendingUpdates[PresenceUpdate.member.id]) {
+      winston.debug(`Deleting timer for userUpdate event for user ID ${PresenceUpdate.member.id}`);
 
-      clearTimeout(pendingUpdates[newUser.id]);
+      clearTimeout(pendingUpdates[PresenceUpdate.member.id]);
     }
 
-    winston.debug(`Starting timer for userUpdate event for user ID ${newUser.id}`);
+    winston.debug(`Starting timer for userUpdate event for user ID ${PresenceUpdate.member.id}`);
 
-    pendingUpdates[newUser.id] = setTimeout(handleQueue.bind(this, main, newUser.id), 10000);
+    pendingUpdates[PresenceUpdate.member.id] = setTimeout(handleQueue.bind(this, main, PresenceUpdate.member.id), 10000);
   },
 };

@@ -1,13 +1,13 @@
 module.exports = {
-  fn: (main, message) => {
-    if (message.author.bot || message.pinned || message.system || !message.guild) {
+  fn: (main, MessageDelete) => {
+    if (MessageDelete.message.author.bot || MessageDelete.message.pinned || MessageDelete.message.system || !MessageDelete.message.guild) {
       return;
     }
 
     main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
     main.db.member_messages.destroy({
       where: {
-        message_id: message.id,
+        message_id: MessageDelete.message.id,
       },
     });
   },

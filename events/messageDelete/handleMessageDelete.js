@@ -1,3 +1,3 @@
 module.exports = {
-  fn: (main, message) => main.commandHandler.handleMessageDeleteEvent(message),
+  fn: (main, MessageDelete) => main.commandHandler.handleMessageDeleteEvent(MessageDelete.message),
 };

@@ -1,15 +1,19 @@
 const winston = require('winston');
 
 module.exports = {
-  fn: (main, guild) => {
-    winston.info(`Bot has been removed from server ${guild.name} (ID: ${guild.id}).`);
+  fn: (main, GuildDelete) => {
+    if (GuildDelete.isUnavailable) {
+      return;
+    }
+
+    winston.info(`Bot has been removed from server ${GuildDelete.guild.name} (ID: ${GuildDelete.guild.id}).`);
 
     main.channelLogHelper.sendLogMessage('guildRemove', {
-      name: guild.name,
-      id: guild.id,
-      iconURL: guild.iconURL(),
-      memberCount: guild.memberCount,
-      botCount: guild.members.filter((u) => u.user.bot).size,
+      name: GuildDelete.guild.name,
+      id: GuildDelete.guild.id,
+      iconURL: GuildDelete.guild.iconURL(),
+      memberCount: GuildDelete.guild.memberCount,
+      botCount: GuildDelete.guild.members.filter((u) => u.user.bot).size,
     });
   },
 };

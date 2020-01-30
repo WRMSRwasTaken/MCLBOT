@@ -1,14 +1,10 @@
 module.exports = {
-  fn: (main, channel) => {
-    if (!channel.guild) {
-      return;
-    }
-
+  fn: (main, ChannelDelete) => {
     main.prometheusMetrics.sqlCommands.labels('DELETE').inc();
     main.db.member_messages.destroy({
       where: {
-        guild_id: channel.guild.id,
-        channel_id: channel.id,
+        guild_id: ChannelDelete.channel.guildId,
+        channel_id: ChannelDelete.channel.id,
       },
     });
   },

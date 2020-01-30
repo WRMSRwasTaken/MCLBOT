@@ -1,50 +1,26 @@
 const winston = require('winston');
 
 module.exports = {
-  fn: async (main, oldMember, newMember) => {
-    if (oldMember.nickname === newMember.nickname) {
+  fn: async (main, GuildMemberUpdate) => {
+    if (GuildMemberUpdate.member.bot) {
       return;
     }
 
-    if (newMember.user.bot) {
+    if (GuildMemberUpdate.differences.nick === undefined) { // this could be null if a nick has been added, so we actually have to check explicitly for undefined here
       return;
     }
 
     main.prometheusMetrics.sqlCommands.labels('INSERT').inc();
 
-    if (oldMember.nickname && newMember.nickname) {
-      winston.debug(`Nickname changed for user ${newMember.user.tag} on guild ${newMember.guild.name}: from ${oldMember.nickname} to ${newMember.nickname}`);
+    winston.debug(`Nickname changed for user ${GuildMemberUpdate.member.username}#${GuildMemberUpdate.member.discriminator} on guild ${GuildMemberUpdate.member.guild.name}: from ${GuildMemberUpdate.differences.nick} to ${GuildMemberUpdate.member.nick}`);
 
-      await main.db.name_logs.create({
-        user_id: newMember.user.id,
-        type: 'NICKNAME',
-        guild_id: newMember.guild.id,
-        before: oldMember.nickname,
-        after: newMember.nickname,
-        timestamp: Date.now(),
-      });
-    } else if (newMember.nickname) {
-      winston.debug(`A nickname has been added for user ${newMember.user.tag} on guild ${newMember.guild.name}: ${newMember.nickname}`);
-
-      await main.db.name_logs.create({
-        user_id: newMember.user.id,
-        type: 'NICKNAME',
-        guild_id: newMember.guild.id,
-        before: null,
-        after: newMember.nickname,
-        timestamp: Date.now(),
-      });
-    } else if (oldMember.nickname) {
-      winston.debug(`The nickname has been deleted for user ${newMember.user.tag} on guild ${newMember.guild.name}`);
-
-      await main.db.name_logs.create({
-        user_id: newMember.user.id,
-        type: 'NICKNAME',
-        guild_id: newMember.guild.id,
-        before: oldMember.nickname,
-        after: null,
-        timestamp: Date.now(),
-      });
-    }
+    main.db.name_logs.create({
+      user_id: GuildMemberUpdate.member.id,
+      type: 'NICKNAME',
+      guild_id: GuildMemberUpdate.guildId,
+      before: GuildMemberUpdate.differences.nick, // this is gonna be null if a nick has been added
+      after: GuildMemberUpdate.member.nick, // this is gonna be null if a nick has been deleted
+      timestamp: Date.now(),
+    });
   },
 };

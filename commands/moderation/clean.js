@@ -9,7 +9,7 @@ async function cleanSingle(ctx, messages) {
   let deleted = 0;
 
   for (const message of messages.values()) {
-    if (message.deletable) {
+    if (message.canDelete) {
       try {
         await message.delete();
 

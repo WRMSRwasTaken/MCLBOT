@@ -1,3 +1,3 @@
 module.exports = {
-  fn: (main, messageReaction, user) => main.paginationHelper.handleMessageReactionRemoveEvent(messageReaction, user),
+  fn: (main, MessageReactionAdd) => main.paginationHelper.handleMessageReactionRemoveEvent(MessageReactionAdd.reaction, MessageReactionAdd.user),
 };

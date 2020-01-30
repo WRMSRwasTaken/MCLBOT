@@ -834,6 +834,41 @@ detect-libc@^1.0.2:
   resolved "https://registry.yarnpkg.com/detect-libc/-/detect-libc-1.0.3.tgz#fa137c4bd698edf55cd5cd02ac559f91a4c4ba9b"
   integrity sha1-+hN8S9aY7fVc1c0CrFWfkaTEups=
 
+detritus-client-rest@^0.6.7:
+  version "0.6.7"
+  resolved "https://registry.yarnpkg.com/detritus-client-rest/-/detritus-client-rest-0.6.7.tgz#1f71303d19d516a9c0c0a800db49ab9dc48e64c9"
+  integrity sha512-q9O0UqmykMDzVjSDey7B3V8NdN28bnLFH7XHnXYNyYfW52Mm/JFAOfTsObR6dm5JazEh3Zn7ry/r2+B7Yd/cNQ==
+  dependencies:
+    detritus-rest "^0.3.1"
+    detritus-utils "^0.2.6"
+
+detritus-client-socket@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/detritus-client-socket/-/detritus-client-socket-0.4.6.tgz#95f3f4e23e3b321f89a7a4868537ff4d4cf9ff43"
+  integrity sha512-4kZ6S5xVPuJJbtA3Q8EhP9azxCAG9ALW7UYKTg5810bPbyvvfiv14CutdsFHcyq8yHUXFVI2A2+1lGFH6etkUw==
+  dependencies:
+    detritus-utils "^0.2.6"
+    ws "^7.2.0"
+
+detritus-client@^0.9.40:
+  version "0.9.40"
+  resolved "https://registry.yarnpkg.com/detritus-client/-/detritus-client-0.9.40.tgz#42473b5e8d71eece87367c380791bfbccd5c7d09"
+  integrity sha512-G254KnTQGom1gQd06oSawN9MIuDmqtHl3NHUVHhD6v2Sq0oCIYvOCH4oF9a1epmKQ/AVA4yQs7Tn+2PBmTlp7g==
+  dependencies:
+    detritus-client-rest "^0.6.7"
+    detritus-client-socket "^0.4.6"
+    detritus-utils "^0.2.6"
+
+detritus-rest@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/detritus-rest/-/detritus-rest-0.3.1.tgz#75969e95e9e2200134b397c5246df23b26d69726"
+  integrity sha512-DW7wu/trh/Oq+u/ky3xZMgGoZErC2VnEuZ9ZHrOZd973MVcIm9a8hRqIA/N53ygf5a2qExBzuv7UaPw8nwV7yw==
+
+detritus-utils@^0.2.6:
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/detritus-utils/-/detritus-utils-0.2.6.tgz#9249850d769d8572de43690a111899d6c3961f6c"
+  integrity sha512-cjeZjmIPew0h4ZP+A9aGizGCNrUyYhSx4FkQXGa3bJ5dNunChSqzUR8a5c2Gq6PIerWldTbh9976WxMw3m6Ejw==
+
 diagnostics@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/diagnostics/-/diagnostics-1.1.1.tgz#cab6ac33df70c9d9a727490ae43ac995a769b22a"

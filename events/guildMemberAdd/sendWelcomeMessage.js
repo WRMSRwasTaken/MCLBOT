@@ -1,48 +1,52 @@
 module.exports = {
-  fn: async (main, member) => {
-    if (member.user.bot) {
+  fn: async (main, GuildMemberAdd) => {
+    if (GuildMemberAdd.isDuplicate) {
       return false;
     }
 
-    let currentMessage = await main.guildSettingsManager.getGuildSetting(member.guild.id, 'welcomeMessageText');
-    const channelID = await main.guildSettingsManager.getGuildSetting(member.guild.id, 'welcomeLeaveMessageChannel');
+    if (GuildMemberAdd.member.user.bot) {
+      return false;
+    }
+
+    let currentMessage = await main.guildSettingsManager.getGuildSetting(GuildMemberAdd.member.guild.id, 'welcomeMessageText');
+    const channelID = await main.guildSettingsManager.getGuildSetting(GuildMemberAdd.member.guild.id, 'welcomeLeaveMessageChannel');
 
     if (!currentMessage || !channelID) {
       return false;
     }
 
-    if (!member.guild.channels.get(channelID)) {
+    if (!GuildMemberAdd.member.guild.channels.get(channelID)) {
       return false;
     }
 
-    if (!member.guild.channels.get(channelID).permissionsFor(member.guild.me).has('SEND_MESSAGES')) {
+    if (!GuildMemberAdd.member.guild.channels.get(channelID).permissionsFor(GuildMemberAdd.member.guild.me).has('SEND_MESSAGES')) {
       return false;
     }
 
     const replacements = [
       {
         search: 'membercount',
-        replace: member.guild.memberCount,
+        replace: GuildMemberAdd.member.guild.memberCount,
       },
       {
         search: 'servername',
-        replace: member.guild.name,
+        replace: GuildMemberAdd.member.guild.name,
       },
       {
         search: 'mention',
-        replace: `<@${member.id}>`,
+        replace: `<@${GuildMemberAdd.member.id}>`,
       },
       {
         search: 'username',
-        replace: member.user.username,
+        replace: GuildMemberAdd.member.user.username,
       },
       {
         search: 'discriminator',
-        replace: member.user.discriminator,
+        replace: GuildMemberAdd.member.user.discriminator,
       },
       {
         search: 'tag',
-        replace: member.user.tag,
+        replace: GuildMemberAdd.member.user.tag,
       },
     ];
 
@@ -50,6 +54,6 @@ module.exports = {
       currentMessage = currentMessage.replace(new RegExp(`{${replacement.search}}`, 'gi'), replacement.replace);
     }
 
-    return member.guild.channels.get(channelID).send(currentMessage);
+    return GuildMemberAdd.member.guild.channels.get(channelID).send(currentMessage);
   },
 };
