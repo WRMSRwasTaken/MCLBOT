@@ -1,17 +1,17 @@
 module.exports = {
-  description: 'Manage the leave message for left server members',
+  description: 'Manage the leave messageCreate for left server members',
   guildOnly: true,
   fn: 'show',
   subcommands: {
     show: {
-      description: 'Displays the current leave message',
+      description: 'Displays the current leave messageCreate',
       alias: ['print'],
       fn: async (ctx) => {
         const currentMessage = await ctx.main.guildSettingsManager.getGuildSetting(ctx.guild.id, 'leaveMessageText');
         const channelID = await ctx.main.guildSettingsManager.getGuildSetting(ctx.guild.id, 'welcomeLeaveMessageChannel');
 
         if (!currentMessage || !channelID) {
-          return 'This server has no leave message set. Run `leave set` to enable this feature.';
+          return 'This server has no leave messageCreate set. Run `leave set` to enable this feature.';
         }
 
         if (!ctx.guild.channels.get(channelID)) {
@@ -26,7 +26,7 @@ module.exports = {
       },
     },
     set: {
-      description: 'Sets a new leave message',
+      description: 'Sets a new leave messageCreate',
       permission: 'ADMINISTRATOR',
       arguments: [
         {
@@ -43,16 +43,16 @@ module.exports = {
           await ctx.main.guildSettingsManager.setGuildSetting(ctx.guild.id, 'welcomeLeaveMessageChannel', ctx.channel.id);
         }
 
-        return `Successfully updated the server leave message.${(new RegExp('{mention}', 'gi').test(message) ? '\n\nNote: putting `{mention}` inside the leave message will result in `@invalid-user` being mentioned.' : '')}`;
+        return `Successfully updated the server leave message.${(new RegExp('{mention}', 'gi').test(message) ? '\n\nNote: putting `{mention}` inside the leave messageCreate will result in `@invalid-user` being mentioned.' : '')}`;
       },
     },
     clear: {
-      description: 'Disable the leave message',
+      description: 'Disable the leave messageCreate',
       permission: 'ADMINISTRATOR',
       alias: ['delete', 'remove', 'off', 'disable'],
       fn: async (ctx) => {
         if (!await ctx.main.guildSettingsManager.getGuildSetting(ctx.guild.id, 'leaveMessageText')) {
-          return 'This server has no leave message set.';
+          return 'This server has no leave messageCreate set.';
         }
 
         await ctx.main.guildSettingsManager.deleteGuildSetting(ctx.guild.id, 'leaveMessageText');
@@ -61,7 +61,7 @@ module.exports = {
           await ctx.main.guildSettingsManager.deleteGuildSetting(ctx.guild.id, 'welcomeLeaveMessageChannel');
         }
 
-        return 'The leave message has been disabled for this server.';
+        return 'The leave messageCreate has been disabled for this server.';
       },
     },
     setchannel: {

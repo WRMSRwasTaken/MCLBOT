@@ -19,7 +19,7 @@ module.exports = {
     }
 
     if (!channel.permissionsFor(channel.guild.me).has('SEND_MESSAGES')) {
-      return ctx.main.stringUtils.argumentError('csay', 0, 'Can not send the message to this channel. Missing `SEND_MESSAGES` permission');
+      return ctx.main.stringUtils.argumentError('csay', 0, 'Can not send the messageCreate to this channel. Missing `SEND_MESSAGES` permission');
     }
 
     const cmsg = await channel.send(text);

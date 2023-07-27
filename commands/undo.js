@@ -1,4 +1,4 @@
 module.exports = {
   description: '???',
-  fn: () => 'Just delete your command message, lol',
+  fn: () => 'Just delete your command messageCreate, lol',
 };

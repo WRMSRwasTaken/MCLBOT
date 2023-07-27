@@ -4,7 +4,6 @@ let foo = false;
 
 module.exports = {
   interval: 60,
-  noSelfbot: true,
   fn: (main) => {
     if (nconf.get('bot:stealth') && nconf.get('bot:stealth') !== 'false') {
       return;

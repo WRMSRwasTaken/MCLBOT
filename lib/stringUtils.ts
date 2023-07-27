@@ -1,11 +1,31 @@
-const _ = require('lodash');
-const prettyMs = require('pretty-ms');
-const moment = require('moment');
-const XRegExp = require('xregexp');
-const winston = require('winston');
+import {MCLBOTContext, MCLBOTMain, MCLBOTModule} from "../definitions.js";
 
-class StringUtils {
-  constructor(main) {
+import _ from 'lodash';
+import prettyMs from 'pretty-ms';
+import moment from 'moment';
+import XRegExp from 'xregexp';
+import winston from 'winston';
+
+interface errorCodes {
+  [key: string]: string
+}
+
+export default class StringUtils implements MCLBOTModule {
+  private main = {} as MCLBOTMain;
+
+  private emojiRegex: RegExp;
+  private customEmojiRegex: RegExp;
+
+  private customEmojiEndpoint: string;
+  private emojiEndpoint: string;
+
+  private integerRegex: RegExp;
+  private integerSplitRegex: RegExp;
+
+  private errorCodes: errorCodes;
+
+
+  constructor(main: MCLBOTMain) {
     this.main = main;
 
     this.emojiRegex = XRegExp('[\u{1f300}-\u{1f5ff}\u{1f900}-\u{1f9ff}\u{1f600}-\u{1f64f}\u{1f680}-\u{1f6ff}\u{2600}-\u{26ff}\u{2700}-\u{27bf}\u{1f1e6}-\u{1f1ff}\u{1f191}-\u{1f251}\u{1f004}\u{1f0cf}\u{1f170}-\u{1f171}\u{1f17e}-\u{1f17f}\u{1f18e}\u{3030}\u{2b50}\u{2b55}\u{2934}-\u{2935}\u{2b05}-\u{2b07}\u{2b1b}-\u{2b1c}\u{3297}\u{3299}\u{303d}\u{00a9}\u{00ae}\u{2122}\u{23f3}\u{24c2}\u{23e9}-\u{23ef}\u{25b6}\u{23f8}-\u{23fa}]', 'u');
@@ -28,16 +48,24 @@ class StringUtils {
     };
   }
 
-  parseIntegerList(input, min, max) { // yup, this is somewhat copy pasted from the command handler's parseArguments() function
+  initializeModule() {
+    return;
+  }
+
+  parseIntegerList(input: string, min: number, max: number) { // yup, this is somewhat copy pasted from the command handler's parseArguments() function
     let argSplitPosition = 0;
     let argSplitMatch;
-    let previousNumber = false;
+    let previousNumber: boolean | number = false;
     let hadCommaBefore = false;
     let inList = false;
-    const list = [];
+    const list: Array<number> = [];
 
     while (argSplitMatch = XRegExp.exec(input, this.integerSplitRegex, argSplitPosition)) { // eslint-disable-line no-cond-assign
       const splittedArgument = argSplitMatch[0] || argSplitMatch[1] || argSplitMatch[2];
+
+      if (!splittedArgument) {
+        return; // prevent endless loop... i think
+      }
 
       argSplitPosition = argSplitMatch.index + splittedArgument.length; // XRegExp ignores lastIndex, so the 'g' flag doesn't work here and we have to pass the position manually
 
@@ -123,7 +151,7 @@ class StringUtils {
     return list.sort((a, b) => b - a);
   }
 
-  prettyError(errorMessage) {
+  prettyError(errorMessage: string) {
     for (const errorCode of Object.keys(this.errorCodes)) {
       if (errorMessage.includes(errorCode)) {
         return this.errorCodes[errorCode];
@@ -133,7 +161,7 @@ class StringUtils {
     return errorMessage;
   }
 
-  emojiToCodePoint(unicodeSurrogates) { // Taken from https://github.com/twitter/twemoji
+  emojiToCodePoint(unicodeSurrogates: string) { // Taken from https://github.com/twitter/twemoji
     const r = [];
     let c = 0;
     let p = 0;
@@ -153,7 +181,7 @@ class StringUtils {
     return r.join('-');
   }
 
-  async getEmojiUrl(input) {
+  async getEmojiUrl(input: string) {
     const isEmoji = this.emojiRegex.test(input);
     const customEmojiResult = XRegExp.exec(input, this.customEmojiRegex);
 
@@ -168,20 +196,20 @@ class StringUtils {
     if (isEmoji) {
       url = `${this.emojiEndpoint}${this.emojiToCodePoint(input)}.png`;
     } else {
-      url = `${this.customEmojiEndpoint}${customEmojiResult.id}`;
+      url = `${this.customEmojiEndpoint}${customEmojiResult?.['id']}`;
     }
 
     return url;
   }
 
-  formatUnixTimestamp(timestamp, mode = 0, verbose = true, newline = false) { // modes: 0 = timestamp & duration, 1 = timestamp only, 2 = duration only // TODO: passing an object with options would be better
+  formatUnixTimestamp(timestamp: number, mode = 0, verbose = true, newline = false) { // modes: 0 = timestamp & duration, 1 = timestamp only, 2 = duration only // TODO: passing an object with options would be better
     if (!timestamp) { // moment complains if not a number
       return 'N/A';
     }
 
-    if (typeof timestamp === 'string') { // moment complains if not a number
-      timestamp = Number.parseInt(timestamp, 10);
-    }
+    // if (typeof timestamp === 'string') { // moment complains if not a number
+    //   timestamp = Number.parseInt(timestamp, 10);
+    // }
 
     let output = '';
 
@@ -214,7 +242,19 @@ class StringUtils {
     return output;
   }
 
-  argumentError(context, argIndex, message) {
+  argumentError(context: MCLBOTContext, argIndex: number, message: string) {
+    const commandToHandle = context.subcommand || context.command;
+
+    if(!commandToHandle) {
+      return '';
+    }
+
+    const commandParams = commandToHandle.arguments;
+
+    if(!commandParams) {
+      return '';
+    }
+
     let firstLine = `${context.command.name} `;
     let secondLine = `${' '.repeat(context.command.name.length)} `;
 
@@ -222,10 +262,6 @@ class StringUtils {
       firstLine += `${context.subcommand.name} `;
       secondLine += `${' '.repeat(context.subcommand.name.length)} `;
     }
-
-    const commandToHandle = context.subcommand || context.command;
-
-    const commandParams = commandToHandle.arguments;
 
     for (let i = 0; i < argIndex; i += 1) {
       const label = commandParams[i].label || commandParams[i].type;
@@ -352,5 +388,3 @@ class StringUtils {
     return (matches[0] && matches[0][1] > 1) ? matches[0][0] : false;
   }
 }
-
-module.exports = StringUtils;

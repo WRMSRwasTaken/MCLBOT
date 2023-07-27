@@ -5,6 +5,7 @@ const Bluebird = require('bluebird');
 const interval = 60 * 10; // 10 Minutes interval
 
 module.exports = {
+  disabled: true,
   interval,
   fn: async (main) => {
     const startTime = Date.now();

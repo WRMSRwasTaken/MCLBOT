@@ -1,11 +1,22 @@
-const winston = require('winston');
-const nconf = require('nconf');
-const Bluebird = require('bluebird');
-const raven = require('raven');
-const XRegExp = require('xregexp');
+import winston from 'winston';
+import nconf from 'nconf';
+import XRegExp from 'xregexp';
 
-class CommandHandler {
-  constructor(main) {
+import {MCLBOTMain, MCLBOTContext, MCLBOTModule, MCLBOTMessage, MCLBOTCommand} from '../definitions.js';
+import {DMChannel, GuildChannel, PartialDMChannel} from "discord.js";
+
+export default class CommandHandler implements MCLBOTModule{
+  private main = {} as MCLBOTMain;
+
+  private argSplitRegex: RegExp;
+  private flagRegex: RegExp;
+  private flagScanRegex: RegExp;
+
+  private tokenRegex: RegExp;
+  private safeMentionRegex: RegExp;
+
+
+  constructor(main: MCLBOTMain) {
     this.main = main;
 
     this.main.disabledDMs = {};
@@ -22,143 +33,113 @@ class CommandHandler {
     //this.main.redisScanner.deleteKeys('concurrent:*'); // TODO: make this shard aware - don't delete other shard's keys
   }
 
-  async handleMessageDeleteEvent(message) {
-    if (nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false' && message.author.id !== this.main.api.user.id) {
+  initializeModule() {
+    return;
+  }
+
+  async handleMessageDeleteEvent(message: MCLBOTMessage) {
+    if (message.author.id === this.main.api.user?.id) {
       return;
     }
 
-    if (message.author.bot) {
+    if (message.author.bot || message.pinned || message.system) {
       return;
     }
 
-    const context = message.context;
-
-    if (!context || !context.replies || context.replies.length === 0) {
+    if (!message.replies || message.replies.length === 0) {
       return;
     }
 
     message.deleted = true;
 
-    winston.debug(`Deleting ${context.replies.length} message(s)...`);
+    winston.debug(`Deleting ${message.replies.length} message(s)...`);
 
-    for (const reply of context.replies) {
+    for (const reply of message.replies) {
       if (reply.deletable) {
-        reply.delete().catch(() => winston.warn(`Cannot delete message id ${reply.id}, maybe it has already been deleted?`));
+        reply.delete()
+          .catch(() => winston.warn(`Cannot delete message id ${reply.id}, maybe it has already been deleted?`));
       }
     }
 
-    context.replies = [];
+    message.replies = [];
   }
 
-  async initializeContext(message, editedMessage) {
+  async initializeContext(message: MCLBOTMessage, editedMessage: MCLBOTMessage) {
     const messageToHandle = editedMessage || message;
 
-    let oldReplies;
+    // things we need to store in the actual message object in order to retrieve it on an edit
+    message.messageEdits = editedMessage ? message.messageEdits + 1 : 0; // we have to build this for ourselves
+    message.replies = message.replies || [];
 
-    if (messageToHandle.context && messageToHandle.context.replies) {
-      oldReplies = messageToHandle.context.replies; // we need to keep this for reply editing / deleting to function
-    }
+    const mentionExec = this.main.modules.userHelper.mentionRegex.exec(messageToHandle.content);
 
-    const context = {};
-
-    messageToHandle.context = context; // we need to do a circular reference, to get the context object in events passing message objects
-
-    context.invokeTime = Date.now();
-
-    context.replies = oldReplies || [];
-
-    context.main = this.main;
-
-    context.message = messageToHandle;
-
-    context.author = message.author;
-
-    context.channel = messageToHandle.channel;
-
-    if (nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false') {
-      context.isBotAdmin = true;
-    } else {
-      context.isBotAdmin = message.author.id === nconf.get('bot:owner');
-    }
-
-    context.isDM = !messageToHandle.guild;
-
-    context.isEdited = !!editedMessage;
-
-    context.messageEdits = messageToHandle.edits.length - 1; // we don't want to count the original message too
-
-    context.message.currentHandled = context.messageEdits; // this get's used in the reply handler
-
-    if (!context.isDM) {
-      context.guild = messageToHandle.guild;
-      context.member = message.member;
-
-      const mentionExec = this.main.mentionRegex.exec(messageToHandle.content);
-      context.mentionLength = (mentionExec && mentionExec[0].length) || 0; // We need that later again
-      context.isMention = !!context.mentionLength;
-
-      if (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false') {
-        context.guildPrefixDisabled = !!await this.main.prefixHelper.isGuildPrefixDisabled(context.guild.id);
-
-        if (!context.guildPrefixDisabled) {
-          context.guildPrefix = await this.main.prefixHelper.getGuildPrefix(context.guild.id);
-        }
-      }
-    }
-
-    if (nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false') {
-      context.guildPrefix = await this.main.prefixHelper.getDefaultPrefix();
-    }
-
-    if (!context.isDM || (nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false')) {
-      if (context.guildPrefixDisabled) {
-        context.startsWithPrefix = false;
-      } else {
-        context.startsWithPrefix = messageToHandle.content.startsWith(context.guildPrefix);
-      }
-    }
-
-    context.reply = async (...args) => this.messageSendFunction(context, args);
-
-    context.deleteReplies = async () => {
-      const tempReplies = [...context.replies]; // we need to copy the array to delete old messages, but don't delete new (already added) messages
-
-      context.replies = [];
-
-      for (const reply of tempReplies) {
-        if (reply.deletable) {
-          await reply.delete().catch(() => winston.warn(`Cannot delete message id ${reply.id}, maybe it has already been deleted?`));
-        }
-      }
+    const context: MCLBOTContext = {
+      invokeTime: Date.now(),
+      main: this.main,
+      message: messageToHandle,
+      author: messageToHandle.author,
+      channel: messageToHandle.channel,
+      guild: messageToHandle.guild,
+      member: messageToHandle.member,
+      isBotAdmin: messageToHandle.author.id === nconf.get('bot:owner'),
+      isEdited: !!messageToHandle.editedAt,
+      messageEdits: messageToHandle.messageEdits,
+      mentionLength: (mentionExec && mentionExec[0].length) || 0,
+      parsedArguments: [],
+      parsedFlags: {},
+      reply: async (...args) => this.messageSendFunction(context, args),
+      deleteReplies: async () => this.deleteReplies(context)
     };
+
+    context.message.currentHandled = context.messageEdits; // this gets used in the reply handler
+
+    if (messageToHandle.guild) {
+      context.guildPrefixDisabled = !! await this.main.modules.prefixHelper.isGuildPrefixDisabled(messageToHandle.guild.id);
+
+      if (!context.guildPrefixDisabled) {
+        context.guildPrefix = await this.main.modules.prefixHelper.getGuildPrefix(messageToHandle.guild.id);
+
+        if (context.guildPrefix) {
+          context.startsWithPrefix = messageToHandle.content.startsWith(context.guildPrefix);
+        } else {
+          context.startsWithPrefix = false;
+        }
+      } else {
+        context.startsWithPrefix = false;
+      }
+    } else {
+      context.startsWithPrefix = messageToHandle.content.startsWith(this.main.modules.prefixHelper.getDefaultPrefix());
+    }
 
     return context;
   }
 
-  async shouldHandle(context, message, editedMessage) {
-    const messageToHandle = editedMessage || message;
+  async deleteReplies(context: MCLBOTContext) {
+    const tempReplies = context.message.replies.slice(); // we need to copy the array to delete old messages, but don't delete new (already added) replies
 
-    if (!context.isDM && editedMessage && context.replies.length === 0) { // message edit in guild channel without answers, but handled before
-      for (const reaction of editedMessage.reactions.values()) {
-        for (const user of reaction.users.values()) {
-          if (user.id === this.main.api.user.id) {
-            reaction.users.remove(user);
-          }
-        }
+    context.message.replies = [];
+
+    for (const reply of tempReplies) {
+      if (reply.deletable) {
+        await reply.delete().catch(() => winston.warn(`Cannot delete message id ${reply.id}, maybe it has already been deleted?`));
+      }
+    }
+  }
+
+  async shouldHandle(context: MCLBOTContext, message: MCLBOTMessage, editedMessage: MCLBOTMessage) {
+    if (context.guild && context.isEdited && message.replies.length === 0) { // message edit in guild channel without answers, but handled before
+      for (const reaction of message.reactions.values()) {
+        reaction.clear();
       }
     }
 
-    if (!context.isDM && !context.isMention && !context.startsWithPrefix) { // if in guild channel without being mentioned and no prefix in message
-      if (editedMessage && context.replies.length > 0) { // if there is an old message that has been responded to, but the edited message shouldn't be handled so delete my old answers
-        winston.debug(`I responded to the old message, but the new message isn't a bot command, deleting ${context.replies.length} answer message(s)...`);
+    if (context.guild && context.mentionLength === 0 && !context.startsWithPrefix) { // if in guild channel without being mentioned and no prefix in message
+      if (context.isEdited && message.replies.length > 0) { // if there is an old message that has been responded to, but the edited message shouldn't be handled so delete my old answers
+        winston.debug(`I responded to the old message, but the new message isn't a bot command, deleting ${message.replies.length} answer message(s)...`);
 
         context.deleteReplies();
       }
 
-      return false;
-    }
-
-    if (nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false' && context.isDM && !context.startsWithPrefix) { // Avoid bot output while talking to other people in DM without calling bot commands
       return false;
     }
 
@@ -168,20 +149,15 @@ class CommandHandler {
 
     winston.debug(''); // For easier debugging leave one blank line
 
-    if (!editedMessage) {
-      winston.debug('New message event fired! id: %s content: %s', messageToHandle.id, messageToHandle.content);
+    if (!context.isEdited) {
+      winston.debug('New message event fired! id: %s content: %s', message.id, message.content);
       return true;
     }
 
     winston.debug('Message edit event fired! id: %s - old content: %s - new content: %s', editedMessage.id, message.content, editedMessage.content);
 
-    if (!message.content || !editedMessage.content || message.content === editedMessage.content) { // This will be the case if e.g. embed images are resolved
-      winston.debug('Message content did not change... returning');
-      return false;
-    }
-
-    if (context.replies.length > 0) {
-      winston.debug(`Deleting ${context.replies.length} answer message(s) to send new messages...`); // TODO: maybe I should re-evaluate inline answer editing
+    if (message.replies.length > 0) {
+      winston.debug(`Deleting ${message.replies.length} answer message(s) to send new messages...`); // TODO: maybe I should re-evaluate inline answer editing
 
       context.deleteReplies();
     }
@@ -189,51 +165,60 @@ class CommandHandler {
     return true;
   }
 
-  async getCommandMessage(context) {
+  async getCommandMessage(context: MCLBOTContext) {
     let rawCommand;
 
-    if (context.isDM && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) { // direct message channel if not a selfbot
+    if (!context.guild) { // direct message channel
       rawCommand = context.message.content; // Just pass the whole message
 
       if (!rawCommand && context.message.attachments.size !== 0) {
-        context.reply('Thanks for the picture :)');
-        return false;
-      }
-
-      if (rawCommand.startsWith(this.main.prefixHelper.getDefaultPrefix())) {
-        context.reply(`You don't need the bot's default prefix \`${this.main.prefixHelper.getDefaultPrefix()}\` in private messages. Try without.`);
-        return false;
-      }
-    } else if (context.isMention) { // mention
-      rawCommand = context.message.content.substring(context.mentionLength).trim();
-
-      if (!rawCommand && context.message.attachments.size !== 0 && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) {
         context.reply('Oh! That\'s a nice Picture :)');
         return false;
       }
 
-      if (!rawCommand && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) {
-        context.reply(`Hi! How can I help you? For help, type \`@${context.guild.me.displayName} help\`${(!context.guildPrefixDisabled) ? ` or to use the bot's prefix: \`${context.guildPrefix}help\`` : ''}`);
+      if (context.startsWithPrefix) {
+        context.reply(`You don't need the bot's default prefix \`${this.main.modules.prefixHelper.getDefaultPrefix()}\` in private messages. Try without.`);
         return false;
       }
 
-      if (!context.guildPrefixDisabled && rawCommand.startsWith(context.guildPrefix)) {
+      if (context.mentionLength > 0) {
+        context.reply(`You don't need to mention me in private messages. Try without.`);
+        return false;
+      }
+
+      return rawCommand;
+    } else if (context.mentionLength > 0) { // mention
+      rawCommand = context.message.content.substring(context.mentionLength).trim();
+
+      if (!rawCommand && context.message.attachments.size !== 0) {
+        context.reply('Oh! That\'s a nice Picture :)');
+        return false;
+      }
+
+      if (!rawCommand) {
+        context.reply(`Hi! How can I help you? For help, type \`@${context.guild.members.me?.displayName} help\`${(!context.guildPrefixDisabled) ? ` or to use the bot's prefix: \`${context.guildPrefix}help\`` : ''}`);
+        return false;
+      }
+
+      if (!context.guildPrefixDisabled && context.guildPrefix && rawCommand.startsWith(context.guildPrefix)) {
         context.reply(`You don't need the bot's server prefix \`${context.guildPrefix}\` in mentioned messages. Try without.`);
         return false;
       }
 
-      if (rawCommand.startsWith(this.main.prefixHelper.getDefaultPrefix())) {
-        context.reply(`You don't need the bot's default prefix \`${this.main.prefixHelper.getDefaultPrefix()}\` in mentioned messages. Try without.`);
+      if (rawCommand.startsWith(this.main.modules.prefixHelper.getDefaultPrefix())) {
+        context.reply(`You don't need the bot's default prefix \`${this.main.modules.prefixHelper.getDefaultPrefix()}\` in mentioned messages. Try without.`);
         return false;
       }
-    } else { // regular call with bot prefix
-      rawCommand = context.message.content.substring(context.guildPrefix.length).trim();
+
+      return rawCommand;
+    } else if (context.guildPrefix) { // regular call with bot prefix
+      return context.message.content.substring(context.guildPrefix.length).trim();
     }
 
-    return rawCommand;
+    return false; // should never happen
   }
 
-  async isBlacklisted(context) {
+  async isBlacklisted(context: MCLBOTContext) {
     if (context.isBotAdmin) {
       return false;
     }
@@ -241,13 +226,13 @@ class CommandHandler {
     // global user blacklist (blacklists given user id on all servers & DM - bot admin only)
     winston.debug(`Checking global blacklist status for user id ${context.author.id}`);
 
-    if (await this.main.blacklistHelper.getGlobalBlacklist(context.author.id)) {
+    if (await this.main.modules.blacklistHelper.getGlobalBlacklist(context.author.id)) {
       winston.debug(`User id ${context.author.id} has been globally blacklisted! Returning`);
       return true;
     }
     winston.debug(`User id ${context.author.id} is not globally blacklisted`);
 
-    if (context.isDM) {
+    if (!context.guild) {
       winston.debug('DM received, skipping member, channel and server blacklist check!');
       return false;
     }
@@ -255,21 +240,23 @@ class CommandHandler {
     // global server blacklist (blacklists given server id - bot admin only)
     winston.debug(`Checking global blacklist status for server id ${context.guild.id}`);
 
-    if (await this.main.blacklistHelper.getGuildBlacklist(context.guild.id)) {
+    if (await this.main.modules.blacklistHelper.getGuildBlacklist(context.guild.id)) {
       winston.debug(`Server id ${context.guild.id} has been globally blacklisted! Returning`);
       return true;
     }
     winston.debug(`Server id ${context.guild.id} is not globally blacklisted`);
 
-    // guild admin bypass
-    if (context.member.hasPermission('ADMINISTRATOR')) {
-      return false;
+    if(context.channel instanceof GuildChannel) {
+      // guild admin bypass
+      if (context.member && context.channel.permissionsFor(context.member).has('Administrator')) {
+        return false;
+      }
     }
 
     // per-server user blacklist (blacklists given user id on the given server id - server admin only)
     winston.debug(`Checking user blacklist status for user id ${context.author.id} on server id ${context.guild.id}`);
 
-    if (await this.main.blacklistHelper.getMemberBlacklist(context.author.id, context.guild.id)) {
+    if (await this.main.modules.blacklistHelper.getMemberBlacklist(context.author.id, context.guild.id)) {
       winston.debug(`User id ${context.author.id} has been blacklisted on server id ${context.guild.id}! Returning`);
       return true;
     }
@@ -278,7 +265,7 @@ class CommandHandler {
     // per-server channel blacklist (blacklists given channel id on the given server id - server admin only)
     winston.debug(`Checking channel blacklist status for channel id ${context.channel.id} on server id ${context.guild.id}`);
 
-    if (await this.main.blacklistHelper.getChannelBlacklist(context.channel.id, context.guild.id)) {
+    if (await this.main.modules.blacklistHelper.getChannelBlacklist(context.channel.id, context.guild.id)) {
       winston.debug(`Channel id ${context.channel.id} has been blacklisted on server id ${context.guild.id}! Returning`);
       return true;
     }
@@ -287,7 +274,7 @@ class CommandHandler {
     return false;
   }
 
-  getProperty(context, propertyName, command = context.command, subcommand = context.subcommand) {
+  getProperty(context: MCLBOTContext, propertyName: string, command: MCLBOTCommand = context.command, subcommand: MCLBOTCommand = context.subcommand) {
     if (subcommand && subcommand[propertyName] !== undefined) { // attribute directly in subcommand set
       return subcommand[propertyName];
     }
@@ -303,11 +290,10 @@ class CommandHandler {
     return undefined; // attribute has not been set at all
   }
 
-  async hasPermission(context) { // TODO: add permission flags for subcommands too (and maybe other things too)
-    // bot owner check
-    if (this.getProperty(context, 'owner') && !context.isBotAdmin) {
+  async hasPermission(context: MCLBOTContext) { // TODO: add permission flags for subcommands too (and maybe other things too)
+    if (this.getProperty(context, 'owner') && !context.isBotAdmin) { // bot owner check
       if (nconf.get('bot:owner')) {
-        const botOwner = await this.main.userHelper.getUser(context, nconf.get('bot:owner'));
+        const botOwner = await this.main.modules.userHelper.getUser(context, nconf.get('bot:owner'));
 
         context.reply(`Sorry, but you need to be \`${botOwner.tag}\` to use this command. (Bot administrator only)`);
       } else {
@@ -320,16 +306,15 @@ class CommandHandler {
     const selfPermission = this.getProperty(context, 'selfPermission');
     const noConcurrent = this.getProperty(context, 'noConcurrent');
 
-    // no DM check
-    if ((this.getProperty(context, 'guildOnly') || permission || noConcurrent === 'guild') && context.isDM) {
+    if ((this.getProperty(context, 'guildOnly') || permission || noConcurrent === 'guild') && !context.guild) { // no DM check
       context.reply('Sorry, but this command can\'t be executed via DM.');
       return false;
     }
 
-    // guild permission check for the calling member
-    if (!context.isDM && permission && !context.member.hasPermission(permission) && !context.isBotAdmin) {
+    if (context.guild && permission && !context.channel.permissionsFor(context.member).has(permission) && !context.isBotAdmin) { // guild permission check for the calling member
       if (Array.isArray(permission)) {
-        context.reply(`Sorry, but your role needs all of the following permissions to execute this command: ${permission.map((p) => context.main.permissions[p]).join(', ')}`);
+        context.reply(`Sorry, but your role needs all of the following permissions to execute this command: ${permission.map((p) => context.main.permissions[p])
+          .join(', ')}`);
       } else {
         context.reply(`Sorry, but your role needs the following permission to execute this command: ${context.main.permissions[permission]}`);
       }
@@ -337,10 +322,10 @@ class CommandHandler {
       return false;
     }
 
-    // guild permission check for the bot member itself
-    if (!context.isDM && selfPermission && !context.channel.permissionsFor(context.guild.me).has(selfPermission)) {
+    if (context.guild && selfPermission && !context.channel.permissionsFor(this.main.api.user).has(selfPermission)) { // guild permission check for the bot member itself
       if (Array.isArray(selfPermission)) {
-        context.reply(`Sorry, but my role needs all of the following permissions to execute this command: ${selfPermission.map((p) => context.main.permissions[p]).join(', ')}`);
+        context.reply(`Sorry, but my role needs all of the following permissions to execute this command: ${selfPermission.map((p) => context.main.permissions[p])
+          .join(', ')}`);
       } else {
         context.reply(`Sorry, but my role needs the following permission to execute this command: ${context.main.permissions[selfPermission]}`);
       }
@@ -357,7 +342,7 @@ class CommandHandler {
     return true;
   }
 
-  getCommand(context) {
+  getCommand(context: MCLBOTContext) {
     const rawCommand = context.rawCommand;
 
     if (!rawCommand) {
@@ -365,33 +350,36 @@ class CommandHandler {
       return false;
     }
 
-    let inputStringWithoutPipes;
-    let pipes = [];
+    // let inputStringWithoutPipes;
+    // let pipes = [];
+    //
+    // if (nconf.get('bot:pipeChar')) {
+    //   const firstPipePosition = rawCommand.indexOf(nconf.get('bot:pipeChar'));
+    //
+    //   if (firstPipePosition > 1) { // first we're going to chop off the text behind the pipe, if the command name is at least one char
+    //     const splittedInput = rawCommand.split(nconf.get('bot:pipeChar'));
+    //
+    //     inputStringWithoutPipes = splittedInput.shift();
+    //
+    //     pipes = splittedInput;
+    //   } else { // there are no pipes at all, just pass the whole input unmodified
+    //     inputStringWithoutPipes = rawCommand;
+    //   }
+    // } else { // pipes disabled
+    //   inputStringWithoutPipes = rawCommand;
+    // }
 
-    if (nconf.get('bot:pipeChar')) {
-      const firstPipePosition = rawCommand.indexOf(nconf.get('bot:pipeChar'));
-
-      if (firstPipePosition > 1) { // first we're going to chop off the text behind the pipe, if the command name is at least one char
-        const splittedInput = rawCommand.split(nconf.get('bot:pipeChar'));
-
-        inputStringWithoutPipes = splittedInput.shift();
-
-        pipes = splittedInput;
-      } else { // there are no pipes at all, just pass the whole input unmodified
-        inputStringWithoutPipes = rawCommand;
-      }
-    } else { // pipes disabled
-      inputStringWithoutPipes = rawCommand;
-    }
-
+    const inputStringWithoutPipes = rawCommand;
     let firstSpacePosition = inputStringWithoutPipes.indexOf(' ');
 
     let commandString;
     let commandParameterString;
 
     if (firstSpacePosition > 0) {
-      commandString = inputStringWithoutPipes.substring(0, firstSpacePosition).toLowerCase();
-      commandParameterString = inputStringWithoutPipes.substring(firstSpacePosition).trim();
+      commandString = inputStringWithoutPipes.substring(0, firstSpacePosition)
+        .toLowerCase();
+      commandParameterString = inputStringWithoutPipes.substring(firstSpacePosition)
+        .trim();
     } else { // The code above won't work if there are no spaces in the input string
       commandString = inputStringWithoutPipes.toLowerCase();
     }
@@ -407,13 +395,13 @@ class CommandHandler {
 
       if (related) {
         output += ` Did you mean \`${related}\`?`;
-      } else if (!related && context.isDM) {
+      } else if (!related && !context.guild) {
         output += ' (Maybe try commands without any prefixes?)';
       }
 
-      if (context.isDM || context.isMention) {
+      if (!context.guild || context.mentionLength === 0) {
         context.reply(output);
-      } else if (context.channel.permissionsFor(context.guild.me).has('ADD_REACTIONS')) {
+      } else if (context.channel.permissionsFor(this.main.api.user).has('ADD_REACTIONS')) {
         winston.debug('Unknown command: %s - going to add reaction', commandString);
 
         context.message.react('❌');
@@ -445,7 +433,8 @@ class CommandHandler {
       let subcommandString;
 
       if (firstSpacePosition > 0) { // Extract the subcommand string by separating with whitespaces again
-        subcommandString = commandParameterString.substring(0, firstSpacePosition).toLowerCase();
+        subcommandString = commandParameterString.substring(0, firstSpacePosition)
+          .toLowerCase();
       } else { // There are no whitespaces left, so pass the parameter as a whole
         subcommandString = commandParameterString.toLowerCase();
       }
@@ -454,7 +443,8 @@ class CommandHandler {
         inputSubCommand = inputCommand.subcommands[subcommandString] || inputCommand.subcommands[inputCommand.subcommandAliases[subcommandString]];
 
         if (!inputCommand.fn && !inputSubCommand) { // There's no subcommand (or subcommand alias) named after the input parameter and the input command has no function or a subcommand redirect
-          context.reply(`Unknown subcommand. Valid subcommands are: ${Object.keys(inputCommand.subcommands).join(', ')}`);
+          context.reply(`Unknown subcommand. Valid subcommands are: ${Object.keys(inputCommand.subcommands)
+            .join(', ')}`);
           return false;
         }
 
@@ -471,7 +461,8 @@ class CommandHandler {
 
           if (inputSubCommand) { // We only want to chop of the subcommand from the parameter string if it's really a called subcommand
             if (firstSpacePosition > 0) { // If there are whitespaces left, meaning there are additional parameters for the subcommand, then...
-              commandParameterString = commandParameterString.substring(firstSpacePosition).trim(); // ...remove the subcommand from the command parameters
+              commandParameterString = commandParameterString.substring(firstSpacePosition)
+                .trim(); // ...remove the subcommand from the command parameters
             } else {
               commandParameterString = undefined; // Set this to undefined, because there are no parameters to be passed to the subcommand
             }
@@ -480,25 +471,26 @@ class CommandHandler {
       }
     }
 
-    if (pipes.length > 0) {
-      for (let pipeIndex = 0; pipeIndex < pipes.length; pipeIndex += 1) {
-        const currentPipeString = pipes[pipeIndex].trim();
-
-        if (currentPipeString === '') {
-          context.reply('No pipe name specified.');
-          return false;
-        }
-
-        firstSpacePosition = commandParameterString.indexOf(' ');
-
-        const pipeName = currentPipeString.substring(0, firstSpacePosition).toLowerCase();
-
-        if (!this.main.pipes[pipeName]) {
-          context.reply('Unknown pipe name.');
-          return false;
-        }
-      }
-    }
+    // if (pipes.length > 0) {
+    //   for (let pipeIndex = 0; pipeIndex < pipes.length; pipeIndex += 1) {
+    //     const currentPipeString = pipes[pipeIndex].trim();
+    //
+    //     if (currentPipeString === '') {
+    //       context.reply('No pipe name specified.');
+    //       return false;
+    //     }
+    //
+    //     firstSpacePosition = commandParameterString.indexOf(' ');
+    //
+    //     const pipeName = currentPipeString.substring(0, firstSpacePosition)
+    //       .toLowerCase();
+    //
+    //     if (!this.main.pipes[pipeName]) {
+    //       context.reply('Unknown pipe name.');
+    //       return false;
+    //     }
+    //   }
+    // }
 
     context.command = inputCommand;
     context.subcommand = inputSubCommand;
@@ -525,14 +517,14 @@ class CommandHandler {
       if (args[0].includes(context.main.api.token)) { // Just a little security check, eh?
         winston.warn('Message contained my token!');
 
-        raven.captureException(new Error('Message output contained bot token'), {
-          extra: {
-            guild: (context.isDM) ? 'DM' : `${context.guild.name} (ID: ${context.guild.id})`,
-            channel: (context.isDM) ? 'DM' : `${context.channel.name} (ID: ${context.channel.id})`,
-            user: `${context.author.tag} (ID: ${context.author.id})`,
-            rawInput: context.message.content,
-          },
-        });
+        // raven.captureException(new Error('Message output contained bot token'), {
+        //   extra: {
+        //     guild: (context.isDM) ? 'DM' : `${context.guild.name} (ID: ${context.guild.id})`,
+        //     channel: (context.isDM) ? 'DM' : `${context.channel.name} (ID: ${context.channel.id})`,
+        //     user: `${context.author.tag} (ID: ${context.author.id})`,
+        //     rawInput: context.message.content,
+        //   },
+        // });
 
         args[0] = XRegExp.replace(args[0], this.tokenRegex, '<redacted>', 'all');
       }
@@ -545,10 +537,10 @@ class CommandHandler {
     let sendTo;
 
     try {
-      if (context.guild && !context.channel.permissionsFor(context.guild.me).has('SEND_MESSAGES')) {
+      if (context.guild && !context.channel.permissionsFor(this.main.api.user).has('SEND_MESSAGES')) {
         if (!context.channelNoPermission) { // Just send this message only 1 time per invoked command
           const permErrMsg = await context.author.send(`Sorry, but I don't have the permission to send messages in the channel <#${context.channel.id}> on server ${context.guild.name}! Your command output is going to be my next DM.`);
-          context.replies.push(permErrMsg);
+          context.message.replies.push(permErrMsg);
         }
 
         context.channelNoPermission = true;
@@ -559,7 +551,7 @@ class CommandHandler {
       }
 
       if (args.length !== 0 && typeof args[0] === 'string' && args[0].length > 2000) {
-        if (context.guild && !context.channel.permissionsFor(context.guild.me).has('ATTACH_FILES')) {
+        if (context.guild && !context.channel.permissionsFor(this.main.api.user).has('ATTACH_FILES')) {
           newMessage = await sendTo.send('Sorry, but I don\'t have the permission to attach messages in this channel.');
         } else {
           newMessage = await sendTo.send({
@@ -573,7 +565,7 @@ class CommandHandler {
         newMessage = await sendTo.send(...args);
       }
 
-      context.replies.push(newMessage);
+      context.message.replies.push(newMessage);
 
       context.answered = true;
 
@@ -964,7 +956,7 @@ class CommandHandler {
   }
 
   async handleMessageEvent(message, editedMessage) {
-    if (nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false' && message.author.id !== this.main.api.user.id) {
+    if (message.author.id === this.main.api.user.id) {
       return false;
     }
 
@@ -1000,7 +992,7 @@ class CommandHandler {
       return false;
     }
 
-    if (await this.main.cooldownHelper.hasCooldown(context)) {
+    if (await this.main.modules.cooldownHelper.hasCooldown(context)) {
       return false;
     }
 
@@ -1013,37 +1005,38 @@ class CommandHandler {
         return false;
       }
 
-      await this.main.cooldownHelper.commandCall(context);
+      await this.main.modules.cooldownHelper.commandCall(context);
 
       if (nconf.get('log:commands') === 'true') {
-        if (context.isDM) {
+        if (!context.guild) {
           winston.info(`${context.command.name} by ${context.author.tag} (ID: ${context.author.id}) (DM)`);
         } else {
           winston.info(`${context.command.name} by ${context.author.tag} (ID: ${context.author.id}) in channel #${context.channel.name} (ID: ${context.channel.id}) on server ${context.guild.name} (ID: ${context.guild.id})`);
         }
       }
 
-      this.main.prometheusMetrics.commandInvocations.labels(context.command.name).inc();
+      // this.main.prometheusMetrics.commandInvocations.labels(context.command.name)
+      //   .inc();
 
-      if (!this.getProperty(context, 'hideTyping') && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) {
-        Bluebird.delay(500).then(() => {
-          if (!context.answered && !context.message.deleted) {
-            if (context.guild && !context.channel.permissionsFor(context.guild.me).has('SEND_MESSAGES')) { // we need to have this permission to show the typing indicator
-              return;
-            }
-
-            context.typing = true;
-            context.channel.startTyping();
-          }
-        });
-
-        Bluebird.delay(10000).then(() => {
-          if (context.typing && !context.answered) {
-            context.typing = false;
-            context.channel.stopTyping();
-          }
-        });
-      }
+      // if (!this.getProperty(context, 'hideTyping') && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) {
+      //   Bluebird.delay(500).then(() => {
+      //     if (!context.answered && !context.message.deleted) {
+      //       if (context.guild && !context.channel.can('SEND_MESSAGES')) { // we need to have this permission to show the typing indicator
+      //         return;
+      //       }
+      //
+      //       context.typing = true;
+      //       context.channel.startTyping();
+      //     }
+      //   });
+      //
+      //   Bluebird.delay(10000).then(() => {
+      //     if (context.typing && !context.answered) {
+      //       context.typing = false;
+      //       context.channel.stopTyping();
+      //     }
+      //   });
+      // }
 
       const commandToHandle = context.subcommand || context.command;
 
@@ -1056,16 +1049,17 @@ class CommandHandler {
       }
 
       winston.debug(`Command ${context.command.name} finished in ${Date.now() - context.invokeTime}ms`); // TODO: i want to record this with prometheus too
-      this.main.prometheusMetrics.commandExecutionTimes.labels(context.command.name).inc(Date.now() - context.invokeTime);
+      // this.main.prometheusMetrics.commandExecutionTimes.labels(context.command.name)
+      //   .inc(Date.now() - context.invokeTime);
     } catch (err) {
-      raven.captureException(err, {
-        extra: {
-          guild: (context.isDM) ? 'DM' : `${context.guild.name} (ID: ${context.guild.id})`,
-          channel: (context.isDM) ? 'DM' : `${context.channel.name} (ID: ${context.channel.id})`,
-          user: `${context.author.tag} (ID: ${context.author.id})`,
-          rawInput: context.message.content,
-        },
-      });
+      // raven.captureException(err, {
+      //   extra: {
+      //     guild: (context.isDM) ? 'DM' : `${context.guild.name} (ID: ${context.guild.id})`,
+      //     channel: (context.isDM) ? 'DM' : `${context.channel.name} (ID: ${context.channel.id})`,
+      //     user: `${context.author.tag} (ID: ${context.author.id})`,
+      //     rawInput: context.message.content,
+      //   },
+      // });
 
       winston.error('Error executing command %s: %s', context.command.name, err.message);
       context.reply('Ooops! I encountered an error while executing your command.');
@@ -1074,5 +1068,3 @@ class CommandHandler {
     return true;
   }
 }
-
-module.exports = CommandHandler;

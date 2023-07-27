@@ -1,17 +1,17 @@
 module.exports = {
-  description: 'Manage the welcome message for newly joined server members',
+  description: 'Manage the welcome messageCreate for newly joined server members',
   guildOnly: true,
   fn: 'show',
   subcommands: {
     show: {
-      description: 'Displays the current welcome message',
+      description: 'Displays the current welcome messageCreate',
       alias: ['print'],
       fn: async (ctx) => {
         const currentMessage = await ctx.main.guildSettingsManager.getGuildSetting(ctx.guild.id, 'welcomeMessageText');
         const channelID = await ctx.main.guildSettingsManager.getGuildSetting(ctx.guild.id, 'welcomeLeaveMessageChannel');
 
         if (!currentMessage || !channelID) {
-          return 'This server has no welcome message set. Run `welcome set` to enable this feature.';
+          return 'This server has no welcome messageCreate set. Run `welcome set` to enable this feature.';
         }
 
         if (!ctx.guild.channels.get(channelID)) {
@@ -25,8 +25,8 @@ module.exports = {
         return `The current welcome message will be posted in channel <#${channelID}> and is:\n\n${currentMessage}`;
       },
     },
-    set: { // TODO: create a listener for channelDelete and delete the welcome & leave message setting, if the currently set channel got deleted
-      description: 'Sets a new welcome message',
+    set: { // TODO: create a listener for channelDelete and delete the welcome & leave messageCreate setting, if the currently set channel got deleted
+      description: 'Sets a new welcome messageCreate',
       permission: 'ADMINISTRATOR',
       arguments: [
         {
@@ -43,16 +43,16 @@ module.exports = {
           await ctx.main.guildSettingsManager.setGuildSetting(ctx.guild.id, 'welcomeLeaveMessageChannel', ctx.channel.id);
         }
 
-        return 'Successfully updated the server welcome message.';
+        return 'Successfully updated the server welcome messageCreate.';
       },
     },
     clear: {
-      description: 'Disable the welcome message',
+      description: 'Disable the welcome messageCreate',
       permission: 'ADMINISTRATOR',
       alias: ['delete', 'remove', 'off', 'disable'],
       fn: async (ctx) => {
         if (!await ctx.main.guildSettingsManager.getGuildSetting(ctx.guild.id, 'welcomeMessageText')) {
-          return 'This server has no welcome message set.';
+          return 'This server has no welcome messageCreate set.';
         }
 
         await ctx.main.guildSettingsManager.deleteGuildSetting(ctx.guild.id, 'welcomeMessageText');
@@ -61,7 +61,7 @@ module.exports = {
           await ctx.main.guildSettingsManager.deleteGuildSetting(ctx.guild.id, 'welcomeLeaveMessageChannel');
         }
 
-        return 'The welcome message has been disabled for this server.';
+        return 'The welcome messageCreate has been disabled for this server.';
       },
     },
     setchannel: {

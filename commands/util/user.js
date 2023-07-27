@@ -55,7 +55,7 @@ module.exports = {
 
       if (lastMessage) {
         if (lastMessage.channel_id === ctx.channel.id) {
-          embed.addField('Last message on this Server (and also this Channel)', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp, 0, true, true));
+          embed.addField('Last messageCreate on this Server (and also this Channel)', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp, 0, true, true));
         } else {
           ctx.main.prometheusMetrics.sqlCommands.labels('SELECT').inc();
           const lastChannelMessage = await ctx.main.db.member_messages.findOne({
@@ -68,10 +68,10 @@ module.exports = {
           });
 
           if (lastChannelMessage) {
-            embed.addField('Last message in this Channel', ctx.main.stringUtils.formatUnixTimestamp(lastChannelMessage.timestamp, 0, true, true));
+            embed.addField('Last messageCreate in this Channel', ctx.main.stringUtils.formatUnixTimestamp(lastChannelMessage.timestamp, 0, true, true));
           }
 
-          embed.addField('Last message on this Server', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp, 0, true, true));
+          embed.addField('Last messageCreate on this Server', ctx.main.stringUtils.formatUnixTimestamp(lastMessage.timestamp, 0, true, true));
         }
       }
     }
@@ -179,7 +179,7 @@ module.exports = {
       let commonGuilds;
 
       if (ctx.main.api.shard) {
-        const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.userHelper.getGuildsInCommon('${user.id}')`);
+        const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.modules.userHelper.getGuildsInCommon('${user.id}')`);
 
         commonGuilds = rpcGuilds.flat();
       } else {

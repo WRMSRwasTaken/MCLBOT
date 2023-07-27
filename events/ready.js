@@ -11,16 +11,8 @@ module.exports = {
     if (!main.firstReady) {
       main.firstReady = true;
 
-      if (!main.api.user.bot && (!nconf.get('bot:selfbot') || nconf.get('bot:selfbot') === 'false')) {
-        winston.error('The token provided is not a bot token and selfbot mode has not been enabled. Exiting.');
-
-        main.shutdown(1);
-
-        return;
-      }
-
-      if (main.api.user.bot && nconf.get('bot:selfbot') && nconf.get('bot:selfbot') !== 'false') {
-        winston.error('The token provided is a bot token, but selfbot mode has been enabled. Exiting.');
+      if (!main.api.user.bot) {
+        winston.error('The token provided is not a bot token! Exiting.');
 
         main.shutdown(1);
 

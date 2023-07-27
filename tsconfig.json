@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "useUnknownInCatchVariables": false,
+    "target": "es6", // and this
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "extends": ["@tsconfig/strictest/tsconfig", "@tsconfig/node20/tsconfig"]
+}

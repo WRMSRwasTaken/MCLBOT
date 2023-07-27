@@ -23,4 +23,4 @@ RUN adduser -S mclbot
 RUN chown -R mclbot /mclbot
 USER mclbot
 
-ENTRYPOINT [ "/usr/bin/node", "/mclbot/bot.js" ]
+ENTRYPOINT [ "/usr/bin/node", "/mclbot/bot.ts" ]

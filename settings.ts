@@ -1,5 +1,5 @@
-const nconf = require('nconf');
-const dotenv = require('dotenv');
+import nconf from 'nconf';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -19,7 +19,6 @@ nconf.defaults({
     pipeChar: false, // pipes disabled for now, have to think more about it, possibly dropping this feature completely again
     shards: false, // number of shards to spawn, or false for single process mode
     waitForReady: true, // false to disable waiting for previously spawned shard to become ready before spawning another one
-    selfbot: false, // selfbot is not fully supported right now and this may never change
     wdCheckInterval: 10000, // ms
     wdMaxPingTimestampDiff: 120000, // ms
     defaultCooldownActions: 5,
@@ -59,3 +58,5 @@ nconf.defaults({
     prefix: 'mclbot:',
   },
 });
+
+export {};

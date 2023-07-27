@@ -1,7 +1,7 @@
 const prettyMs = require('pretty-ms');
 
 module.exports = {
-  description: 'Prints member message statistics about this server',
+  description: 'Prints member messageCreate statistics about this server',
   alias: ['top', 'serverstats', 'sstats', 'guildstats', 'gstats'],
   guildOnly: true,
   flags: {

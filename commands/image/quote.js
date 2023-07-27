@@ -50,7 +50,7 @@ module.exports = {
   },
   subcommands: {
     id: {
-      description: 'Use an existing message to quote',
+      description: 'Use an existing messageCreate to quote',
       alias: ['message', 'user'],
       arguments: [
         {
@@ -67,14 +67,14 @@ module.exports = {
           let message;
 
           try {
-            message = await ctx.channel.messages.fetch(input, false); // first we try to fetch a message with the id directly
+            message = await ctx.channel.messages.fetch(input, false); // first we try to fetch a messageCreate with the id directly
           } catch (ex) {
             // do nothing on purpose
           }
 
           if (message) {
             if (!message.content) {
-              return ctx.main.stringUtils.argumentError(ctx, 0, 'Invalid message specified (this image needs to contain text to quote it)');
+              return ctx.main.stringUtils.argumentError(ctx, 0, 'Invalid messageCreate specified (this image needs to contain text to quote it)');
             }
 
             user = await ctx.main.userHelper.getUser(ctx, message.author); // in order to access user.member, we're just using my helper function
@@ -89,7 +89,7 @@ module.exports = {
 
         if (!user) {
           if (isSnowflake) {
-            return ctx.main.stringUtils.argumentError(ctx, 0, 'No message in this channel or user found with the given ID');
+            return ctx.main.stringUtils.argumentError(ctx, 0, 'No messageCreate in this channel or user found with the given ID');
           }
 
           return ctx.main.stringUtils.argumentError(ctx, 0, 'No user found for given input');

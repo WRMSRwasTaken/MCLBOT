@@ -1,4 +1,5 @@
 module.exports = {
+  disabled: true,
   interval: 30,
   fn: (main) => {
     main.prometheusMetrics.guildCount.set(main.api.guilds.size || 0);

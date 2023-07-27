@@ -1,6 +1,7 @@
 const uuid = require('uuid');
 
 module.exports = { // TODO: if we're in sharded mode, run this job only on shard 0
+  disabled: true,
   interval: 60,
   load: async (main) => {
     if (!main.remindTasks) {

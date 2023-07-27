@@ -12,7 +12,7 @@ The easiest way to get this bot up and running is to deploy it via Docker (a [Do
 
 [Redis Sentinel](https://redis.io/topics/sentinel) (for Redis HA) is supported via `redis.sentinel.addresses` (comma separated servers) and `redis.sentinel.name` setting key.
 
-The bot's default configuration is in the [settings.js](settings.js) file, however it is not recommended to change settings there, as they might get overwritten on the next git pull. To change settings, either use environment variables (best suited for Docker installations) or create a file named `.env` in the bot's root directory and place the overwritten parameters there, as seen in [the Twelve-Factor App](https://12factor.net/config) methodology.
+The bot's default configuration is in the [settings.ts](settings.ts) file, however it is not recommended to change settings there, as they might get overwritten on the next git pull. To change settings, either use environment variables (best suited for Docker installations) or create a file named `.env` in the bot's root directory and place the overwritten parameters there, as seen in [the Twelve-Factor App](https://12factor.net/config) methodology.
 
 For example: To store your bot token, either pass the environment variable `bot.token` containing the bot's token or insert `bot.token=<token>` in the `.env` file. The same goes for another example with the database password defined as `database.password`.
 

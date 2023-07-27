@@ -14,6 +14,7 @@ This is also a nice bonus for people who remove the bot from their server and ch
  */
 
 module.exports = {
+  disabled: true,
   interval: 60 * 5,
   fn: async (main) => {
     const Op = main.db.Sequelize.Op;

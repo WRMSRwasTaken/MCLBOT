@@ -20,7 +20,7 @@ module.exports = {
     let commonGuilds;
 
     if (ctx.main.api.shard) {
-      const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.userHelper.getGuildsInCommon('${user.id}')`);
+      const rpcGuilds = await ctx.main.api.shard.broadcastEval(`this.main.modules.userHelper.getGuildsInCommon('${user.id}')`);
 
       commonGuilds = rpcGuilds.flat();
     } else {

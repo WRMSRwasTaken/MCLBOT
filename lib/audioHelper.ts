@@ -1,14 +1,15 @@
-const winston = require('winston');
-const fs = require('fs-extra');
-const nconf = require('nconf');
-const raven = require('raven');
+import winston from 'winston';
+import fs from 'fs-extra';
+import nconf from 'nconf';
 
-class AudioHelper {
-  constructor(main) {
-    this.main = main;
+import {MCLBOTModule} from '../definitions.js';
+
+export default class AudioHelper implements MCLBOTModule {
+  initializeModule() {
+    return;
   }
 
-  async playSoundFile(context, filePath) {
+  async playSoundFile(context, filePath: string): Promise<void> {
     if (!context.member.voice.channel) {
       return context.reply('You need to join a voice channel first!');
     }
@@ -36,14 +37,14 @@ class AudioHelper {
       winston.error('Could not connect to voice channel: %s', ex);
       context.reply('Ooops! I encountered an error while connecting to the voice channel.');
 
-      raven.captureException(ex, {
-        extra: {
-          guild: `${context.guild.name} (ID: ${context.guild.id})`,
-          voiceChannel: `${context.member.voice.channel.name} (ID: ${context.member.voice.channel.id})`,
-          user: `${context.author.tag} (ID: ${context.author.id})`,
-          rawInput: context.message.content,
-        },
-      });
+      // raven.captureException(ex, {
+      //   extra: {
+      //     guild: `${context.guild.name} (ID: ${context.guild.id})`,
+      //     voiceChannel: `${context.member.voice.channel.name} (ID: ${context.member.voice.channel.id})`,
+      //     user: `${context.author.tag} (ID: ${context.author.id})`,
+      //     rawInput: context.message.content,
+      //   },
+      // });
 
       if (context.guild.me.voice.channel) {
         context.guild.me.voice.channel.leave();
@@ -68,14 +69,14 @@ class AudioHelper {
       winston.error('Error while playing audio file: %s', ex);
       context.reply('Ooops! I encountered an error while playing the audio file.');
 
-      raven.captureException(ex, {
-        extra: {
-          guild: `${context.guild.name} (ID: ${context.guild.id})`,
-          voiceChannel: `${context.member.voice.channel.name} (ID: ${context.member.voice.channel.id})`,
-          user: `${context.author.tag} (ID: ${context.author.id})`,
-          rawInput: context.message.content,
-        },
-      });
+      // raven.captureException(ex, {
+      //   extra: {
+      //     guild: `${context.guild.name} (ID: ${context.guild.id})`,
+      //     voiceChannel: `${context.member.voice.channel.name} (ID: ${context.member.voice.channel.id})`,
+      //     user: `${context.author.tag} (ID: ${context.author.id})`,
+      //     rawInput: context.message.content,
+      //   },
+      // });
 
       return false;
     }
@@ -92,14 +93,14 @@ class AudioHelper {
       winston.error('Error while playing audio file: %s', ex);
       context.reply('Ooops! I encountered an error while playing the audio file.');
 
-      raven.captureException(ex, {
-        extra: {
-          guild: `${context.guild.name} (ID: ${context.guild.id})`,
-          voiceChannel: `${context.member.voice.channel.name} (ID: ${context.member.voice.channel.id})`,
-          user: `${context.author.tag} (ID: ${context.author.id})`,
-          rawInput: context.message.content,
-        },
-      });
+      // raven.captureException(ex, {
+      //   extra: {
+      //     guild: `${context.guild.name} (ID: ${context.guild.id})`,
+      //     voiceChannel: `${context.member.voice.channel.name} (ID: ${context.member.voice.channel.id})`,
+      //     user: `${context.author.tag} (ID: ${context.author.id})`,
+      //     rawInput: context.message.content,
+      //   },
+      // });
     });
 
     return true;
@@ -120,5 +121,3 @@ class AudioHelper {
     return this.playSoundFile(context, filePath);
   }
 }
-
-module.exports = AudioHelper;

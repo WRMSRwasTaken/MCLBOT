@@ -13,7 +13,7 @@ module.exports = {
     let sqlOutput;
 
     try {
-      sqlOutput = await context.main.db.sequelize.query(command);
+      sqlOutput = await context.main.pg`${command}`;
     } catch (err) {
       return `There was an error while executing your SQL query:\n\`\`\`\n${err.message}\n\`\`\``;
     }

@@ -2,14 +2,19 @@ const XRegExp = require('xregexp');
 const winston = require('winston');
 const Bluebird = require('bluebird');
 
-class UserHelper {
-  constructor(main) {
+import {MCLBOTMain, MCLBOTContext} from '../definitions.js';
+
+export default class UserHelper {
+  private main = {} as MCLBOTMain;
+  public mentionRegex: RegExp;
+
+  constructor(main: MCLBOTMain) {
     this.main = main;
 
     this.mentionRegex = XRegExp('^(<@!?)?(?<userID>\\d{16,})>?$');
   }
 
-  getGuildMember(context, input) {
+  getGuildMember(context: MCLBOTContext, input: string) {
     winston.debug('Trying to get a guild member from supplied string: %s', input);
 
     const mentionResult = XRegExp.exec(input, this.mentionRegex);
@@ -17,7 +22,7 @@ class UserHelper {
     if (mentionResult) { // mentioned user or userid
       winston.debug('Is mention or user id! Getting member object from guild...');
 
-      const mentionedMember = context.guild.members.get(mentionResult.userID);
+      const mentionedMember = context.guild?.members.get(mentionResult.userID);
 
       if (mentionedMember) {
         return mentionedMember;
@@ -29,7 +34,7 @@ class UserHelper {
 
     winston.debug('Not a user mention or user id! Searching guild member list...');
 
-    let memberMatch = context.guild.members.filter((member) => {
+    let memberMatch = context.guild?.members.filter((member) => {
       if (member.displayName && member.displayName.toUpperCase().includes(input.toUpperCase())) {
         return true;
       }
@@ -49,7 +54,7 @@ class UserHelper {
       return memberMatch.first();
     }
 
-    memberMatch = memberMatch.sort((memberOne, memberTwo) => { // TODO: maybe we should query the database with one big query for the last message timestamps, but limited to like 100 max users for more precise user selection
+    memberMatch = memberMatch.sort((memberOne, memberTwo) => { // TODO: maybe we should query the database with one big query for the last messageCreate timestamps, but limited to like 100 max users for more precise user selection
       if (memberOne.lastMessage && memberTwo.lastMessage) {
         return memberTwo.lastMessage.createdTimestamp - memberOne.lastMessage.createdTimestamp;
       }
@@ -62,7 +67,7 @@ class UserHelper {
         return 1;
       }
 
-      if (memberOne.presence.status !== 'offline' && memberTwo.presence.status === 'offline') { // get the member being online right now, if both have no sent message timestamp record
+      if (memberOne.presence.status !== 'offline' && memberTwo.presence.status === 'offline') { // get the member being online right now, if both have no sent messageCreate timestamp record
         return -1;
       }
 
@@ -233,5 +238,3 @@ class UserHelper {
     return (darkMode) ? '#ffffff' : '#000000';
   }
 }
-
-module.exports = UserHelper;

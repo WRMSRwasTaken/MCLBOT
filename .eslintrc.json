@@ -1,15 +1,21 @@
 {
-  "extends": "airbnb-base",
-  "rules": {
-    "class-methods-use-this": "off", // this makes the code unnecessarily more complicated
-    "max-len": "off",  // way too short
-    "prefer-destructuring": "off", // this makes the code much more unreadable IMO
-    "global-require": "off", // we need to dynamically load modules / commands
-    "import/no-dynamic-require": "off", // see above
-    "no-param-reassign": "off", // e.g. the context object needs to be modified a lot
-    "no-await-in-loop": "off", // we need that for our command parser
-    "no-restricted-syntax":"off", // this is literally just for allowing for loops instead of using forEach
-    "no-bitwise": "off", // why isn't this allowed?!
-    "no-plusplus": "off" // same
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2022
+  },
+  "env": {
+    "node": true,
+    "browser": true,
+    "es6": true
   }
 }

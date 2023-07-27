@@ -1,4 +1,5 @@
 module.exports = {
+  disabled: true,
   interval: 60,
   fn: async (main) => {
     const Op = main.db.Sequelize.Op;

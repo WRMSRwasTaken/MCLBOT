@@ -30,7 +30,7 @@ module.exports = {
       const message = channel.messages.get(channel.lastMessageID);
 
       if (message) {
-        embed.addField('Last message', ctx.main.stringUtils.formatUnixTimestamp(message.createdTimestamp));
+        embed.addField('Last messageCreate', ctx.main.stringUtils.formatUnixTimestamp(message.createdTimestamp));
       }
     }
 

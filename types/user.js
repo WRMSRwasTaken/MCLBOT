@@ -6,7 +6,7 @@ module.exports = {
       return user;
     }
 
-    throw new Error((context.isDM) ? 'Invalid user ID entered (needed for this command in DM)' : 'No matching users found');
+    throw new Error((!context.guild) ? 'Invalid user ID entered (needed for this command in DM)' : 'No matching users found');
   },
 
   default: (context) => context.author,
